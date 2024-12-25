@@ -1,8 +1,9 @@
+import AnalyticsInfo from "../../Components/AnalyticsInfo/AnalyticsInfo";
 
 const Analytics = () => {
     return (
         <div>
-            Analytics
+            <AnalyticsInfo />
         </div>
     );
 };
