@@ -1,26 +1,24 @@
 import { Form, Input } from "antd";
-import brandlogo from "../../../assets/image/logo.png"
 import { Link } from "react-router-dom";
 const ForgatePassword = () => {
     const onFinish = (values) => {
         console.log("Received values of form: ", values);
     };
+
     return (
-        <div className="bg-[ffffff]">
+        <div className="bg-white">
             <div className="container mx-auto">
-                <div className="w-full flex flex-col md:flex-row justify-between items-center gap-20  ">
-                    <div className="w-full md:w-[50%] px-3 mt-10">
-                        <img src={brandlogo} alt="brandlogo" className="h-full w-full object-cover" />
-                    </div>
-                    <div className="w-full md:w-[50%] ">
-                        <div className="py-16 md:py-0 h-[100vh] w-full flex items-center justify-center ">
+                <div className="w-full md:max-w-screen-md mx-auto flex flex-col md:flex-row justify-between items-center gap-20  ">
+
+                    <div className="w-full md:w-[50%] order-2 md:order-1 ">
+                        <div className=" md:py-0 md:h-[100vh] w-full flex items-center justify-center">
                             <Form
-                                name="login"
+                                name="forget-password"
                                 initialValues={{ remember: true }}
                                 style={{ maxWidth: 550 }}
                                 onFinish={onFinish}
                                 layout="vertical"
-                                className=" bg-[#eef6ff] py-28 mx-4 md:mx-0 px-6 md:px-10 rounded-2xl w-[450px] border-2 shadow-xl"
+                                className=" bg-white py-10 md:py-28 mx-2 md:mx-0 px-6 md:px-10 rounded-2xl w-[450px] border-2 shadow-xl"
                             >
                                 <div className="mb-4 text-center">
                                     <h2
@@ -48,7 +46,7 @@ const ForgatePassword = () => {
                                 <Form.Item className="text-center">
                                     <Link to="/varification">
                                         <button
-                                            className="bg-[#2c9ef1] text-center w-full  p-2 font-semibold    text-white px-10 py-2 rounded-md shadow-lg"
+                                            className="bg-primary text-center w-full  p-2 font-semibold text-white px-10 py-2 rounded-2xl shadow-lg"
                                             type="submit"
                                         >
                                             Send a code
@@ -58,6 +56,12 @@ const ForgatePassword = () => {
                             </Form>
                         </div>
 
+                    </div>
+                    <div className="w-full md:w-[50%] px-3 text-center order-1 md:order-2  mt-32 md:mt-0">
+
+                        <p className="text-neutral-500 flex justify-center items-center ">Welcome to out forgot password page !
+                            provide your email for
+                            confirm 6 digit verification code.</p>
                     </div>
                 </div>
             </div>

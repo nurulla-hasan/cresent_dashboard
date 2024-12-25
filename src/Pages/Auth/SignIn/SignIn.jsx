@@ -1,5 +1,4 @@
 import { Checkbox, Form, Input, Typography } from "antd";
-import brandlogo from "../../../assets/image/logo.png"
 import { Link } from "react-router-dom";
 import { useState } from "react";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
@@ -10,24 +9,23 @@ const SignIn = () => {
         setShowpassword(!showpassword)
     }
 
-
     const onFinish = (values) => {
         console.log("Received values of form: ", values);
     };
     return (
         <div className="bg-white">
             <div className="container mx-auto">
-                <div className="w-full md:max-w-screen-lg mx-auto flex flex-col md:flex-row justify-between items-center gap-20  ">
+                <div className="w-full md:max-w-screen-md mx-auto flex flex-col md:flex-row justify-between items-center gap-2 md:gap-20">
 
-                    <div className="w-full md:w-[50%] ">
-                        <div className="py-16 md:py-0 h-[100vh] w-full flex items-center justify-center ">
+                    <div className="w-full md:w-[50%] order-2 md:order-1">
+                        <div className="md:h-[100vh] w-full flex items-center justify-center ">
                             <Form
                                 name="login"
                                 initialValues={{ remember: true }}
                                 style={{ maxWidth: 550 }}
                                 onFinish={onFinish}
                                 layout="vertical"
-                                className="  py-28 mx-4 md:mx-0 px-6 md:px-10 rounded-2xl w-[450px] border-2 border-[#eef6ff] mt-10"
+                                className="py-10  md:py-28 mx-2 md:mx-0 px-6 md:px-10 rounded-2xl w-[450px] border-2 border-[#eef6ff] mt-10"
                             >
                                 <div className="mb-4 text-center">
                                     <h2
@@ -82,7 +80,6 @@ const SignIn = () => {
                                     </Form.Item>
                                     <Link to="/forgate-password" className=" ">
                                         <p className="text-red-600 hover:text-red-600 text-md  ">
-
                                             Forgate Password
                                         </p>
                                     </Link>
@@ -101,12 +98,14 @@ const SignIn = () => {
                         </div>
 
                     </div>
-                    <div className="w-full md:w-[50%] px-3 text-center ">
-                        <h1 className="text-2xl md:text-3xl font-bold mb-16">Welcome Back</h1>
-                        <p className="text-neutral-500 ">Please Sign in into your
+
+                    <div className="w-full md:w-[50%] px-3 flex flex-col justify-center items-center order-1 md:order-2 mt-10">
+                        <h1 className="text-2xl md:text-3xl font-bold mb-5 md:mb-16 ">Welcome Back</h1>
+                        <p className="text-neutral-500 text-center text-lg ">Please Sign in into your
                             account with the given
                             details to continue</p>
                     </div>
+
                 </div>
             </div>
         </div>

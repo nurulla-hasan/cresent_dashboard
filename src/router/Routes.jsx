@@ -5,10 +5,10 @@ import MainLayout from "../Layout/Main/Main";
 import Analytics from "../Pages/Analytics/Analytics";
 import SignIn from "../Pages/Auth/SignIn/SignIn";
 import ForgatePassword from "../Pages/Auth/ForgatePassword/ForgatePassword";
-import ResetPass from "../Pages/Auth/ResetPass/ResetPass";
 import Newpass from "../Pages/Auth/NewPass/Newpass";
 import VerifyPass from "../Pages/Auth/VerifyPass/VerifyPass";
 import Chat from "../Pages/ChatComponent/Chat";
+import ContinuePage from "../Pages/Auth/ContinuePage/ContinuePage";
 
 
 export const router = createBrowserRouter([
@@ -25,13 +25,14 @@ export const router = createBrowserRouter([
         path: "/varification",
         element: <VerifyPass></VerifyPass>
     },
-    {
-        path: "/reset-password",
-        element: <ResetPass></ResetPass>
-    },
+
     {
         path: "/new-password",
         element: <Newpass></Newpass>
+    },
+    {
+        path: "/continue-page",
+        element: <ContinuePage />
     },
     {
         path: "/",
