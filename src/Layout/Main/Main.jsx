@@ -28,35 +28,35 @@ const MainLayout = () => {
     return (
         <div>
             {/* haeder */}
-            <div className="h-20 bg-primary flex justify-between  items-center px-2 md:px-20 gap-2">
+            <div className="h-20 bg-white flex justify-between  items-center px-2 md:px-20 gap-2">
                 {isMobile && (
                     <GiHamburgerMenu onClick={toggleDrawer} className="h-5 w-5 cursor-pointer text-white" />
                 )}
+                {/* logo section */}
                 <div>
                     <Link to="/">
                         <div className="">
                             <img src={brandlogo} alt="brandlogo" className="md:h-full md:w-full object-cover" />
-
                         </div>
                     </Link>
                 </div>
+                {/* others section */}
                 <div>
                     <div className="flex justify-between items-center gap-2 text-white mx-10">
                         <div className="relative">
                             <div className=" flex justify-between items-center gap-5 py-5">
                                 <Link to="/notification">
-                                    <div className="relative">
-                                        <IoIosNotificationsOutline className="h-10 w-10 bg-white rounded-full text-black p-2" />
-
-                                        <span className="bg-green-500 h-5 w-5 rounded-full flex justify-center items-center absolute top-0 right-0 text-white text-xs">
+                                    <div className="relative ">
+                                        <IoIosNotificationsOutline className="h-10 w-10 bg-white  text-black p-1 border rounded-full border-primary " />
+                                        <span className="bg-primary h-5 w-5 rounded-full flex justify-center items-center absolute top-0 right-0 text-white text-xs">
                                             1
                                         </span>
                                     </div>
                                 </Link>
                                 <Link to="/userProfile">
                                     <div className="flex justify-center items-center gap-2">
-                                        <img src={user} alt="" />
-                                        <p className="md:text-xl font-semibold hover:text-textColor">Mr Barbar</p>
+                                        <img src={user} alt="" className="w-10 h-10 rounded-full border border-primary" />
+                                        <p className="md:text-xl font-semibold text-primary">Mr Rita</p>
                                     </div>
                                 </Link>
                             </div>
@@ -92,11 +92,11 @@ const MainLayout = () => {
                             <Sidebar onClose={closeDrawer} />
                         </Drawer>
                     ) : (
-                        <div className="w-[30%] lg:w-[20%] ">
+                        <div className="w-[30%] lg:w-[15%] ">
                             <Sidebar />
                         </div>
                     )}
-                    <div className={`flex-1 ${isMobile ? "p-4" : "p-10"}`}>
+                    <div className={`flex-1 bg-[#eeeeee] h-[90vh] ${isMobile ? "p-4" : "p-10"}`}>
                         <Outlet />
                     </div>
                 </div>

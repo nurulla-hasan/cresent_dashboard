@@ -56,18 +56,18 @@ const Sidebar = ({ closeDrawer }) => {
     ];
 
     return (
-        <div className="">
+        <div className="bg-white h-full">
             <div className=" flex flex-col md:h-full">
                 <div className="flex flex-col justify-end items-end gap-2 md:my-5 mb-10">
                     {menuItems.map((item) => (
                         <div key={item.label}>
                             <Link to={item.Link} onClick={!item.isDropdown ? closeDrawer : undefined}>
                                 <div
-                                    className={`w-52 flex justify-between items-center px-5 py-2 cursor-pointer ${active === item.label ? "rounded-l-3xl bg-primary text-white  hover:text-white" : "bg-white text-black hover:text-black"}`}
+                                    className={`w-52 flex justify-between items-center px-5 py-2 cursor-pointer ${active === item.label ? " bg-black text-primary  hover:text-primary " : "bg-white text-black hover:text-black"}`}
                                     onClick={() => (item.isDropdown ? toggleDropdown(item.label) : handleActiveRoute(item.label))}
                                 >
 
-                                    <div className={`${active === item.label ? "text-white hover:text-white" : "bg-white text-black hover:text-black"}`} >
+                                    <div className={`${active === item.label ? "text-primary hover:text-primary " : "bg-white text-black hover:text-black"}`} >
 
                                         <div className="flex items-center gap-3">
                                             {item.icon}
@@ -96,7 +96,7 @@ const Sidebar = ({ closeDrawer }) => {
                                         <Link to={subItem.Link} key={subItem.label}>
                                             <div
 
-                                                className={`py-2 px-5 cursor-pointer ${active === subItem.label ? "text-white bg-red-300 font-bold" : "text-black bg-white"}`}
+                                                className={`py-2 px-5 cursor-pointer ${active === subItem.label ? "text-primary bg-red-300 font-bold" : "text-black bg-white"}`}
                                                 onClick={() => handleSubItemClick(subItem.label)}
                                             >
                                                 <p className="flex items-center gap-2 ml-10">
@@ -116,7 +116,7 @@ const Sidebar = ({ closeDrawer }) => {
                                         <Link to={subItem.Link} key={subItem.label}>
                                             <div
 
-                                                className={`py-2 px-5 cursor-pointer ${active === subItem.label ? "text-white bg-red-700 font-bold" : "text-black bg-white"}`}
+                                                className={`py-2 px-5 cursor-pointer ${active === subItem.label ? "text-primary bg-primary font-bold" : "text-black bg-white"}`}
                                                 onClick={() => handleSubItemClick(subItem.label)}
                                             >
                                                 {subItem.label}
@@ -132,7 +132,7 @@ const Sidebar = ({ closeDrawer }) => {
                     {/* Logout */}
                     <Link className="text-black hover:text-black" to="/auth/login">
                         <div
-                            className="bg-red-700 w-52 md:mt-20 py-3 flex justify-center items-center cursor-pointer hover:bg-red-500 text-white"
+                            className="bg-primary w-52 md:mt-20 py-3 flex justify-center items-center cursor-pointer hover:bg-primary text-white"
                             onClick={() => console.log("Logged out")}
                         >
                             <FiLogOut className="text-xl" />
