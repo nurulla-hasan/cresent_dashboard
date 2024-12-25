@@ -1,4 +1,5 @@
 import AnalyticsInfo from "../../Components/Dashboard/AnalyticsInfo/AnalyticsInfo";
+import SubscriptionGrowth from "../../Components/Dashboard/SubscriptionGrowth/SubscriptionGrowth";
 import UserGrowth from "../../Components/Dashboard/UserGrowth/UserGrowth";
 
 const Analytics = () => {
@@ -7,7 +8,7 @@ const Analytics = () => {
             <AnalyticsInfo />
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <UserGrowth />
-                {/* <EarningStatistics /> */}
+                <SubscriptionGrowth />
             </div>
 
         </div>
