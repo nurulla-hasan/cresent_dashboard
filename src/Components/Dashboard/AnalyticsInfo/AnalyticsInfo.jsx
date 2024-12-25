@@ -2,7 +2,7 @@ import { Col } from "antd";
 import { FaUsers } from "react-icons/fa";
 import { FaUserDoctor } from "react-icons/fa6";
 import { BsDatabase } from "react-icons/bs";
-import { AllImages } from "../../assets/image/AllImages";
+import { AllImages } from "../../../assets/image/AllImages";
 
 const AnalyticsInfo = () => {
     return (
