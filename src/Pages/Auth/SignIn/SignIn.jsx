@@ -2,8 +2,7 @@ import { Checkbox, Form, Input, Typography } from "antd";
 import brandlogo from "../../../assets/image/logo.png"
 import { Link } from "react-router-dom";
 import { useState } from "react";
-import { IoIosLock } from "react-icons/io";
-import { FaLockOpen } from "react-icons/fa";
+import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 const SignIn = () => {
     const [showpassword, setShowpassword] = useState(false);
 
@@ -16,12 +15,10 @@ const SignIn = () => {
         console.log("Received values of form: ", values);
     };
     return (
-        <div className="bg-[ffffff]">
+        <div className="bg-white">
             <div className="container mx-auto">
-                <div className="w-full flex flex-col md:flex-row justify-between items-center gap-20  ">
-                    <div className="w-full md:w-[50%] px-3 mt-10">
-                        <img src={brandlogo} alt="brandlogo" className="h-full w-full object-cover" />
-                    </div>
+                <div className="w-full md:max-w-screen-lg mx-auto flex flex-col md:flex-row justify-between items-center gap-20  ">
+
                     <div className="w-full md:w-[50%] ">
                         <div className="py-16 md:py-0 h-[100vh] w-full flex items-center justify-center ">
                             <Form
@@ -30,7 +27,7 @@ const SignIn = () => {
                                 style={{ maxWidth: 550 }}
                                 onFinish={onFinish}
                                 layout="vertical"
-                                className=" bg-[#eef6ff] py-28 mx-4 md:mx-0 px-6 md:px-10 rounded-2xl w-[450px] border-2 shadow-xl"
+                                className="  py-28 mx-4 md:mx-0 px-6 md:px-10 rounded-2xl w-[450px] border-2 border-[#eef6ff] mt-10"
                             >
                                 <div className="mb-4 text-center">
                                     <h2
@@ -68,7 +65,7 @@ const SignIn = () => {
                                         <div className="flex justify-center absolute right-0 px-3">
                                             <button onClick={togglePasswordVisibility} type="button">
 
-                                                {showpassword ? (<IoIosLock className="" />) : (<FaLockOpen className="" />)}
+                                                {showpassword ? (<FaRegEyeSlash className="" />) : (<FaRegEye className="" />)}
                                             </button>
                                         </div>
                                     </div>
@@ -84,7 +81,7 @@ const SignIn = () => {
                                         </Checkbox>
                                     </Form.Item>
                                     <Link to="/forgate-password" className=" ">
-                                        <p className="text-blue-600  ">
+                                        <p className="text-red-600 hover:text-red-600 text-md  ">
 
                                             Forgate Password
                                         </p>
@@ -93,7 +90,7 @@ const SignIn = () => {
                                 <Form.Item className="text-center my-10">
                                     <Link to="/">
                                         <button
-                                            className="bg-[#2c9ef1] text-center w-full  p-2 font-semibold    text-white px-10 py-2 rounded-md shadow-lg"
+                                            className="bg-primary text-center w-full  p-2 font-semibold  text-white px-10 py-2 rounded-2xl shadow-lg"
                                             type="submit"
                                         >
                                             Login
@@ -103,6 +100,12 @@ const SignIn = () => {
                             </Form>
                         </div>
 
+                    </div>
+                    <div className="w-full md:w-[50%] px-3 text-center ">
+                        <h1 className="text-2xl md:text-3xl font-bold mb-16">Welcome Back</h1>
+                        <p className="text-neutral-500 ">Please Sign in into your
+                            account with the given
+                            details to continue</p>
                     </div>
                 </div>
             </div>

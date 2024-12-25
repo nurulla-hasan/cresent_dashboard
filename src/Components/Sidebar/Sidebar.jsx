@@ -64,7 +64,7 @@ const Sidebar = ({ closeDrawer }) => {
                         <div key={item.label}>
                             <Link to={item.Link} onClick={!item.isDropdown ? closeDrawer : undefined}>
                                 <div
-                                    className={`w-72 flex justify-between items-center px-5 py-2 cursor-pointer ${active === item.label ? " bg-black text-primary  hover:text-primary " : "bg-white text-black hover:text-black"}`}
+                                    className={`w-72 flex justify-between items-center px-5 py-2 cursor-pointer ${active === item.label ? " bg-black text-primary  hover:text-primary font-semibold" : "bg-white text-black hover:text-black  font-semibold"}`}
                                     onClick={() => (item.isDropdown ? toggleDropdown(item.label) : handleActiveRoute(item.label))}
                                 >
 
@@ -131,9 +131,9 @@ const Sidebar = ({ closeDrawer }) => {
                     ))}
 
                     {/* Logout */}
-                    <Link className="text-black hover:text-black" to="/auth/login">
+                    <Link className="text-black hover:text-black" to="/sign-in">
                         <div
-                            className="bg-primary w-52 md:mt-20 py-3 flex justify-center items-center cursor-pointer hover:bg-primary text-white"
+                            className="bg-primary w-72 md:mt-20 py-3 flex justify-center items-center cursor-pointer hover:bg-primary text-white"
                             onClick={() => console.log("Logged out")}
                         >
                             <FiLogOut className="text-xl" />
