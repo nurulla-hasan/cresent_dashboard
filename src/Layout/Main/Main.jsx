@@ -30,7 +30,7 @@ const MainLayout = () => {
             {/* haeder */}
             <div className="h-20 bg-white flex justify-between  items-center px-2 md:px-20 gap-2">
                 {isMobile && (
-                    <GiHamburgerMenu onClick={toggleDrawer} className="h-5 w-5 cursor-pointer text-white" />
+                    <GiHamburgerMenu onClick={toggleDrawer} className="h-8 w-8 cursor-pointer " />
                 )}
                 {/* logo section */}
                 <div>
@@ -96,7 +96,7 @@ const MainLayout = () => {
                             <Sidebar />
                         </div>
                     )}
-                    <div className={`flex-1 bg-[#eeeeee] h-[100vh] ${isMobile ? "p-4" : "p-10"}`}>
+                    <div className={`flex-1 bg-[#eeeeee] md:h-[100vh] ${isMobile ? "p-4" : "p-10"}`}>
                         <Outlet />
                     </div>
                 </div>

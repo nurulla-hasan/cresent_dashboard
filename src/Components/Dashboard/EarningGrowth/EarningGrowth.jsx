@@ -11,7 +11,7 @@ import {
 import dayjs from "dayjs";
 import { useState } from "react";
 
-const SubscriptionGrowth = () => {
+const EarningGrowth = () => {
     const [selectedYear, setSelectedYear] = useState(dayjs().year());
 
     // Mock data
@@ -44,7 +44,7 @@ const SubscriptionGrowth = () => {
                 {/* Header Section */}
                 <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
                     <h1 className="text-lg md:text-xl font-medium">
-                        Subscription Growth
+                        Earning Growth
                     </h1>
                     <DatePicker
                         onChange={onChange}
@@ -92,4 +92,4 @@ const SubscriptionGrowth = () => {
     );
 };
 
-export default SubscriptionGrowth;
+export default EarningGrowth;

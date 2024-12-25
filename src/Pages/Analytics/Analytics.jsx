@@ -1,4 +1,5 @@
 import AnalyticsInfo from "../../Components/Dashboard/AnalyticsInfo/AnalyticsInfo";
+import EarningGrowth from "../../Components/Dashboard/EarningGrowth/EarningGrowth";
 import SubscriptionGrowth from "../../Components/Dashboard/SubscriptionGrowth/SubscriptionGrowth";
 import UserGrowth from "../../Components/Dashboard/UserGrowth/UserGrowth";
 
@@ -10,7 +11,7 @@ const Analytics = () => {
                 <UserGrowth />
                 <SubscriptionGrowth />
             </div>
-
+            <EarningGrowth />
         </div>
     );
 };
