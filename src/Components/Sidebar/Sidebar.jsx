@@ -3,14 +3,13 @@ import { useState } from "react";
 import { AiOutlineSetting } from "react-icons/ai";
 import { FiUser, FiLogOut } from "react-icons/fi";
 import { BsGraphUp } from "react-icons/bs";
-import { FaQuestionCircle, FaUsers } from "react-icons/fa";
+import { FaQuestionCircle, } from "react-icons/fa";
 import { BiChevronDown } from "react-icons/bi";
 import { Link } from "react-router-dom";
 import { MdDashboard, MdMenuBook, MdPolicy, MdPrivacyTip } from "react-icons/md";
 import { LuCircleDollarSign } from "react-icons/lu";
 import { FaMoneyCheckAlt } from "react-icons/fa";
 import { FaEdit } from "react-icons/fa";
-import { GrAnalytics } from "react-icons/gr";
 import { RiTerminalWindowLine } from "react-icons/ri";
 const Sidebar = ({ closeDrawer }) => {
     const [active, setActive] = useState("Dashboard");
@@ -33,10 +32,12 @@ const Sidebar = ({ closeDrawer }) => {
 
     const menuItems = [
         { icon: <MdDashboard className="h-5 w-5" />, label: "dashboard", Link: "/" },
-        { icon: <FiUser className="h-5 w-5" />, label: "Donar List", Link: "/donar-list" },
-        { icon: <BsGraphUp className="h-5 w-5" />, label: "Project Details", Link: "/project-details" },
-        { icon: <LuCircleDollarSign className="h-5 w-5" />, label: "Budgets", Link: "/budgets" },
-        { icon: <FaMoneyCheckAlt className="h-5 w-5" />, label: "Fixed Costs", Link: "/fixed-cost" },
+        { icon: <FiUser className="h-5 w-5" />, label: "User Management", Link: "/user-management" },
+        { icon: <BsGraphUp className="h-5 w-5" />, label: "Appoinment Management", Link: "/appoinment-management" },
+        { icon: <LuCircleDollarSign className="h-5 w-5" />, label: "Payment Management", Link: "/payment-management" },
+        { icon: <FaMoneyCheckAlt className="h-5 w-5" />, label: "notification Management", Link: "/notification-management" },
+        { icon: <FaMoneyCheckAlt className="h-5 w-5" />, label: "Project", Link: "/project" },
+        { icon: <FaMoneyCheckAlt className="h-5 w-5" />, label: "Make Admin", Link: "/make-admin" },
 
         {
             icon: <AiOutlineSetting className="h-5 w-5" />,
@@ -45,14 +46,14 @@ const Sidebar = ({ closeDrawer }) => {
             subItems: [
                 { icon: <FaEdit className="h-5 w-5" />, label: "Edit Profile", Link: "/edit-profile" },
                 { icon: <MdPolicy className="h-5 w-5" />, label: "Policies", Link: "/policies" },
-                { icon: <GrAnalytics className="h-5 w-5" />, label: "Grants", Link: "/grants" },
+
                 { icon: <MdMenuBook className="h-5 w-5" />, label: "Blogs", Link: "/blogs" },
                 { icon: <FaQuestionCircle className="h-5 w-5" />, label: "FAQ", Link: "/faq" },
                 { icon: <MdPrivacyTip className="h-5 w-5" />, label: "Privacy Policy", Link: "/privacy-policy" },
                 { icon: <RiTerminalWindowLine className="h-5 w-5" />, label: "Terms & Condition", Link: "/terms-condition" },
             ],
         },
-        { icon: <FaUsers className="h-5 w-5" />, label: "Orders Transection", Link: "/ordersTransection" },
+
     ];
 
     return (
@@ -63,7 +64,7 @@ const Sidebar = ({ closeDrawer }) => {
                         <div key={item.label}>
                             <Link to={item.Link} onClick={!item.isDropdown ? closeDrawer : undefined}>
                                 <div
-                                    className={`w-52 flex justify-between items-center px-5 py-2 cursor-pointer ${active === item.label ? " bg-black text-primary  hover:text-primary " : "bg-white text-black hover:text-black"}`}
+                                    className={`w-72 flex justify-between items-center px-5 py-2 cursor-pointer ${active === item.label ? " bg-black text-primary  hover:text-primary " : "bg-white text-black hover:text-black"}`}
                                     onClick={() => (item.isDropdown ? toggleDropdown(item.label) : handleActiveRoute(item.label))}
                                 >
 

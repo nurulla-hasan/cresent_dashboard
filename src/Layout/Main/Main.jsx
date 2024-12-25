@@ -92,11 +92,11 @@ const MainLayout = () => {
                             <Sidebar onClose={closeDrawer} />
                         </Drawer>
                     ) : (
-                        <div className="w-[30%] lg:w-[15%] ">
+                        <div className="w-[30%] lg:w-[18%] ">
                             <Sidebar />
                         </div>
                     )}
-                    <div className={`flex-1 bg-[#eeeeee] h-[90vh] ${isMobile ? "p-4" : "p-10"}`}>
+                    <div className={`flex-1 bg-[#eeeeee] h-[100vh] ${isMobile ? "p-4" : "p-10"}`}>
                         <Outlet />
                     </div>
                 </div>
