@@ -70,7 +70,7 @@ const Sidebar = ({ closeDrawer }) => {
     ];
 
     return (
-        <div className="bg-white h-full">
+        <div className="bg-white h-full md:ml-16">
             <div className="flex flex-col md:h-full">
                 <div className="flex flex-col gap-2 md:my-5 mb-10">
                     {menuItems.map((item) => (
