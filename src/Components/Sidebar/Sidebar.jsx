@@ -13,12 +13,11 @@ import { FaEdit } from "react-icons/fa";
 import { RiTerminalWindowLine } from "react-icons/ri";
 const Sidebar = ({ closeDrawer }) => {
     const [active, setActive] = useState("Dashboard");
-
-    const [showSettings, setShowSettings] = useState(false);
+    const [openDropdown, setOpenDropdown] = useState("");
 
     const handleActiveRoute = (item) => {
         setActive(item);
-        setShowSettings(false);
+        setOpenDropdown("");
     };
 
     const handleSubItemClick = (subItem) => {
@@ -26,13 +25,27 @@ const Sidebar = ({ closeDrawer }) => {
         closeDrawer();
     };
 
-    const toggleDropdown = (item) => {
-        setShowSettings(item === "Settings");
+    // const toggleDropdown = (item) => {
+    //     setActive(item);
+    //     setOpenDropdown(openDropdown === item ? "" : item);
+    // };
+    const toggleDropdown = (label) => {
+        // setActive(label);
+        setOpenDropdown(openDropdown === label ? "" : label);
     };
 
     const menuItems = [
         { icon: <MdDashboard className="h-5 w-5" />, label: "dashboard", Link: "/" },
-        { icon: <FiUser className="h-5 w-5" />, label: "User Management", Link: "/user-management" },
+        {
+            icon: <FiUser className="h-5 w-5" />,
+            label: "User Management",
+            isDropdown: true,
+            subItems: [
+                { icon: <FaQuestionCircle className="h-5 w-5" />, label: "Patients", Link: "/patient" },
+                { icon: <FaQuestionCircle className="h-5 w-5" />, label: "Doctor", Link: "/doctor" },
+                { icon: <FaQuestionCircle className="h-5 w-5" />, label: "Sign-up Request", Link: "/sign-up-request" },
+            ],
+        },
         { icon: <BsGraphUp className="h-5 w-5" />, label: "Appoinment Management", Link: "/appoinment-management" },
         { icon: <LuCircleDollarSign className="h-5 w-5" />, label: "Payment Management", Link: "/payment-management" },
         { icon: <FaMoneyCheckAlt className="h-5 w-5" />, label: "notification Management", Link: "/notification-management" },
@@ -58,70 +71,40 @@ const Sidebar = ({ closeDrawer }) => {
 
     return (
         <div className="bg-white h-full">
-            <div className=" flex flex-col md:h-full">
-                <div className="flex flex-col justify-end items-end gap-2 md:my-5 mb-10">
+            <div className="flex flex-col md:h-full">
+                <div className="flex flex-col gap-2 md:my-5 mb-10">
                     {menuItems.map((item) => (
                         <div key={item.label}>
-                            <Link to={item.Link} onClick={!item.isDropdown ? closeDrawer : undefined}>
-                                <div
-                                    className={`w-72 flex justify-between items-center px-5 py-2 cursor-pointer ${active === item.label ? " bg-black text-primary  hover:text-primary font-semibold" : "bg-white text-black hover:text-black  font-semibold"}`}
-                                    onClick={() => (item.isDropdown ? toggleDropdown(item.label) : handleActiveRoute(item.label))}
-                                >
-
-                                    <div className={`${active === item.label ? "text-primary hover:text-primary " : "bg-white text-black hover:text-black"}`} >
-
-                                        <div className="flex items-center gap-3">
-                                            {item.icon}
-                                            {!item.isDropdown ? (
-                                                <p>{item.label}</p>
-                                            ) : (
-                                                <div className="flex items-center justify-between w-full">
-                                                    <p>{item.label}</p>
-                                                    <BiChevronDown />
-
-                                                </div>
-                                            )}
-                                        </div>
-
-                                    </div>
-
+                            <div
+                                className={`w-72 flex justify-between items-center px-5 py-2 cursor-pointer  ${active === item.label ? "bg-black text-primary font-semibold" : "bg-white text-black font-semibold"
+                                    }`}
+                                onClick={() => (item.isDropdown ? toggleDropdown(item.label) : handleActiveRoute(item.label))}
+                            >
+                                <div className="flex items-center gap-3">
+                                    {item.icon}
+                                    <p>{item.label}</p>
+                                    {item.isDropdown && (
+                                        <BiChevronDown
+                                            className={`transform transition-transform ${openDropdown === item.label ? "rotate-180" : ""
+                                                }`}
+                                        />
+                                    )}
                                 </div>
-                            </Link>
-
-
-
-                            {/* Dropdown for Settings */}
-                            {item.label === "Settings" && showSettings && (
+                            </div>
+                            {/* Dropdown for sub-items */}
+                            {item.isDropdown && openDropdown === item.label && (
                                 <div className="flex flex-col">
                                     {item.subItems.map((subItem) => (
                                         <Link to={subItem.Link} key={subItem.label}>
                                             <div
-
-                                                className={`py-2 px-5 cursor-pointer ${active === subItem.label ? "text-primary bg-red-300 font-bold" : "text-black bg-white"}`}
+                                                className={`py-2 px-5 cursor-pointer  ${active === subItem.label ? "text-white bg-primary font-bold" : "text-black bg-[#efe5c4]"
+                                                    }`}
                                                 onClick={() => handleSubItemClick(subItem.label)}
                                             >
                                                 <p className="flex items-center gap-2 ml-10">
                                                     {subItem.icon}
-                                                    {subItem.label}</p>
-
-                                            </div>
-                                        </Link>
-                                    ))}
-                                </div>
-                            )}
-
-                            {/* Dropdown for Content */}
-                            {item.label === "Content" && (
-                                <div className="flex flex-col">
-                                    {item.subItems.map((subItem) => (
-                                        <Link to={subItem.Link} key={subItem.label}>
-                                            <div
-
-                                                className={`py-2 px-5 cursor-pointer ${active === subItem.label ? "text-primary bg-primary font-bold" : "text-black bg-white"}`}
-                                                onClick={() => handleSubItemClick(subItem.label)}
-                                            >
-                                                {subItem.label}
-
+                                                    {subItem.label}
+                                                </p>
                                             </div>
                                         </Link>
                                     ))}
@@ -129,7 +112,6 @@ const Sidebar = ({ closeDrawer }) => {
                             )}
                         </div>
                     ))}
-
                     {/* Logout */}
                     <Link className="text-black hover:text-black" to="/sign-in">
                         <div
@@ -137,16 +119,12 @@ const Sidebar = ({ closeDrawer }) => {
                             onClick={() => console.log("Logged out")}
                         >
                             <FiLogOut className="text-xl" />
-
                             <p className="ml-2">Log out</p>
-
                         </div>
                     </Link>
                 </div>
             </div>
-
-
-        </div >
+        </div>
     );
 };
 

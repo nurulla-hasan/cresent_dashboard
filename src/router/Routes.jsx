@@ -9,6 +9,10 @@ import Newpass from "../Pages/Auth/NewPass/Newpass";
 import VerifyPass from "../Pages/Auth/VerifyPass/VerifyPass";
 import Chat from "../Pages/ChatComponent/Chat";
 import ContinuePage from "../Pages/Auth/ContinuePage/ContinuePage";
+import Patient from "../Components/UserManagemnet/Patient/Patient";
+import Doctor from "../Components/UserManagemnet/Doctor/Doctor";
+import SignUpRequest from "../Components/UserManagemnet/SignUpRequest/SignUpRequest";
+import EditProfile from "../Components/Settings/EditProfile/EditProfile";
 
 
 export const router = createBrowserRouter([
@@ -41,6 +45,28 @@ export const router = createBrowserRouter([
             {
                 path: "/",
                 element: <Analytics />
+            },
+            {
+                path: "/patient",
+                element: <Patient />
+            },
+            {
+                path: "/doctor",
+                element: <Doctor />
+            },
+            {
+                path: "/sign-up-request",
+                element: <SignUpRequest />
+            },
+
+
+
+
+
+            // setting:
+            {
+                path: "/edit-profile",
+                element: <EditProfile />
             },
             {
                 path: "/chat",
