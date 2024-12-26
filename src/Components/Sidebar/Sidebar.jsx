@@ -80,16 +80,18 @@ const Sidebar = ({ closeDrawer }) => {
                                     }`}
                                 onClick={() => (item.isDropdown ? toggleDropdown(item.label) : handleActiveRoute(item.label))}
                             >
-                                <div className="flex items-center gap-3">
-                                    {item.icon}
-                                    <p>{item.label}</p>
-                                    {item.isDropdown && (
-                                        <BiChevronDown
-                                            className={`transform transition-transform ${openDropdown === item.label ? "rotate-180" : ""
-                                                }`}
-                                        />
-                                    )}
-                                </div>
+                                <Link to={item.Link}>
+                                    <div className="flex items-center gap-3">
+                                        {item.icon}
+                                        <p>{item.label}</p>
+                                        {item.isDropdown && (
+                                            <BiChevronDown
+                                                className={`transform transition-transform ${openDropdown === item.label ? "rotate-180" : ""
+                                                    }`}
+                                            />
+                                        )}
+                                    </div>
+                                </Link>
                             </div>
                             {/* Dropdown for sub-items */}
                             {item.isDropdown && openDropdown === item.label && (
