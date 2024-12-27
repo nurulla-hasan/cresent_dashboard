@@ -4,12 +4,12 @@ import { useState } from "react";
 
 import { Button, Modal } from "antd";
 import { FaCalendar, FaEye, FaStopwatch } from "react-icons/fa";
-import { AllImages } from "../../../assets/image/AllImages";
 import { FiUserCheck } from "react-icons/fi";
 import { LiaUserSlashSolid } from "react-icons/lia";
 import { SearchOutlined } from "@ant-design/icons";
 import { LuRefreshCcw } from "react-icons/lu";
-const SignUpRequest = () => {
+import { AllImages } from "../../assets/image/AllImages";
+const AppointmentManagement = () => {
     const userData = [
         {
             id: "#1239",
@@ -343,4 +343,4 @@ const SignUpRequest = () => {
     );
 };
 
-export default SignUpRequest;
+export default AppointmentManagement;

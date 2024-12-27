@@ -257,7 +257,7 @@ const Doctor = () => {
 
                             <div className="flex gap-2 mb-4">
                                 <p className="text-gray-600 font-semibold">Email :</p>
-                                <p>{selectedUser.email}</p>
+                                <p>{selectedUser.email}</p> 
                             </div>
                             <div className="flex gap-2 mb-4">
                                 <p className="text-gray-600 font-semibold">Contact No :</p>

@@ -41,9 +41,9 @@ const Sidebar = ({ closeDrawer }) => {
             label: "User Management",
             isDropdown: true,
             subItems: [
-                { icon: <FaQuestionCircle className="h-5 w-5" />, label: "Patients", Link: "/patient" },
-                { icon: <FaQuestionCircle className="h-5 w-5" />, label: "Doctor", Link: "/doctor" },
-                { icon: <FaQuestionCircle className="h-5 w-5" />, label: "Sign-up Request", Link: "/sign-up-request" },
+                { icon: <FaQuestionCircle className="h-5 w-5" />, label: "Patients", Link: "/user-management/patient" },
+                { icon: <FaQuestionCircle className="h-5 w-5" />, label: "Doctor", Link: "/user-management/doctor" },
+                { icon: <FaQuestionCircle className="h-5 w-5" />, label: "Sign-up Request", Link: "/user-management/sign-up-request" },
             ],
         },
         { icon: <BsGraphUp className="h-5 w-5" />, label: "Appoinment Management", Link: "/appoinment-management" },
@@ -57,13 +57,13 @@ const Sidebar = ({ closeDrawer }) => {
             label: "Settings",
             isDropdown: true,
             subItems: [
-                { icon: <FaEdit className="h-5 w-5" />, label: "Edit Profile", Link: "/edit-profile" },
-                { icon: <MdPolicy className="h-5 w-5" />, label: "Policies", Link: "/policies" },
+                { icon: <FaEdit className="h-5 w-5" />, label: "Edit Profile", Link: "/settings/edit-profile" },
+                { icon: <MdPolicy className="h-5 w-5" />, label: "Policies", Link: "/settings/policies" },
 
-                { icon: <MdMenuBook className="h-5 w-5" />, label: "Blogs", Link: "/blogs" },
-                { icon: <FaQuestionCircle className="h-5 w-5" />, label: "FAQ", Link: "/faq" },
-                { icon: <MdPrivacyTip className="h-5 w-5" />, label: "Privacy Policy", Link: "/privacy-policy" },
-                { icon: <RiTerminalWindowLine className="h-5 w-5" />, label: "Terms & Condition", Link: "/terms-condition" },
+                { icon: <MdMenuBook className="h-5 w-5" />, label: "Blogs", Link: "/settings/blogs" },
+                { icon: <FaQuestionCircle className="h-5 w-5" />, label: "FAQ", Link: "/settings/faq" },
+                { icon: <MdPrivacyTip className="h-5 w-5" />, label: "Privacy Policy", Link: "/settings/privacy-policy" },
+                { icon: <RiTerminalWindowLine className="h-5 w-5" />, label: "Terms & Condition", Link: "/settings/terms-condition" },
             ],
         },
 

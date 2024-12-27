@@ -7,12 +7,19 @@ import SignIn from "../Pages/Auth/SignIn/SignIn";
 import ForgatePassword from "../Pages/Auth/ForgatePassword/ForgatePassword";
 import Newpass from "../Pages/Auth/NewPass/Newpass";
 import VerifyPass from "../Pages/Auth/VerifyPass/VerifyPass";
-import Chat from "../Pages/ChatComponent/Chat";
+// import Chat from "../Pages/ChatComponent/Chat";
 import ContinuePage from "../Pages/Auth/ContinuePage/ContinuePage";
 import Patient from "../Components/UserManagemnet/Patient/Patient";
 import Doctor from "../Components/UserManagemnet/Doctor/Doctor";
 import SignUpRequest from "../Components/UserManagemnet/SignUpRequest/SignUpRequest";
-import EditProfile from "../Components/Settings/EditProfile/EditProfile";
+import Appointment from "../Pages/Appointment/Appointment";
+import Payment from "../Pages/Payment/Payment";
+import Notification from "../Pages/Notification/Notification";
+import Projects from "../Pages/Projects/Projects";
+import MakeAdmin from "../Pages/MakeAdmin/MakeAdmin";
+import Policy from "../Pages/Settings/Policy/Policy";
+import Blogs from "../Pages/Settings/Blogs/Blogs";
+import EditProfile from "../Pages/Settings/EditProfile/EditProfile";
 
 
 export const router = createBrowserRouter([
@@ -47,16 +54,36 @@ export const router = createBrowserRouter([
                 element: <Analytics />
             },
             {
-                path: "/patient",
+                path: "/user-management/patient",
                 element: <Patient />
             },
             {
-                path: "/doctor",
+                path: "/user-management/doctor",
                 element: <Doctor />
             },
             {
-                path: "/sign-up-request",
+                path: "/user-management/sign-up-request",
                 element: <SignUpRequest />
+            },
+            {
+                path: '/appoinment-management',
+                element: <Appointment />
+            },
+            {
+                path: '/payment-management',
+                element: <Payment></Payment>
+            },
+            {
+                path: '/notification-management',
+                element: <Notification />
+            },
+            {
+                path: '/project',
+                element: <Projects />
+            },
+            {
+                path: '/make-admin',
+                element: <MakeAdmin />
             },
 
 
@@ -65,13 +92,34 @@ export const router = createBrowserRouter([
 
             // setting:
             {
-                path: "/edit-profile",
+                path: "/settings/edit-profile",
                 element: <EditProfile />
             },
             {
-                path: "/chat",
-                element: <Chat></Chat>
-            }
+                path: "/settings/policies",
+                element: <Policy></Policy>
+            },
+            {
+                path: "/settings/blogs",
+                element: <Blogs />
+            },
+            {
+                path: "/settings/faq",
+                element: <EditProfile />
+            },
+            {
+                path: "/settings/privacy-policy",
+                element: <EditProfile />
+            },
+            {
+                path: "/settings/terms-condition",
+                element: <EditProfile />
+            },
+            // chat
+            // {
+            //     path: "/chat",
+            //     element: <Chat></Chat>
+            // }
         ]
     },
 ]);
