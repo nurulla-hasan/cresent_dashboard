@@ -1,175 +1,258 @@
-import { Image } from "antd";
+/* eslint-disable no-unused-vars */
+import { Avatar, ConfigProvider, Input, Space, Table } from "antd";
 import { useState } from "react";
 
 import { Button, Modal } from "antd";
-import { FaUserCheck, FaUserAltSlash } from "react-icons/fa";
+import { FaEye } from "react-icons/fa";
 import { AllImages } from "../../../assets/image/AllImages";
-
+import { FiUserCheck } from "react-icons/fi";
+import { LiaUserSlashSolid } from "react-icons/lia";
+import { SearchOutlined } from "@ant-design/icons";
+import { LuRefreshCcw } from "react-icons/lu";
 const Patient = () => {
-  const [modalOpen, setModalOpen] = useState(false);
-  const [selectedUser, setSelectedUser] = useState(null);
-  const [block, setBlock] = useState(false);
-
   const userData = [
     {
       id: "#1239",
       name: "Mr. Mahmud",
       email: "mr101@mail.ru",
+      total_booking: 20,
       contact: "(+33) 7 00 55 59 27",
       location: "Corona, Michigan",
       address: "76/4 R no. 60/1 Rue des Saints-Paris, 75005 Paris",
       dob: "17 Dec, 2024",
       gender: "Male",
       action: "↗",
+      is_active: "true",
     },
     {
       id: "#1238",
       name: "Lily",
       email: "xterris@gmail.com",
+      total_booking: 20,
       contact: "(+33) 7 00 55 59 27",
       location: "Great Falls, Maryland",
       address: "123 Rue des Lilas, Paris, 75008",
       dob: "15 Jan, 2022",
       gender: "Female",
       action: "↗",
+      is_active: "true",
     },
     {
       id: "#1237",
       name: "Kathry",
       email: "irnabela@gmail.com",
+      total_booking: 20,
       contact: "(+33) 7 00 55 59 27",
       location: "Syracuse, Connecticut",
       address: "45 Avenue des Champs, Paris, 75001",
       dob: "11 Jul, 2021",
       gender: "Female",
       action: "↗",
+      is_active: "true",
     },
   ];
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [email, setEmail] = useState("");
 
-  const openModal = (user) => {
-    setSelectedUser(user);
-    setModalOpen(true);
+  // const data = userData?.data
+  // const filteredData = data?.filter(user =>
+  //   user.email.includes(email) || user.name.toLowerCase().includes(email.toLowerCase())
+  // );
+
+  // const [block, setBlock] = useState(false);
+
+
+  const showModal = (record) => {
+    setSelectedUser(record);
+    setIsModalOpen(true);
   };
 
-  const closeModal = () => {
-    setModalOpen(false);
+  const handleCancel = () => {
+    setIsModalOpen(false);
     setSelectedUser(null);
   };
 
+  const handleSearch = () => {
+    // refetc();
+  };
+
+  const handleSession = (record) => {
+    console.log(record);
+
+
+  }
+
+  const columns = [
+    {
+      title: 'Sl No',
+      dataIndex: 'slno',
+      key: 'slno',
+      render: (text, record, index) => index + 1
+    },
+    {
+      title: 'Name',
+      key: 'name',
+      render: (_, record) => (
+        <div className="flex items-center gap-2">
+          <Avatar size={40} className="shadow-md" src={record?.profileImage || AllImages.user} />
+          <span>{record.name}</span>
+        </div>
+      ),
+    },
+    {
+      title: 'Email',
+      dataIndex: 'email',
+      key: 'email',
+    },
+    {
+      title: 'Contact No',
+      key: 'contact',
+      render: (_, record) => {
+        const contact = record.contact || 'N/A';
+        return (
+          <p>{contact}</p>
+        )
+      }
+    },
+    {
+      title: 'Location',
+      key: 'address',
+      render: (_, record) => {
+        const address = record?.address || 'N/A';
+        return (
+          <p>{address}</p>
+        )
+      }
+    },
+    {
+      title: 'Total Booking',
+      key: 'total_booking',
+      render: (_, record) => {
+        const totalBooking = record?.total_booking || 'N/A';
+        return (
+          <p>{totalBooking}</p>
+        )
+      }
+
+    },
+    {
+      title: 'Action',
+      key: 'action',
+      render: (_, record) => (
+        <ConfigProvider theme={{
+          components: {
+            "Button": {
+              "defaultHoverBorderColor": "rgb(47,84,235)",
+              "defaultHoverColor": "rgb(47,84,235)",
+              "defaultBorderColor": "rgb(47,84,235)"
+            }
+          }
+        }}>
+          <Space size="middle">
+            <Button onClick={() => showModal(record)} icon={<FaEye className="text-blue-500" />} />
+
+            <Button
+              onClick={() => handleSession(record)}
+              icon={
+                record?.is_active === true ? (
+                  <FiUserCheck className="h-5 w-5 text-green-500" />
+
+                ) : (
+                  <LiaUserSlashSolid className="h-5 w-5 text-red-500" />
+                )
+              }
+            />
+          </Space>
+        </ConfigProvider>
+      ),
+    }
+  ];
+
+
   return (
-    <div className="bg-gray-50 rounded-lg shadow p-4 mt-4">
-      <h1 className="text-lg md:text-xl font-medium mb-4">All User Details</h1>
-      <div className="overflow-x-scroll">
-        <table className="min-w-full border-collapse border border-gray-200 ">
-          <thead className="bg-orange-100">
-            <tr>
-              <th className="text-left p-3 border border-gray-200">SL.no</th>
-              <th className="text-left p-3 border border-gray-200">User</th>
-              <th className="text-left p-3 border border-gray-200">Email</th>
-              <th className="text-left p-3 border border-gray-200">Contact</th>
-              <th className="text-left p-3 border border-gray-200">Location</th>
-              <th className="text-left p-3 border border-gray-200">Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {userData.map((user, index) => (
-              <tr key={index} className="hover:bg-gray-100">
-                <td className="p-3 border border-gray-200">{user.id}</td>
-                <td className="p-3 border border-gray-200 flex items-center gap-2">
-                  <Image
-                    src={AllImages.user}
-                    alt={user.name}
-                    className="h-10 w-10 rounded-full"
-                  />
-                  <span>{user.name}</span>
-                </td>
-                <td className="p-3 border border-gray-200">{user.email}</td>
-                <td className="p-3 border border-gray-200">{user.contact}</td>
-                <td className="p-3 border border-gray-200">{user.location}</td>
-                <td className="p-3 border border-gray-200 text-blue-500 font-bold cursor-pointer">
-                  <div className="flex items-center ">
-                    <Button
-                      type="link"
-                      className="text-blue-500 font-extrabold text-xl border-none"
-                      onClick={() => openModal(user)}
-                    >
-                      {user.action}
-                    </Button>
-                    <Button
-                      type="link"
-                      className="font-extrabold text-xl"
-                      onClick={() => setBlock(!block)}
-                    >
-                      {block ? (
-                        <FaUserCheck className="h-7 text-green-500" />
-                      ) : (
-                        <FaUserAltSlash className="h-7 text-red-500" />
-                      )}
-                    </Button>
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+    <div className="">
+      <div className="flex flex-col md:flex-row justify-between md:items-center mb-10">
+        <h3 className="text-xl md:text-2xl font-semibold text-textColor px-2 md:px-0">
+          All Patients
+        </h3>
+        <div className="mt-4 md:mt-0 flex justify-between items-center gap-2">
+          <div>
+            <ConfigProvider
+              theme={{
+                components: {
+                  Input: {
+                    borderRadius: 0,
+                    hoverBorderColor: "none",
+                    activeBorderColor: "none",
+                  },
+                },
+              }}
+            >
+              <div className="flex gap-2 items-center relative">
 
-        {/* Modal Section */}
+                <Input
+                  placeholder="Search by email"
+                  allowClear
+                  size="large"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  onPressEnter={handleSearch}
+                  prefix={
+                    <SearchOutlined
+                      style={{ cursor: "pointer" }}
+                      onClick={handleSearch}
+                    />
+                  }
+                />
 
-        <Modal
-          title={"User Details"}
-          centered
-          open={modalOpen}
-          onOk={closeModal}
-          onCancel={closeModal}
-          footer={null}
-        >
-          {selectedUser && (
-            <div className="flex flex-col items-center">
-              <Image
-                src={AllImages.user}
-                height={96}
-                alt={selectedUser.name}
-                className="h-36 w-36 rounded-full mb-4 "
-              />
-              <h2 className=" font-semibold text-2xl mt-16">{selectedUser.name}</h2>
-              <div className="mt-4 text-left w-full">
-                <p className="font-semibold">Email: {selectedUser.email}</p>
-                <p className="font-semibold">Address: {selectedUser.address}</p>
-                <p className="font-semibold">Contact: {selectedUser.contact}</p>
-                <p className="font-semibold">Location: {selectedUser.location}</p>
-                <p className="font-semibold">Date Of Birth: {selectedUser.dob}</p>
-                <p className="font-semibold">Gender: {selectedUser.gender}</p>
+
+                <button
+                  onClick={handleSearch}
+                  className="absolute right-0 top-1/2 transform -translate-y-1/2 z-10 bg-primaryColor text-white p-2 rounded-r-lg"
+                >
+                  search
+                </button>
               </div>
-            </div>
-          )}
-        </Modal>
+            </ConfigProvider>
+          </div>
+
+        </div>
+      </div>
+      <div className="bg-white overflow-x-auto">
+        <Table columns={columns} dataSource={userData || []} pagination={false} rowKey="id" />
       </div>
 
-      {/* Pagination Section */}
+      <Modal open={isModalOpen} onCancel={handleCancel} footer={null}>
+        {selectedUser && (
+          <div className="p-2">
+            <div className="bg-[#fddbd6] py-5 text-center">
+              <Avatar size={200} src={selectedUser?.profileImage || AllImages.user} />
+              <h2 className="text-2xl font-bold mt-4 text-textColor">Name: {selectedUser.name}</h2>
+              <h2 className="text-xl mt-4 text-textColor">Patient </h2>
+            </div>
+            <div className="my-6">
+              <div className="flex gap-2 mb-4">
+                <p className="text-gray-600 font-semibold">Email :</p>
+                <p>{selectedUser.email}</p>
+              </div>
+              <div className="flex gap-2 mb-4">
+                <p className="text-gray-600 font-semibold">Contact No :</p>
+                <p>{selectedUser?.contact || 'N/A'}</p>
+              </div>
+              <div className="flex gap-2 mb-4">
+                <p className="text-gray-600 font-semibold">Date of birth :</p>
+                <p>{selectedUser?.dob || 'N/A'}</p>
+              </div>
 
-      {/* <div className="flex justify-between items-center mt-4 text-sm">
-        <p>
-          Showing <span className="font-bold">1-6</span> out of{" "}
-          <span className="font-bold">1239</span>
-        </p>
-        <div className="flex items-center gap-2">
-          <button className="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300">
-            Previous
-          </button>
-          <div className="flex items-center gap-1">
-            <button className="w-6 h-6 bg-primary text-white rounded-full">
-              1
-            </button>
-            <button className="w-6 h-6 text-gray-500 rounded">2</button>
-            <button className="w-6 h-6 text-gray-500 rounded">3</button>
-            <span>...</span>
-            <button className="w-6 h-6 text-gray-500 rounded">100</button>
+              <div className="flex gap-2 mb-4">
+                <p className="text-gray-600 font-semibold">Address :</p>
+                <p>{selectedUser.address || 'N/A'}</p>
+              </div>
+            </div>
           </div>
-          <button className="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300">
-            Next
-          </button>
-        </div>
-      </div> */}
+        )}
+      </Modal>
     </div>
   );
 };
