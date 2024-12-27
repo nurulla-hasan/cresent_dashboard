@@ -150,7 +150,7 @@ const Patient = () => {
           }
         }}>
           <Space size="middle">
-            <Button onClick={() => showModal(record)} icon={<FaEye className="text-blue-500" />} />
+            <Button onClick={() => showModal(record)} icon={<FaEye className="text-primary" />} />
 
             <Button
               onClick={() => handleSession(record)}
@@ -226,7 +226,7 @@ const Patient = () => {
       <Modal open={isModalOpen} onCancel={handleCancel} footer={null}>
         {selectedUser && (
           <div className="p-2">
-            <div className="bg-[#fddbd6] py-5 text-center">
+            <div className="bg-[#e9d69a] py-5 text-center">
               <Avatar size={200} src={selectedUser?.profileImage || AllImages.user} />
               <h2 className="text-2xl font-bold mt-4 text-textColor">Name: {selectedUser.name}</h2>
               <h2 className="text-xl mt-4 text-textColor">Patient </h2>
