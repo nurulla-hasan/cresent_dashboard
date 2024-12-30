@@ -22,6 +22,8 @@ import ContactUS from "../Pages/Settings/ContactUS/COntactUS";
 import PrivacyPolicy from "../Pages/Settings/PrivacyPolicy/PrivacyPolicy";
 import TermsCondition from "../Pages/Settings/TermsCondition/TermsCondition";
 import Banner from "../Pages/Settings/Banner/Banner";
+import AdminProfile from "../Pages/AdminProfile/AdminProfile";
+import Notifications from "../Pages/Notification/Notification";
 
 
 export const router = createBrowserRouter([
@@ -88,10 +90,6 @@ export const router = createBrowserRouter([
                 element: <MakeAdmin />
             },
 
-
-
-
-
             // setting:
             {
                 path: "/settings/about-us",
@@ -101,8 +99,8 @@ export const router = createBrowserRouter([
                 path: "/settings/contact-us",
                 element: <ContactUS />
             },
-           
-        
+
+
             {
                 path: "/settings/privacy-policy",
                 element: <PrivacyPolicy />
@@ -115,6 +113,16 @@ export const router = createBrowserRouter([
                 path: "/settings/banner",
                 element: <Banner />
             },
+
+            // Admin profile:
+            {
+                path: '/admin-profile',
+                element: <AdminProfile />
+            },
+            {
+                path: '/notification',
+                element: <Notifications />
+            }
 
         ]
     },

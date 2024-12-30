@@ -53,7 +53,7 @@ const MainLayout = () => {
                                         </span>
                                     </div>
                                 </Link>
-                                <Link to="/userProfile">
+                                <Link to="/admin-profile">
                                     <div className="flex justify-center items-center gap-2">
                                         <img src={user} alt="" className="w-10 h-10 rounded-full border border-primary" />
                                         <p className="md:text-xl font-semibold text-primary">Mr Rita</p>
@@ -96,7 +96,7 @@ const MainLayout = () => {
                             <Sidebar />
                         </div>
                     )}
-                    <div className={`flex-1 bg-[#eeeeee] md:h-[100vh] ${isMobile ? "p-4" : "p-10"}`}>
+                    <div className={`flex-1 bg-[#eeeeee]  ${isMobile ? "p-4" : "p-10"}`}>
                         <Outlet />
                     </div>
                 </div>
