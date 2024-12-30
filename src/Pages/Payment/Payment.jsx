@@ -1,8 +1,9 @@
+import PaymentManagement from "../../Components/PaymentManagement/PaymentManagement";
 
 const Payment = () => {
     return (
         <div>
-            <h1>Payment</h1>
+            <PaymentManagement />
         </div>
     );
 };
