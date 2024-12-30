@@ -170,7 +170,7 @@ const PaymentManagement = () => {
         <div className="">
             <div className="flex flex-col md:flex-row justify-between md:items-center mb-10">
                 <h3 className="text-xl md:text-2xl font-semibold text-textColor px-2 md:px-0">
-                    Doctors  Sign Up Request
+                    Payment Management
                 </h3>
                 <div className="mt-4 md:mt-0 flex justify-between items-center gap-2">
                     <div>

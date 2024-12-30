@@ -14,12 +14,12 @@ import Doctor from "../Components/UserManagemnet/Doctor/Doctor";
 import SignUpRequest from "../Components/UserManagemnet/SignUpRequest/SignUpRequest";
 import Appointment from "../Pages/Appointment/Appointment";
 import Payment from "../Pages/Payment/Payment";
-import Notification from "../Pages/Notification/Notification";
 import Projects from "../Pages/Projects/Projects";
 import MakeAdmin from "../Pages/MakeAdmin/MakeAdmin";
 import Policy from "../Pages/Settings/Policy/Policy";
 import Blogs from "../Pages/Settings/Blogs/Blogs";
 import EditProfile from "../Pages/Settings/EditProfile/EditProfile";
+import Category from "../Pages/Category/Category";
 
 
 export const router = createBrowserRouter([
@@ -74,8 +74,8 @@ export const router = createBrowserRouter([
                 element: <Payment></Payment>
             },
             {
-                path: '/notification-management',
-                element: <Notification />
+                path: '/add-category',
+                element: <Category></Category>
             },
             {
                 path: '/project',

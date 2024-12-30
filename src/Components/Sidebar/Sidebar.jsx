@@ -48,7 +48,7 @@ const Sidebar = ({ closeDrawer }) => {
         },
         { icon: <BsGraphUp className="h-5 w-5" />, label: "Appoinment Management", Link: "/appoinment-management" },
         { icon: <LuCircleDollarSign className="h-5 w-5" />, label: "Payment Management", Link: "/payment-management" },
-        { icon: <FaMoneyCheckAlt className="h-5 w-5" />, label: "notification Management", Link: "/notification-management" },
+        { icon: <FaMoneyCheckAlt className="h-5 w-5" />, label: "Add Category", Link: "/add-category" },
         { icon: <FaMoneyCheckAlt className="h-5 w-5" />, label: "Project", Link: "/project" },
         { icon: <FaMoneyCheckAlt className="h-5 w-5" />, label: "Make Admin", Link: "/make-admin" },
 
