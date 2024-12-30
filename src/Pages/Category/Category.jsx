@@ -10,6 +10,7 @@ import { LiaUserSlashSolid } from "react-icons/lia";
 import { FaRegPenToSquare } from "react-icons/fa6";
 import { AllImages } from "../../assets/image/AllImages";
 import AddCategory from "../../Components/Category/AddCategory/AddCategory";
+import EditCAtegory from "../../Components/Category/EditCategory/EditCAtegory";
 const Category = () => {
     const userData = [
         {
@@ -37,6 +38,7 @@ const Category = () => {
         },
     ];
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [editModalOpen, setEditModalOpen] = useState(false);
     const [selectedUser, setSelectedUser] = useState(null);
     const [status, setStatus] = useState({});
 
@@ -51,13 +53,23 @@ const Category = () => {
         setSelectedUser(null);
     };
 
-    const handleSearch = () => {
-        // refetc();
+    const showEditModal = (record) => {
+        setSelectedUser(record);
+        setEditModalOpen(true);
     };
 
+    const handleEditCancel = () => {
+        setEditModalOpen(false);
+        setSelectedUser(null);
+    };
 
-
-
+    const handleDelete = (id) => {
+        message.error('Deleted Successfully');
+        setStatus((prevStatus) => ({
+            ...prevStatus,
+            [id]: { deleted: true }
+        }))
+    }
 
     const columns = [
         {
@@ -96,10 +108,14 @@ const Category = () => {
                         }
                     }
                 }}>
+
                     <Space size="middle">
-                        <button onClick={() => showModal(record)} >
-                            <FaRegPenToSquare className="text-primary " /></button>
-                        <button onClick={() => showModal(record)} >
+                        <button onClick={() => showEditModal(record)} >
+                            <FaRegPenToSquare className="text-primary " />
+                        </button>
+
+
+                        <button onClick={() => handleDelete(record)} >
                             <FaTrash className="text-red-500 " /></button>
                     </Space>
                 </ConfigProvider>
@@ -120,65 +136,21 @@ const Category = () => {
             <div className="bg-white overflow-x-auto">
                 <Table columns={columns} dataSource={userData || []} pagination={false} rowKey="id" />
             </div>
+
+
             {/* Add Category */}
-
-
-
             <Modal open={isModalOpen} onCancel={handleCancel} footer={null}>
                 {selectedUser && (
                     <AddCategory selectedUser={selectedUser} handleCancel={handleCancel} />
                 )}
             </Modal>
-            {/* <Modal open={isModalOpen} onCancel={handleCancel} footer={null}>
+            {/* Edit Category */}
+            <Modal open={editModalOpen} onCancel={handleEditCancel} footer={null}>
                 {selectedUser && (
-                    <div className="p-2">
-                        <div className="bg-[#e9d69a] py-5 text-center">
-                            <Avatar size={200} src={selectedUser?.profileImage || AllImages.user} />
-                            <h2 className="text-2xl font-bold mt-4 text-textColor">Doctor: {selectedUser.name}</h2>
-                            <h2 className="text-xl mt-4 text-textColor">{selectedUser.specialization}</h2>
-                        </div>
-                        <div className="my-6">
-
-                            <div className="flex gap-2 mb-4">
-                                <p className="text-gray-600 font-semibold">Email :</p>
-                                <p>{selectedUser.email}</p>
-                            </div>
-                            <div className="flex gap-2 mb-4">
-                                <p className="text-gray-600 font-semibold">Contact No :</p>
-                                <p>{selectedUser?.contact || 'N/A'}</p>
-                            </div>
-                            <div className="flex gap-2 mb-4">
-                                <p className="text-gray-600 font-semibold">Address :</p>
-                                <p>{selectedUser?.address || 'N/A'}</p>
-                            </div>
-                            <div className="flex gap-2 mb-4">
-                                <p className="text-gray-600 font-semibold">Date of birth :</p>
-                                <p>{selectedUser?.dob || 'N/A'}</p>
-                            </div>
-                            <div className="flex gap-2 mb-4">
-                                <p className="text-gray-600 font-semibold">Experience :</p>
-                                <p>{selectedUser?.experience || 'N/A'}</p>
-                            </div>
-                            <div className="flex gap-2 mb-4">
-                                <p className="text-gray-600 font-semibold">Subscription :</p>
-                                <p className="text-primary">{selectedUser?.subscription || 'N/A'}</p>
-                            </div>
-                            <div className="flex gap-2 mb-4">
-                                <p className="text-gray-600 font-semibold">CV & Certification:</p>
-                                <p className="text-primary cursor-pointer">View</p>
-                            </div>
-                            <div className="flex gap-2 mb-4">
-                                <p className="text-gray-600 font-semibold">Availablity:</p>
-                                <p className="flex gap-2 justify-start items-center"><FaCalendar className="text-primary" /> Mon-Fri </p>
-                                <p className="flex gap-2 justify-start items-center" ><FaStopwatch className="text-primary" /> 10:00 AM - 6:00 PM</p>
-                            </div>
-
-
-
-                        </div>
-                    </div>
+                    <EditCAtegory selectedUser={selectedUser} handleCancel={handleEditCancel} />
                 )}
-            </Modal> */}
+            </Modal>
+
         </div>
     );
 };
