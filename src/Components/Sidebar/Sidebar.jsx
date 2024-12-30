@@ -57,13 +57,11 @@ const Sidebar = ({ closeDrawer }) => {
             label: "Settings",
             isDropdown: true,
             subItems: [
-                { icon: <FaEdit className="h-5 w-5" />, label: "Edit Profile", Link: "/settings/edit-profile" },
-                { icon: <MdPolicy className="h-5 w-5" />, label: "Policies", Link: "/settings/policies" },
-
-                { icon: <MdMenuBook className="h-5 w-5" />, label: "Blogs", Link: "/settings/blogs" },
-                { icon: <FaQuestionCircle className="h-5 w-5" />, label: "FAQ", Link: "/settings/faq" },
+                { icon: <FaEdit className="h-5 w-5" />, label: "About Us", Link: "/settings/about-us" },
+                { icon: <MdPolicy className="h-5 w-5" />, label: "Contact Us", Link: "/settings/contact-us" },
                 { icon: <MdPrivacyTip className="h-5 w-5" />, label: "Privacy Policy", Link: "/settings/privacy-policy" },
                 { icon: <RiTerminalWindowLine className="h-5 w-5" />, label: "Terms & Condition", Link: "/settings/terms-condition" },
+                { icon: <MdMenuBook className="h-5 w-5" />, label: "Banner", Link: "/settings/banner" },
             ],
         },
 

@@ -15,11 +15,13 @@ import SignUpRequest from "../Components/UserManagemnet/SignUpRequest/SignUpRequ
 import Appointment from "../Pages/Appointment/Appointment";
 import Payment from "../Pages/Payment/Payment";
 import MakeAdmin from "../Pages/MakeAdmin/MakeAdmin";
-import Policy from "../Pages/Settings/Policy/Policy";
-import Blogs from "../Pages/Settings/Blogs/Blogs";
-import EditProfile from "../Pages/Settings/EditProfile/EditProfile";
 import Category from "../Pages/Category/Category";
 import Subscription from "../Pages/Subscription/Subscription";
+import AboutUs from "../Pages/Settings/AboutUS/AboutUs";
+import ContactUS from "../Pages/Settings/ContactUS/COntactUS";
+import PrivacyPolicy from "../Pages/Settings/PrivacyPolicy/PrivacyPolicy";
+import TermsCondition from "../Pages/Settings/TermsCondition/TermsCondition";
+import Banner from "../Pages/Settings/Banner/Banner";
 
 
 export const router = createBrowserRouter([
@@ -92,34 +94,28 @@ export const router = createBrowserRouter([
 
             // setting:
             {
-                path: "/settings/edit-profile",
-                element: <EditProfile />
+                path: "/settings/about-us",
+                element: <AboutUs />
             },
             {
-                path: "/settings/policies",
-                element: <Policy></Policy>
+                path: "/settings/contact-us",
+                element: <ContactUS />
             },
-            {
-                path: "/settings/blogs",
-                element: <Blogs />
-            },
-            {
-                path: "/settings/faq",
-                element: <EditProfile />
-            },
+           
+        
             {
                 path: "/settings/privacy-policy",
-                element: <EditProfile />
+                element: <PrivacyPolicy />
             },
             {
                 path: "/settings/terms-condition",
-                element: <EditProfile />
+                element: <TermsCondition />
             },
-            // chat
-            // {
-            //     path: "/chat",
-            //     element: <Chat></Chat>
-            // }
+            {
+                path: "/settings/banner",
+                element: <Banner />
+            },
+
         ]
     },
 ]);
