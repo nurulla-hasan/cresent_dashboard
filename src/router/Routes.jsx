@@ -24,6 +24,8 @@ import AdminProfile from "../Pages/AdminProfile/AdminProfile";
 import Notifications from "../Pages/Notification/Notification";
 import AllUsers from "../Components/UserManagemnet/AllUsers/AllUsers";
 import Subscribers from "../Components/UserManagemnet/Subscribers/Subscribers";
+import AllOrganization from "../Pages/OrganizationManagement/AllOrganization/AllOrganization";
+import SubscribersOrganization from "../Pages/OrganizationManagement/SubscribersOrganization/SubscribersOrganization";
 
 
 export const router = createBrowserRouter([
@@ -66,8 +68,12 @@ export const router = createBrowserRouter([
                 element: <Subscribers />
             },
             {
-                path: '/appoinment-management',
-                element: <Appointment />
+                path: '/organization-management/all-organizations',
+                element: <AllOrganization />
+            },
+            {
+                path: '/organization-management/subscribers-organizations',
+                element: <SubscribersOrganization />
             },
             {
                 path: '/payment-management',
