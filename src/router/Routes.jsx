@@ -9,7 +9,6 @@ import Newpass from "../Pages/Auth/NewPass/Newpass";
 import VerifyPass from "../Pages/Auth/VerifyPass/VerifyPass";
 // import Chat from "../Pages/ChatComponent/Chat";
 import ContinuePage from "../Pages/Auth/ContinuePage/ContinuePage";
-import Patient from "../Components/UserManagemnet/AllUsers/AllUsers";
 
 import Appointment from "../Pages/Appointment/Appointment";
 import Payment from "../Pages/Payment/Payment";
@@ -23,6 +22,7 @@ import TermsCondition from "../Pages/Settings/TermsCondition/TermsCondition";
 import Banner from "../Pages/Settings/Banner/Banner";
 import AdminProfile from "../Pages/AdminProfile/AdminProfile";
 import Notifications from "../Pages/Notification/Notification";
+import AllUsers from "../Components/UserManagemnet/AllUsers/AllUsers";
 
 
 export const router = createBrowserRouter([
@@ -58,7 +58,7 @@ export const router = createBrowserRouter([
             },
             {
                 path: "user-management",
-                element: <Patient />
+                element: <AllUsers />
             },
             {
                 path: '/appoinment-management',
