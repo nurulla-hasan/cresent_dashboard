@@ -7,7 +7,7 @@ import { FaCamera, FaPlus, FaTrash } from "react-icons/fa";
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 
 
-const AddSubscription = () => {
+const EditPrice = () => {
     const [categoryImg, setCategoryImg] = useState(null);
     const [form] = Form.useForm();
     const onFinish = (values) => {
@@ -27,7 +27,7 @@ const AddSubscription = () => {
                     <div className="">
                         <Form.Item
                             name="title"
-                            label={<p className="text-md">Subscription Name</p>}
+                            label={<p className="text-md">Category Name</p>}
                             rules={[{ message: "Please input a challenge name!" }]}
                         >
                             <Input
@@ -125,4 +125,4 @@ const AddSubscription = () => {
     );
 };
 
-export default AddSubscription;
+export default EditPrice;

@@ -7,7 +7,7 @@ import { FaCamera, FaPlus, FaTrash } from "react-icons/fa";
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 
 
-const AddSubscription = () => {
+const AddPrice = () => {
     const [categoryImg, setCategoryImg] = useState(null);
     const [form] = Form.useForm();
     const onFinish = (values) => {
@@ -125,4 +125,4 @@ const AddSubscription = () => {
     );
 };
 
-export default AddSubscription;
+export default AddPrice;

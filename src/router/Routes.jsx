@@ -7,10 +7,7 @@ import SignIn from "../Pages/Auth/SignIn/SignIn";
 import ForgatePassword from "../Pages/Auth/ForgatePassword/ForgatePassword";
 import Newpass from "../Pages/Auth/NewPass/Newpass";
 import VerifyPass from "../Pages/Auth/VerifyPass/VerifyPass";
-// import Chat from "../Pages/ChatComponent/Chat";
 import ContinuePage from "../Pages/Auth/ContinuePage/ContinuePage";
-
-import Appointment from "../Pages/Appointment/Appointment";
 import Payment from "../Pages/Payment/Payment";
 import MakeAdmin from "../Pages/MakeAdmin/MakeAdmin";
 import Category from "../Pages/Category/Category";
@@ -76,6 +73,10 @@ export const router = createBrowserRouter([
                 element: <SubscribersOrganization />
             },
             {
+                path: '/subdcription-management',
+                element: <Subscription />
+            },
+            {
                 path: '/payment-management',
                 element: <Payment></Payment>
             },
@@ -83,10 +84,7 @@ export const router = createBrowserRouter([
                 path: '/add-category',
                 element: <Category></Category>
             },
-            {
-                path: '/subdcription-management',
-                element: <Subscription />
-            },
+
             {
                 path: '/make-admin',
                 element: <MakeAdmin />
