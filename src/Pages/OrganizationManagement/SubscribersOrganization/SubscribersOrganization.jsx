@@ -107,7 +107,7 @@ const SubscribersOrganization = () => {
             key: 'organization_name',
             render: (_, record) => (
                 <div className="flex items-center gap-2">
-                    <Avatar size={40} className="shadow-md" src={record?.profileImage || AllImages.user} />
+                    <Avatar size={40} className="shadow-md" src={record?.profileImage || AllImages.orgimg} />
                     <span>{record.organization_name}</span>
                 </div>
             ),
@@ -270,10 +270,14 @@ const SubscribersOrganization = () => {
 
             <Modal open={isModalOpen} onCancel={handleCancel} footer={null}>
                 {selectedUser && (
-                    <div className="p-2">
-                        <div className="bg-secondary py-5 text-center">
-                            <Avatar size={200} src={selectedUser?.profileImage || AllImages.user} />
-                            <h2 className="text-2xl font-bold mt-4 text-textColor">Organization: {selectedUser.organization_name}</h2>
+                    <div className="pt-5">
+                        <div className="text-center ">
+                            <img src={selectedUser?.profileImage || AllImages.banner} alt="organization" className="w-full h-48 rounded-md " />
+
+                        </div>
+                        <div className="absolute top-16 left-32 transform -translate-x-1/2">
+                            <img src={selectedUser?.profileImage || AllImages.orgicon} alt="" />
+                            <h2 className="text-2xl font-bold  text-white"> {selectedUser.organization_name}</h2>
                         </div>
                         <div className="my-6">
                             <div className="flex gap-2 mb-4">
