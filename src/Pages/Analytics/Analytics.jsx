@@ -1,5 +1,5 @@
 import AnalyticsInfo from "../../Components/Dashboard/AnalyticsInfo/AnalyticsInfo";
-import EarningGrowth from "../../Components/Dashboard/EarningGrowth/EarningGrowth";
+import EarningGrowth from "../../Components/Dashboard/OrganizationGrowth/OrganizationGrowth";
 import SubscriptionGrowth from "../../Components/Dashboard/SubscriptionGrowth/SubscriptionGrowth";
 import UserGrowth from "../../Components/Dashboard/UserGrowth/UserGrowth";
 
@@ -9,9 +9,9 @@ const Analytics = () => {
             <AnalyticsInfo />
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <UserGrowth />
-                <SubscriptionGrowth />
+                <EarningGrowth />
             </div>
-            <EarningGrowth />
+            <SubscriptionGrowth />
         </div>
     );
 };

@@ -3,14 +3,16 @@ import { useState } from "react";
 import { AiOutlineSetting } from "react-icons/ai";
 import { FiUser, FiLogOut } from "react-icons/fi";
 import { BsGraphUp } from "react-icons/bs";
-import { FaQuestionCircle, } from "react-icons/fa";
 import { BiChevronDown } from "react-icons/bi";
 import { Link } from "react-router-dom";
 import { MdDashboard, MdMenuBook, MdPolicy, MdPrivacyTip } from "react-icons/md";
 import { LuCircleDollarSign } from "react-icons/lu";
-import { FaMoneyCheckAlt } from "react-icons/fa";
+import { FaMoneyCheckAlt, FaUsers } from "react-icons/fa";
 import { FaEdit } from "react-icons/fa";
 import { RiTerminalWindowLine } from "react-icons/ri";
+import { SiAwsorganizations } from "react-icons/si";
+import { GoOrganization } from "react-icons/go";
+import { SlOrganization } from "react-icons/sl";
 const Sidebar = ({ closeDrawer }) => {
     const [active, setActive] = useState("Dashboard");
     const [openDropdown, setOpenDropdown] = useState("");
@@ -24,13 +26,7 @@ const Sidebar = ({ closeDrawer }) => {
         setActive(subItem);
         closeDrawer();
     };
-
-    // const toggleDropdown = (item) => {
-    //     setActive(item);
-    //     setOpenDropdown(openDropdown === item ? "" : item);
-    // };
     const toggleDropdown = (label) => {
-        // setActive(label);
         setOpenDropdown(openDropdown === label ? "" : label);
     };
 
@@ -41,10 +37,18 @@ const Sidebar = ({ closeDrawer }) => {
             label: "User Management",
             isDropdown: true,
             subItems: [
-                { icon: <FaQuestionCircle className="h-5 w-5" />, label: "Patients", Link: "/user-management/patient" },
-                { icon: <FaQuestionCircle className="h-5 w-5" />, label: "Doctor", Link: "/user-management/doctor" },
-                { icon: <FaQuestionCircle className="h-5 w-5" />, label: "Sign-up Request", Link: "/user-management/sign-up-request" },
-            ],
+                { icon: <FaUsers className="h-5 w-5" />, label: "All Users", Link: "/user-management/all-users" },
+                { icon: <RiTerminalWindowLine className="h-5 w-5" />, label: "Subscribers", Link: "/user-management/subscribers" },
+            ]
+        },
+        {
+            icon: <SlOrganization className="h-5 w-5" />,
+            label: "Organization Management",
+            isDropdown: true,
+            subItems: [
+                { icon: <SiAwsorganizations className="h-5 w-5" />, label: "All Organizations", Link: "/organization-management/all-organizations" },
+                { icon: <GoOrganization className="h-5 w-5" />, label: "Subscribers", Link: "/organization-management/subscribers-organizations" },
+            ]
         },
         { icon: <BsGraphUp className="h-5 w-5" />, label: "Appoinment Management", Link: "/appoinment-management" },
         { icon: <LuCircleDollarSign className="h-5 w-5" />, label: "Payment Management", Link: "/payment-management" },
@@ -74,7 +78,7 @@ const Sidebar = ({ closeDrawer }) => {
                     {menuItems.map((item) => (
                         <div key={item.label}>
                             <div
-                                className={`w-72 flex justify-between items-center px-5 py-2 cursor-pointer  ${active === item.label ? "bg-primary text-white font-semibold" : "bg-white text-black font-semibold"
+                                className={`w-96 flex justify-between items-center px-5 py-2 cursor-pointer  ${active === item.label ? "bg-primary text-white font-semibold" : "bg-white text-black font-semibold"
                                     }`}
                                 onClick={() => (item.isDropdown ? toggleDropdown(item.label) : handleActiveRoute(item.label))}
                             >

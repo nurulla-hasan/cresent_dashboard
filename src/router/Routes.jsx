@@ -9,9 +9,7 @@ import Newpass from "../Pages/Auth/NewPass/Newpass";
 import VerifyPass from "../Pages/Auth/VerifyPass/VerifyPass";
 // import Chat from "../Pages/ChatComponent/Chat";
 import ContinuePage from "../Pages/Auth/ContinuePage/ContinuePage";
-import Patient from "../Components/UserManagemnet/Patient/Patient";
-import Doctor from "../Components/UserManagemnet/Doctor/Doctor";
-import SignUpRequest from "../Components/UserManagemnet/SignUpRequest/SignUpRequest";
+
 import Appointment from "../Pages/Appointment/Appointment";
 import Payment from "../Pages/Payment/Payment";
 import MakeAdmin from "../Pages/MakeAdmin/MakeAdmin";
@@ -24,6 +22,10 @@ import TermsCondition from "../Pages/Settings/TermsCondition/TermsCondition";
 import Banner from "../Pages/Settings/Banner/Banner";
 import AdminProfile from "../Pages/AdminProfile/AdminProfile";
 import Notifications from "../Pages/Notification/Notification";
+import AllUsers from "../Components/UserManagemnet/AllUsers/AllUsers";
+import Subscribers from "../Components/UserManagemnet/Subscribers/Subscribers";
+import AllOrganization from "../Pages/OrganizationManagement/AllOrganization/AllOrganization";
+import SubscribersOrganization from "../Pages/OrganizationManagement/SubscribersOrganization/SubscribersOrganization";
 
 
 export const router = createBrowserRouter([
@@ -58,20 +60,20 @@ export const router = createBrowserRouter([
                 element: <Analytics />
             },
             {
-                path: "/user-management/patient",
-                element: <Patient />
+                path: "/user-management/all-users",
+                element: <AllUsers />
             },
             {
-                path: "/user-management/doctor",
-                element: <Doctor />
+                path: "/user-management/subscribers",
+                element: <Subscribers />
             },
             {
-                path: "/user-management/sign-up-request",
-                element: <SignUpRequest />
+                path: '/organization-management/all-organizations',
+                element: <AllOrganization />
             },
             {
-                path: '/appoinment-management',
-                element: <Appointment />
+                path: '/organization-management/subscribers-organizations',
+                element: <SubscribersOrganization />
             },
             {
                 path: '/payment-management',

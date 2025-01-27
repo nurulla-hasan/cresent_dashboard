@@ -11,7 +11,7 @@ import {
 import dayjs from "dayjs";
 import { useState } from "react";
 
-const EarningGrowth = () => {
+const OrganizationGrowth = () => {
     const [selectedYear, setSelectedYear] = useState(dayjs().year());
 
     // Mock data
@@ -44,7 +44,7 @@ const EarningGrowth = () => {
                 {/* Header Section */}
                 <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
                     <h1 className="text-lg md:text-xl font-medium">
-                        Earning Growth
+                        Organization Growth
                     </h1>
                     <DatePicker
                         onChange={onChange}
@@ -92,4 +92,4 @@ const EarningGrowth = () => {
     );
 };
 
-export default EarningGrowth;
+export default OrganizationGrowth;
