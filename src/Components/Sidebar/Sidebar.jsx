@@ -74,7 +74,7 @@ const Sidebar = ({ closeDrawer }) => {
                     {menuItems.map((item) => (
                         <div key={item.label}>
                             <div
-                                className={`w-72 flex justify-between items-center px-5 py-2 cursor-pointer  ${active === item.label ? "bg-black text-primary font-semibold" : "bg-white text-black font-semibold"
+                                className={`w-72 flex justify-between items-center px-5 py-2 cursor-pointer  ${active === item.label ? "bg-primary text-white font-semibold" : "bg-white text-black font-semibold"
                                     }`}
                                 onClick={() => (item.isDropdown ? toggleDropdown(item.label) : handleActiveRoute(item.label))}
                             >
@@ -97,7 +97,7 @@ const Sidebar = ({ closeDrawer }) => {
                                     {item.subItems.map((subItem) => (
                                         <Link to={subItem.Link} key={subItem.label}>
                                             <div
-                                                className={`py-2 px-5 cursor-pointer  ${active === subItem.label ? "text-white bg-primary font-bold" : "text-black bg-[#efe5c4]"
+                                                className={`py-2 px-5 cursor-pointer  ${active === subItem.label ? "text-white bg-primary font-bold" : "text-black bg-secondary"
                                                     }`}
                                                 onClick={() => handleSubItemClick(subItem.label)}
                                             >

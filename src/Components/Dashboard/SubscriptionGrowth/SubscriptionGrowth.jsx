@@ -69,8 +69,8 @@ const SubscriptionGrowth = () => {
                         >
                             <defs>
                                 <linearGradient id="colorEarnings" x1="0" y1="0" x2="0" y2="1">
-                                    <stop offset="5%" stopColor="#d4af37" stopOpacity={0.8} />
-                                    <stop offset="95%" stopColor="#d4af37" stopOpacity={0} />
+                                    <stop offset="5%" stopColor="#9888f4" stopOpacity={0.8} />
+                                    <stop offset="95%" stopColor="#9888f4" stopOpacity={0} />
                                 </linearGradient>
                             </defs>
                             <CartesianGrid strokeDasharray="3 3" />
@@ -80,7 +80,7 @@ const SubscriptionGrowth = () => {
                             <Area
                                 type="monotone"
                                 dataKey="earnings"
-                                stroke="#d4af37"
+                                stroke="#9888f4"
                                 fillOpacity={1}
                                 fill="url(#colorEarnings)"
                             />

@@ -76,7 +76,7 @@ const UserGrowth = () => {
                             <YAxis tickFormatter={(value) => `${value}%`} />
                             <Tooltip formatter={(value) => `${value.toFixed(2)}%`} />
                             <Legend />
-                            <Bar dataKey="User" fill="#d4af37" />
+                            <Bar dataKey="User" fill="#9888f4" />
                             {/* <Bar dataKey="Active" fill="#28A745" /> */}
                         </BarChart>
                     </ResponsiveContainer>
