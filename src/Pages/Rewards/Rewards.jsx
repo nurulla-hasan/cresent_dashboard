@@ -1,11 +1,13 @@
 import { message, Modal } from "antd";
 import { useState } from "react";
 import { FaPlus } from "react-icons/fa";
-import AddSubscription from "../../Components/SubscriptionManagement/AddSubscription/AddSubscription";
+
 import EditSubscription from "../../Components/SubscriptionManagement/EditSubscription/EditSubscription";
 import redwardbanner from "../../assets/image/Placeholder Image.png"
 import Profile from "../../assets/image/Profile.png"
 import { Collapse } from 'antd';
+import AddRewards from "../../Components/Rewards/AddRewards";
+import EditRewards from "../../Components/Rewards/EditRewards";
 
 const Rewards = () => {
     const [showEditModal, setShowEditModal] = useState(false);
@@ -86,12 +88,12 @@ const Rewards = () => {
             </div>
 
             {/* Add Subscription Modal */}
-            <Modal title="Add Subscription" open={showModal} onCancel={handleCancel} footer={null}>
-                <AddSubscription />
+            <Modal title="Edit Rewards" open={showModal} onCancel={handleCancel} footer={null}>
+                <AddRewards />
             </Modal>
             {/* Edit Subscription Modal */}
             <Modal title="Edit Subscription" open={showEditModal} onCancel={handleCancelEdit} footer={null}>
-                <EditSubscription />
+                <EditRewards />
             </Modal>
         </div>
     );

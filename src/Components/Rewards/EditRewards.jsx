@@ -3,10 +3,11 @@
 /* eslint-disable no-unused-vars */
 import { Button, Form, Input, Upload } from "antd";
 import { useState } from "react";
-import { FaPlus, FaTrash } from "react-icons/fa";
+import { FaCamera, FaPlus, FaTrash } from "react-icons/fa";
+import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 
 
-const AddSubscription = () => {
+const EditRewards = () => {
     const [categoryImg, setCategoryImg] = useState(null);
     const [form] = Form.useForm();
     const onFinish = (values) => {
@@ -26,8 +27,8 @@ const AddSubscription = () => {
                     <div className="">
                         <Form.Item
                             name="title"
-                            label={<p className="text-md">Subscription Name</p>}
-                            rules={[{ message: "Please input a challenge name!" }]}
+                            label={<p className="text-md">Business Name</p>}
+                            rules={[{ message: "Please input a Business name!" }]}
                         >
                             <Input
                                 style={{ padding: "6px" }}
@@ -36,10 +37,55 @@ const AddSubscription = () => {
                             />
                         </Form.Item>
                     </div>
+                    <div className=" border-dashed border-2 border-gray-400 p-4 flex justify-center items-center my-2">
+                        <Upload
+                            action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+                            listType="picture"
+                            maxCount={1}
+                            beforeUpload={(file) => {
+                                setCategoryImg(file);
+                                return false;
+                            }}
+                        >
+                            <div className="flex flex-col justify-center items-center gap-2">
+                                <FaCamera />
+                                <p>Add Logo</p>
+                            </div>
+                        </Upload>
+                    </div>
+                    <div className=" border-dashed border-2 border-gray-400 p-4 flex justify-center items-center my-2">
+                        <Upload
+                            action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+                            listType="picture"
+                            maxCount={1}
+                            beforeUpload={(file) => {
+                                setCategoryImg(file);
+                                return false;
+                            }}
+                        >
+                            <div className="flex flex-col justify-center items-center gap-2">
+                                <FaCamera />
+                                <p>Add Thumbnail Image</p>
+                            </div>
+                        </Upload>
+                    </div>
+                    <div className="">
+                        <Form.Item
+                            name="title"
+                            label={<p className="text-md">Add Location</p>}
+                            rules={[{ message: "Please input a Business name!" }]}
+                        >
+                            <Input
+                                style={{ padding: "6px" }}
+                                className="text-md"
+                                placeholder="Add Location"
+                            />
+                        </Form.Item>
+                    </div>
                     <div className="w-full flex justify-between items-center gap-2">
                         <Form.Item
                             name="price"
-                            label={<p className="text-md">price</p>}
+                            label={<p className="text-md">Discount</p>}
                             rules={[{ message: "Please input a challenge name!" }]}
                         >
                             <Input
@@ -50,7 +96,7 @@ const AddSubscription = () => {
                         </Form.Item>
                         <Form.Item
                             name="validity"
-                            label={<p className="text-md">Validity</p>}
+                            label={<p className="text-md">Description</p>}
                             rules={[{ message: "Please input a challenge name!" }]}
                         >
                             <Input
@@ -124,4 +170,4 @@ const AddSubscription = () => {
     );
 };
 
-export default AddSubscription;
+export default EditRewards;
