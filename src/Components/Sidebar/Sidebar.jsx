@@ -50,10 +50,15 @@ const Sidebar = ({ closeDrawer }) => {
                 { icon: <GoOrganization className="h-5 w-5" />, label: "Subscribers", Link: "/organization-management/subscribers-organizations" },
             ]
         },
+
         { icon: <FaMoneyCheckAlt className="h-5 w-5" />, label: "Subdcription Management", Link: "/subdcription-management" },
+        { icon: <FaMoneyCheckAlt className="h-5 w-5" />, label: "Service Category", Link: "/add-category" },
+
+
+
         { icon: <BsGraphUp className="h-5 w-5" />, label: "Appoinment Management", Link: "/appoinment-management" },
         { icon: <LuCircleDollarSign className="h-5 w-5" />, label: "Payment Management", Link: "/payment-management" },
-        { icon: <FaMoneyCheckAlt className="h-5 w-5" />, label: "Add Category", Link: "/add-category" },
+
 
         { icon: <FaMoneyCheckAlt className="h-5 w-5" />, label: "Make Admin", Link: "/make-admin" },
 

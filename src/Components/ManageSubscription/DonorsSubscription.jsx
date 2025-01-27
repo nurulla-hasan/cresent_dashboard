@@ -19,7 +19,7 @@ const DonorsSubscription = () => {
     }
 
     const hndleShowEditModal = () => {
-        setShowEditModal(true);
+        setShowEditModal(true); 
     }
     const handleCancelEdit = () => {
         setShowEditModal(false);
@@ -27,7 +27,7 @@ const DonorsSubscription = () => {
     const handleDelet = () => {
         message.success('Deleted Successfully');
     }
-    return (
+    return ( 
         <div>
 
             <div className="flex flex-col md:flex-row justify-between md:items-center mb-10">
