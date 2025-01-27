@@ -7,7 +7,7 @@ import { BiChevronDown } from "react-icons/bi";
 import { Link } from "react-router-dom";
 import { MdDashboard, MdMenuBook, MdPolicy, MdPrivacyTip } from "react-icons/md";
 import { LuCircleDollarSign } from "react-icons/lu";
-import { FaMoneyCheckAlt, FaUsers } from "react-icons/fa";
+import { FaGift, FaMoneyCheckAlt, FaUsers } from "react-icons/fa";
 import { FaEdit } from "react-icons/fa";
 import { RiTerminalWindowLine } from "react-icons/ri";
 import { SiAwsorganizations } from "react-icons/si";
@@ -50,10 +50,16 @@ const Sidebar = ({ closeDrawer }) => {
                 { icon: <GoOrganization className="h-5 w-5" />, label: "Subscribers", Link: "/organization-management/subscribers-organizations" },
             ]
         },
+
         { icon: <FaMoneyCheckAlt className="h-5 w-5" />, label: "Subdcription Management", Link: "/subdcription-management" },
-        { icon: <BsGraphUp className="h-5 w-5" />, label: "Appoinment Management", Link: "/appoinment-management" },
-        { icon: <LuCircleDollarSign className="h-5 w-5" />, label: "Payment Management", Link: "/payment-management" },
-        { icon: <FaMoneyCheckAlt className="h-5 w-5" />, label: "Add Category", Link: "/add-category" },
+        { icon: <FaMoneyCheckAlt className="h-5 w-5" />, label: "Service Category", Link: "/add-category" },
+        { icon: <FaGift className="h-5 w-5" />, label: "Rewards", Link: "/add-reward" },
+
+
+
+        // { icon: <BsGraphUp className="h-5 w-5" />, label: "Appoinment Management", Link: "/appoinment-management" },
+        // { icon: <LuCircleDollarSign className="h-5 w-5" />, label: "Payment Management", Link: "/payment-management" },
+
 
         { icon: <FaMoneyCheckAlt className="h-5 w-5" />, label: "Make Admin", Link: "/make-admin" },
 
@@ -66,7 +72,7 @@ const Sidebar = ({ closeDrawer }) => {
                 { icon: <MdPolicy className="h-5 w-5" />, label: "Contact Us", Link: "/settings/contact-us" },
                 { icon: <MdPrivacyTip className="h-5 w-5" />, label: "Privacy Policy", Link: "/settings/privacy-policy" },
                 { icon: <RiTerminalWindowLine className="h-5 w-5" />, label: "Terms & Condition", Link: "/settings/terms-condition" },
-                { icon: <MdMenuBook className="h-5 w-5" />, label: "Banner", Link: "/settings/banner" },
+                // { icon: <MdMenuBook className="h-5 w-5" />, label: "Banner", Link: "/settings/banner" },
             ],
         },
 

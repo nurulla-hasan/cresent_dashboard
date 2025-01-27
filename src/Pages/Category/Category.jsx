@@ -17,7 +17,7 @@ const Category = () => {
             id: "#1239",
             name: "Mr. Mahmud",
             email: "mr101@mail.ru",
-            category_name: "Cardiologist",
+            category_name: "Charity",
             date: '05/10/2025'
         },
         {
@@ -25,7 +25,7 @@ const Category = () => {
             name: "Lily",
             email: "xterris@gmail.com",
             total_appointment: 20,
-            category_name: "Cardiologist",
+            category_name: "Non-Profit",
             date: '05/10/2025'
         },
         {
@@ -33,7 +33,7 @@ const Category = () => {
             name: "Kathry",
             email: "irnabela@gmail.com",
             total_appointment: 20,
-            category_name: "Cardiologist",
+            category_name: "Mosque",
             date: '05/10/2025'
         },
     ];
@@ -84,16 +84,16 @@ const Category = () => {
             key: 'category_name',
 
         },
-        {
-            title: 'Category Image',
-            key: 'category_image',
-            render: (_, record) => (
-                <div className="flex items-center gap-2">
-                    <Avatar size={40} className="shadow-md" src={record?.category_image || AllImages.icon1} />
-                </div>
-            ),
+        // {
+        //     title: 'Category Image',
+        //     key: 'category_image',
+        //     render: (_, record) => (
+        //         <div className="flex items-center gap-2">
+        //             <Avatar size={40} className="shadow-md" src={record?.category_image || AllImages.icon1} />
+        //         </div>
+        //     ),
 
-        },
+        // },
 
         {
             title: 'Action',

@@ -7,10 +7,7 @@ import SignIn from "../Pages/Auth/SignIn/SignIn";
 import ForgatePassword from "../Pages/Auth/ForgatePassword/ForgatePassword";
 import Newpass from "../Pages/Auth/NewPass/Newpass";
 import VerifyPass from "../Pages/Auth/VerifyPass/VerifyPass";
-// import Chat from "../Pages/ChatComponent/Chat";
 import ContinuePage from "../Pages/Auth/ContinuePage/ContinuePage";
-
-import Appointment from "../Pages/Appointment/Appointment";
 import Payment from "../Pages/Payment/Payment";
 import MakeAdmin from "../Pages/MakeAdmin/MakeAdmin";
 import Category from "../Pages/Category/Category";
@@ -26,6 +23,7 @@ import AllUsers from "../Components/UserManagemnet/AllUsers/AllUsers";
 import Subscribers from "../Components/UserManagemnet/Subscribers/Subscribers";
 import AllOrganization from "../Pages/OrganizationManagement/AllOrganization/AllOrganization";
 import SubscribersOrganization from "../Pages/OrganizationManagement/SubscribersOrganization/SubscribersOrganization";
+import Rewards from "../Pages/Rewards/Rewards";
 
 
 export const router = createBrowserRouter([
@@ -76,6 +74,10 @@ export const router = createBrowserRouter([
                 element: <SubscribersOrganization />
             },
             {
+                path: '/subdcription-management',
+                element: <Subscription />
+            },
+            {
                 path: '/payment-management',
                 element: <Payment></Payment>
             },
@@ -84,9 +86,10 @@ export const router = createBrowserRouter([
                 element: <Category></Category>
             },
             {
-                path: '/subdcription-management',
-                element: <Subscription />
+                path: '/add-reward',
+                element: <Rewards></Rewards>
             },
+
             {
                 path: '/make-admin',
                 element: <MakeAdmin />
