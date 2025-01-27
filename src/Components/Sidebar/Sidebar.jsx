@@ -7,7 +7,7 @@ import { BiChevronDown } from "react-icons/bi";
 import { Link } from "react-router-dom";
 import { MdDashboard, MdMenuBook, MdPolicy, MdPrivacyTip } from "react-icons/md";
 import { LuCircleDollarSign } from "react-icons/lu";
-import { FaMoneyCheckAlt } from "react-icons/fa";
+import { FaMoneyCheckAlt, FaUsers } from "react-icons/fa";
 import { FaEdit } from "react-icons/fa";
 import { RiTerminalWindowLine } from "react-icons/ri";
 const Sidebar = ({ closeDrawer }) => {
@@ -32,7 +32,11 @@ const Sidebar = ({ closeDrawer }) => {
         {
             icon: <FiUser className="h-5 w-5" />,
             label: "User Management",
-            Link: "user-management"
+            isDropdown: true,
+            subItems: [
+                { icon: <FaUsers className="h-5 w-5" />, label: "All Users", Link: "/user-management/all-users" },
+                { icon: <RiTerminalWindowLine className="h-5 w-5" />, label: "Subscribers", Link: "/user-management/subscribers" },
+            ]
         },
         { icon: <BsGraphUp className="h-5 w-5" />, label: "Appoinment Management", Link: "/appoinment-management" },
         { icon: <LuCircleDollarSign className="h-5 w-5" />, label: "Payment Management", Link: "/payment-management" },

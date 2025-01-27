@@ -23,6 +23,7 @@ import Banner from "../Pages/Settings/Banner/Banner";
 import AdminProfile from "../Pages/AdminProfile/AdminProfile";
 import Notifications from "../Pages/Notification/Notification";
 import AllUsers from "../Components/UserManagemnet/AllUsers/AllUsers";
+import Subscribers from "../Components/UserManagemnet/Subscribers/Subscribers";
 
 
 export const router = createBrowserRouter([
@@ -57,8 +58,12 @@ export const router = createBrowserRouter([
                 element: <Analytics />
             },
             {
-                path: "user-management",
+                path: "/user-management/all-users",
                 element: <AllUsers />
+            },
+            {
+                path: "/user-management/subscribers",
+                element: <Subscribers />
             },
             {
                 path: '/appoinment-management',
