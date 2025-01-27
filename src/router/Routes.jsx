@@ -23,6 +23,7 @@ import AllUsers from "../Components/UserManagemnet/AllUsers/AllUsers";
 import Subscribers from "../Components/UserManagemnet/Subscribers/Subscribers";
 import AllOrganization from "../Pages/OrganizationManagement/AllOrganization/AllOrganization";
 import SubscribersOrganization from "../Pages/OrganizationManagement/SubscribersOrganization/SubscribersOrganization";
+import Rewards from "../Pages/Rewards/Rewards";
 
 
 export const router = createBrowserRouter([
@@ -83,6 +84,10 @@ export const router = createBrowserRouter([
             {
                 path: '/add-category',
                 element: <Category></Category>
+            },
+            {
+                path: '/add-reward',
+                element: <Rewards></Rewards>
             },
 
             {

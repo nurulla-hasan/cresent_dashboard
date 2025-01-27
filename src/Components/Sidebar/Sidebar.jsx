@@ -7,7 +7,7 @@ import { BiChevronDown } from "react-icons/bi";
 import { Link } from "react-router-dom";
 import { MdDashboard, MdMenuBook, MdPolicy, MdPrivacyTip } from "react-icons/md";
 import { LuCircleDollarSign } from "react-icons/lu";
-import { FaMoneyCheckAlt, FaUsers } from "react-icons/fa";
+import { FaGift, FaMoneyCheckAlt, FaUsers } from "react-icons/fa";
 import { FaEdit } from "react-icons/fa";
 import { RiTerminalWindowLine } from "react-icons/ri";
 import { SiAwsorganizations } from "react-icons/si";
@@ -53,6 +53,7 @@ const Sidebar = ({ closeDrawer }) => {
 
         { icon: <FaMoneyCheckAlt className="h-5 w-5" />, label: "Subdcription Management", Link: "/subdcription-management" },
         { icon: <FaMoneyCheckAlt className="h-5 w-5" />, label: "Service Category", Link: "/add-category" },
+        { icon: <FaGift className="h-5 w-5" />, label: "Rewards", Link: "/add-reward" },
 
 
 
