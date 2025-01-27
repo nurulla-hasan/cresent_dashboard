@@ -3,7 +3,6 @@ import { useState } from "react";
 import { AiOutlineSetting } from "react-icons/ai";
 import { FiUser, FiLogOut } from "react-icons/fi";
 import { BsGraphUp } from "react-icons/bs";
-import { FaQuestionCircle, } from "react-icons/fa";
 import { BiChevronDown } from "react-icons/bi";
 import { Link } from "react-router-dom";
 import { MdDashboard, MdMenuBook, MdPolicy, MdPrivacyTip } from "react-icons/md";
@@ -24,13 +23,7 @@ const Sidebar = ({ closeDrawer }) => {
         setActive(subItem);
         closeDrawer();
     };
-
-    // const toggleDropdown = (item) => {
-    //     setActive(item);
-    //     setOpenDropdown(openDropdown === item ? "" : item);
-    // };
     const toggleDropdown = (label) => {
-        // setActive(label);
         setOpenDropdown(openDropdown === label ? "" : label);
     };
 
@@ -39,12 +32,7 @@ const Sidebar = ({ closeDrawer }) => {
         {
             icon: <FiUser className="h-5 w-5" />,
             label: "User Management",
-            isDropdown: true,
-            subItems: [
-                { icon: <FaQuestionCircle className="h-5 w-5" />, label: "Patients", Link: "/user-management/patient" },
-                { icon: <FaQuestionCircle className="h-5 w-5" />, label: "Doctor", Link: "/user-management/doctor" },
-                { icon: <FaQuestionCircle className="h-5 w-5" />, label: "Sign-up Request", Link: "/user-management/sign-up-request" },
-            ],
+            Link: "user-management"
         },
         { icon: <BsGraphUp className="h-5 w-5" />, label: "Appoinment Management", Link: "/appoinment-management" },
         { icon: <LuCircleDollarSign className="h-5 w-5" />, label: "Payment Management", Link: "/payment-management" },

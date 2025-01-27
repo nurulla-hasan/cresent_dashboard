@@ -9,9 +9,8 @@ import Newpass from "../Pages/Auth/NewPass/Newpass";
 import VerifyPass from "../Pages/Auth/VerifyPass/VerifyPass";
 // import Chat from "../Pages/ChatComponent/Chat";
 import ContinuePage from "../Pages/Auth/ContinuePage/ContinuePage";
-import Patient from "../Components/UserManagemnet/Patient/Patient";
-import Doctor from "../Components/UserManagemnet/Doctor/Doctor";
-import SignUpRequest from "../Components/UserManagemnet/SignUpRequest/SignUpRequest";
+import Patient from "../Components/UserManagemnet/AllUsers/AllUsers";
+
 import Appointment from "../Pages/Appointment/Appointment";
 import Payment from "../Pages/Payment/Payment";
 import MakeAdmin from "../Pages/MakeAdmin/MakeAdmin";
@@ -58,16 +57,8 @@ export const router = createBrowserRouter([
                 element: <Analytics />
             },
             {
-                path: "/user-management/patient",
+                path: "user-management",
                 element: <Patient />
-            },
-            {
-                path: "/user-management/doctor",
-                element: <Doctor />
-            },
-            {
-                path: "/user-management/sign-up-request",
-                element: <SignUpRequest />
             },
             {
                 path: '/appoinment-management',

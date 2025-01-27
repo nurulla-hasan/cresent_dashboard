@@ -9,7 +9,7 @@ import { FiUserCheck } from "react-icons/fi";
 import { LiaUserSlashSolid } from "react-icons/lia";
 import { SearchOutlined } from "@ant-design/icons";
 import { LuRefreshCcw } from "react-icons/lu";
-const Patient = () => {
+const AllUsers = () => {
   const userData = [
     {
       id: "#1239",
@@ -257,4 +257,4 @@ const Patient = () => {
   );
 };
 
-export default Patient;
+export default AllUsers;
