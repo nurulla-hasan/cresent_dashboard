@@ -6,6 +6,10 @@ import patient from "./patient.png"
 import icon1 from "./icon1.png"
 import icon2 from "./icon2.png"
 import icon3 from "./icon3.png"
+import orgimg from "./orgimg.png"
+import banner from "./banner.png"
+import orgicon from "./orgicon.png"
+
 
 
 
@@ -18,5 +22,8 @@ export const AllImages = {
     patient,
     icon1,
     icon2,
-    icon3
+    icon3,
+    orgimg,
+    banner,
+    orgicon
 }
