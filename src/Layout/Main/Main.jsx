@@ -45,18 +45,18 @@ const MainLayout = () => {
                     <div className="flex justify-between items-center gap-2 text-white mx-10">
                         <div className="relative">
                             <div className=" flex justify-between items-center gap-5 py-5">
-                                <Link to="/notification">
+                                {/* <Link to="/notification">
                                     <div className="relative ">
                                         <IoIosNotificationsOutline className="h-10 w-10 bg-white  text-black p-1 border rounded-full border-primary " />
                                         <span className="bg-primary h-5 w-5 rounded-full flex justify-center items-center absolute top-0 right-0 text-white text-xs">
                                             1
                                         </span>
                                     </div>
-                                </Link>
+                                </Link> */}
                                 <Link to="/admin-profile">
                                     <div className="flex justify-center items-center gap-2">
                                         <img src={user} alt="" className="w-10 h-10 rounded-full border border-primary" />
-                                        <p className="md:text-xl font-semibold text-primary">Mr Rita</p>
+                                        <p className="md:text-xl font-semibold text-primary">Mr Raiyan</p>
                                     </div>
                                 </Link>
                             </div>

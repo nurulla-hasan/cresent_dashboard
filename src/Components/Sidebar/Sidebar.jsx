@@ -54,13 +54,6 @@ const Sidebar = ({ closeDrawer }) => {
         { icon: <FaMoneyCheckAlt className="h-5 w-5" />, label: "Subdcription Management", Link: "/subdcription-management" },
         { icon: <FaMoneyCheckAlt className="h-5 w-5" />, label: "Service Category", Link: "/add-category" },
         { icon: <FaGift className="h-5 w-5" />, label: "Rewards", Link: "/add-reward" },
-
-
-
-        // { icon: <BsGraphUp className="h-5 w-5" />, label: "Appoinment Management", Link: "/appoinment-management" },
-        // { icon: <LuCircleDollarSign className="h-5 w-5" />, label: "Payment Management", Link: "/payment-management" },
-
-
         { icon: <FaMoneyCheckAlt className="h-5 w-5" />, label: "Make Admin", Link: "/make-admin" },
 
         {
@@ -72,7 +65,6 @@ const Sidebar = ({ closeDrawer }) => {
                 { icon: <MdPolicy className="h-5 w-5" />, label: "Contact Us", Link: "/settings/contact-us" },
                 { icon: <MdPrivacyTip className="h-5 w-5" />, label: "Privacy Policy", Link: "/settings/privacy-policy" },
                 { icon: <RiTerminalWindowLine className="h-5 w-5" />, label: "Terms & Condition", Link: "/settings/terms-condition" },
-                // { icon: <MdMenuBook className="h-5 w-5" />, label: "Banner", Link: "/settings/banner" },
             ],
         },
 
