@@ -2,7 +2,6 @@ import { message, Modal } from "antd";
 import { useState } from "react";
 import { FaPlus } from "react-icons/fa";
 
-import EditSubscription from "../../Components/SubscriptionManagement/EditSubscription/EditSubscription";
 import redwardbanner from "../../assets/image/Placeholder Image.png"
 import Profile from "../../assets/image/Profile.png"
 import { Collapse } from 'antd';
