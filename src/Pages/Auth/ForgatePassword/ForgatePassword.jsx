@@ -1,72 +1,93 @@
-import { Form, Input } from "antd";
+import { ConfigProvider, Form, Input } from "antd";
+import img from "../../../assets/image/login.png";
 import { Link } from "react-router-dom";
+import logo from "../../../assets/image/logo.png";
+import { AiOutlineMail } from "react-icons/ai";
+
 const ForgatePassword = () => {
-    const onFinish = (values) => {
-        console.log("Received values of form: ", values);
-    };
+  const onFinish = () => {};
 
-    return (
-        <div className="bg-white">
-            <div className="container mx-auto">
-                <div className="w-full md:max-w-screen-md mx-auto flex flex-col md:flex-row justify-between items-center gap-20  ">
-
-                    <div className="w-full md:w-[50%] order-2 md:order-1 ">
-                        <div className=" md:py-0 md:h-[100vh] w-full flex items-center justify-center">
-                            <Form
-                                name="forget-password"
-                                initialValues={{ remember: true }}
-                                style={{ maxWidth: 550 }}
-                                onFinish={onFinish}
-                                layout="vertical"
-                                className=" bg-white py-10 md:py-28 mx-2 md:mx-0 px-6 md:px-10 rounded-2xl w-[450px] border-2 shadow-xl"
-                            >
-                                <div className="mb-4 text-center">
-                                    <h2
-                                        className=" text-center text-2xl md:text-3xl font-bold mb-6"
-                                    >
-                                        Forget Password
-                                    </h2>
-
-                                </div>
-
-                                <Form.Item
-                                    name="email"
-                                    label={<p className="text-md font-semibold">Email Address :</p>}
-                                    style={{}}
-                                >
-                                    <Input
-                                        required
-                                        style={{ padding: "6px" }}
-                                        className=" text-md"
-                                        placeholder="esteban_schiller@gmail.com"
-                                    />
-                                </Form.Item>
-
-
-                                <Form.Item className="text-center">
-                                    <Link to="/varification">
-                                        <button
-                                            className="bg-primary text-center w-full  p-2 font-semibold text-white px-10 py-2 rounded-2xl shadow-lg"
-                                            type="submit"
-                                        >
-                                            Send a code
-                                        </button>
-                                    </Link>
-                                </Form.Item>
-                            </Form>
-                        </div>
-
-                    </div>
-                    <div className="w-full md:w-[50%] px-3 text-center order-1 md:order-2  mt-32 md:mt-0">
-
-                        <p className="text-neutral-500 flex justify-center items-center ">Welcome to out forgot password page !
-                            provide your email for
-                            confirm 6 digit verification code.</p>
-                    </div>
+  return (
+    <div className="h-screen flex p-2">
+      <div className="bg-white p-10 flex flex-col justify-center items-center w-full md:w-1/2">
+        <img src={logo} alt="Logo" className="absolute top-5 left-10" />
+        <div className="w-full max-w-sm mt-20">
+          <div>
+            <ConfigProvider
+              theme={{
+                components: {
+                  Form: {
+                    borderRadius: 0,
+                  },
+                  Input: {
+                    borderRadius: 5,
+                  },
+                },
+              }}
+            >
+              <Form
+                name="contact"
+                initialValues={{ remember: false }}
+                onFinish={onFinish}
+                layout="vertical"
+                className="mt-20"
+              >
+                <div className="mb-4 text-center">
+                  <h2 className="text-xl md:text-2xl lg:text-3xl font-bold mb-6">
+                    Reset your password
+                  </h2>
+                  <p className="text-neutral-600 lg:text-lg font-semibold">
+                    We’ll send you a code on your registered email.
+                  </p>
                 </div>
-            </div>
+                <Form.Item
+                  name="email-address"
+                  label={
+                    <p className="text-lg text-neutral-500">Email Address</p>
+                  }
+                >
+                  <Input
+                    required
+                    className="text-neutral-500"
+                    prefix={<AiOutlineMail className="mr-2 h-5 w-5" />}
+                    placeholder="mailto:admin@crescentchange.org"
+                    style={{
+                      padding: "8px",
+                      borderRadius: "8px",
+                      width: "100%",
+                      height: "52px",
+                    }}
+                  />
+                </Form.Item>
+
+                <Form.Item>
+                  <Link to="/">
+                    <button
+                      className="text-center p-2 font-bold bg-primary  w-full py-4 rounded-md "
+                      type="submit"
+                    >
+                      Send Code
+                    </button>
+                  </Link>
+                </Form.Item>
+                <p className="text-xl font-medium text-center">
+                  Back to{" "}
+                  <Link to="/sign-in" className="font-bold underline">
+                    {" "}
+                    Sign In
+                  </Link>
+                </p>
+              </Form>
+            </ConfigProvider>
+          </div>
         </div>
-    );
+      </div>
+
+      <div className="w-full md:w-1/2">
+        <img src={img} alt="sign-up" className="w-full h-full" />
+      </div>
+    </div>
+  );
 };
 
 export default ForgatePassword;

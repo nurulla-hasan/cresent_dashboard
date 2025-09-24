@@ -94,14 +94,14 @@ const SignIn = () => {
                     <Checkbox>Remember Password</Checkbox>{" "}
                   </ConfigProvider>
                   <Link
-                    to="/auth/forgate-password"
+                    to="/forgate-password"
                     className="text-md underline"
                   >
                     Forgot Password?
                   </Link>
                 </div>
                 <Form.Item>
-                  <Link to="/auth/signUp3">
+                  <Link to="/">
                     <button
                       className="text-center p-2 font-bold bg-primary  w-full py-4 rounded-md "
                       type="submit"
