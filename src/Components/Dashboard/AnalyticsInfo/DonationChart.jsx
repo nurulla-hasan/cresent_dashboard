@@ -6,10 +6,11 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
+  LineChart,
 } from "recharts";
 import { BsArrowUpRight } from "react-icons/bs";
 
-const BarChartComponents = () => {
+const DonationChart = () => {
   const data = [
     { name: "Jan", value: 30 },
     { name: "Feb", value: 50 },
@@ -40,7 +41,7 @@ const BarChartComponents = () => {
           <BsArrowUpRight className="h-5 w-5 cursor-pointer" />
       </div>
       <ResponsiveContainer>
-        <BarChart data={data}>
+        <LineChart data={data}>
           <XAxis dataKey="name" stroke="#000000" />
           <YAxis stroke="#000000" />
           <CartesianGrid strokeDasharray="3 3" stroke="#d3d3d3" />
@@ -63,10 +64,10 @@ const BarChartComponents = () => {
             barSize={30}
             radius={[10, 10, 0, 0]}
           />
-        </BarChart>
+        </LineChart>
       </ResponsiveContainer>
     </div>
   );
 };
 
-export default BarChartComponents;
+export default DonationChart;

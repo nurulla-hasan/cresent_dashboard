@@ -3,6 +3,9 @@ import AnanlyticsCharts from "../../Components/Dashboard/AnalyticsInfo/Ananlytic
 import BarChartComponents from "../../Components/Dashboard/AnalyticsInfo/BarChartComponents";
 import QuickLinks from "../../Components/Dashboard/AnalyticsInfo/QuickLinks";
 import TopDonors from "../../Components/Dashboard/AnalyticsInfo/TopDonors";
+import DonationChart from "../../Components/Dashboard/AnalyticsInfo/DonationChart";
+import Subscribers from "../../Components/UserManagemnet/Subscribers/Subscribers";
+import SubscriptionChart from "../../Components/Dashboard/AnalyticsInfo/SubscriptionChart";
 
 const Analytics = () => {
   const [active, setActive] = useState("Today");
@@ -64,6 +67,8 @@ const Analytics = () => {
           {/* {TODO: there will need to pass the data} */}
           {/* <AnalyticsCard filter={active} data={data} /> */}
           <AnanlyticsCharts filter={active} data={data} />
+          <DonationChart/>
+          <SubscriptionChart/>
           <BarChartComponents filter={active} data={data} />
         </div>
         <div className="hidden md:block w-[30%]">

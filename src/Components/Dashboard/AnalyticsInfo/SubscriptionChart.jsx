@@ -9,7 +9,7 @@ import {
 } from "recharts";
 import { BsArrowUpRight } from "react-icons/bs";
 
-const BarChartComponents = () => {
+const SubscriptionChart = () => {
   const data = [
     { name: "Jan", value: 30 },
     { name: "Feb", value: 50 },
@@ -69,4 +69,4 @@ const BarChartComponents = () => {
   );
 };
 
-export default BarChartComponents;
+export default SubscriptionChart;
