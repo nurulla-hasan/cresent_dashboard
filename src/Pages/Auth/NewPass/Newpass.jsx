@@ -39,7 +39,7 @@ const Newpass = () => {
                   <h2 className="text-xl md:text-2xl lg:text-3xl font-bold">
                     Reset Your Password
                   </h2>
-                  <p className="text-neutral-600 lg:text-lg pt-3 pb-6">
+                  <p className="text-neutral-600 lg:text-lg pt-3 pb-6"> 
                     The password must be different than previous password.
                   </p>
                 </div>
