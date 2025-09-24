@@ -1,115 +1,126 @@
-import { Checkbox, Form, Input, Typography } from "antd";
+import { Checkbox, ConfigProvider, Form, Input } from "antd";
+import img from "../../../assets/image/login.png"; // Adjust path as necessary
 import { Link } from "react-router-dom";
-import { useState } from "react";
-import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
+import logo from "../../../assets/image/logo.png"; // Adjust path as necessary
+import { AiOutlineMail } from "react-icons/ai";
+import { MdLockOutline } from "react-icons/md";
+
 const SignIn = () => {
-    const [showpassword, setShowpassword] = useState(false);
+  const onFinish = () => {};
 
-    const togglePasswordVisibility = () => {
-        setShowpassword(!showpassword)
-    }
-
-    const onFinish = (values) => {
-        console.log("Received values of form: ", values);
-    };
-    return (
-        <div className="bg-white">
-            <div className="container mx-auto">
-                <div className="w-full md:max-w-screen-md mx-auto flex flex-col md:flex-row justify-between items-center gap-2 md:gap-20">
-
-                    <div className="w-full md:w-[50%] order-2 md:order-1">
-                        <div className="md:h-[100vh] w-full flex items-center justify-center ">
-                            <Form
-                                name="login"
-                                initialValues={{ remember: true }}
-                                style={{ maxWidth: 550 }}
-                                onFinish={onFinish}
-                                layout="vertical"
-                                className="py-10  md:py-28 mx-2 md:mx-0 px-6 md:px-10 rounded-2xl w-[450px] border-2 border-[#eef6ff] mt-10"
-                            >
-                                <div className="mb-4 text-center">
-                                    <h2
-                                        className=" text-center text-2xl md:text-3xl font-bold mb-6"
-                                    >
-                                        Login to Account
-                                    </h2>
-                                    <Typography.Text className="text-black text-center text-base ">
-                                        {" "}
-                                        Please enter your name, email and password to continue
-                                    </Typography.Text>
-                                </div>
-
-                                <Form.Item
-                                    name="email"
-                                    label={<p className=" text-md">Email</p>}
-                                    style={{}}
-                                >
-                                    <Input
-                                        required
-                                        style={{ padding: "6px" }}
-                                        className=" text-md"
-                                        placeholder="Your Email"
-                                    />
-                                </Form.Item>
-                                <Form.Item name="password" label={<p className=" text-md">Password</p>}>
-                                    <div className="relative flex justify-center items-center">
-                                        <Input
-                                            required
-                                            style={{ padding: "6px" }}
-                                            className=" text-md"
-                                            type={showpassword ? "password" : "text"}
-                                            placeholder="Password"
-                                        />
-                                        <div className="flex justify-center absolute right-0 px-3">
-                                            <button onClick={togglePasswordVisibility} type="button">
-
-                                                {showpassword ? (<FaRegEyeSlash className="" />) : (<FaRegEye className="" />)}
-                                            </button>
-                                        </div>
-                                    </div>
-
-                                </Form.Item>
-                                <div className="flex justify-between items-center my-2">
-                                    <Form.Item name="remember" valuePropName="checked" noStyle>
-                                        <Checkbox
-                                            required
-                                            className=" text-black text-md hover:text-black text-md"
-                                        >
-                                            Remember Password
-                                        </Checkbox>
-                                    </Form.Item>
-                                    <Link to="/forgate-password" className=" ">
-                                        <p className="text-red-600 hover:text-red-600 text-md  ">
-                                            Forgate Password
-                                        </p>
-                                    </Link>
-                                </div>
-                                <Form.Item className="text-center my-10">
-                                    <Link to="/">
-                                        <button
-                                            className="bg-primary text-center w-full  p-2 font-semibold  text-white px-10 py-2 rounded-2xl shadow-lg"
-                                            type="submit"
-                                        >
-                                            Login
-                                        </button>
-                                    </Link>
-                                </Form.Item>
-                            </Form>
-                        </div>
-
-                    </div>
-
-                    <div className="w-full md:w-[50%] px-3 flex flex-col justify-center items-center order-1 md:order-2 mt-10">
-                        <h1 className="text-2xl md:text-3xl font-bold mb-5 md:mb-16 ">Welcome Back</h1>
-                        <p className="text-neutral-500 text-center text-lg ">Please Sign in into your
-                            account with the given
-                            details to continue</p>
-                    </div>
-
+  return (
+    <div className="h-screen flex p-2">
+      <div className="bg-white p-10 flex flex-col justify-center items-center w-full md:w-1/2">
+        <img src={logo} alt="Logo" className="absolute top-5 left-10" />
+        <div className="w-full max-w-sm mt-20">
+          <div>
+            <ConfigProvider
+              theme={{
+                components: {
+                  Form: {
+                    borderRadius: 0,
+                  },
+                  Input: {
+                    borderRadius: 5,
+                  },
+                },
+              }}
+            >
+              <Form
+                name="contact"
+                initialValues={{ remember: false }}
+                onFinish={onFinish}
+                layout="vertical"
+                className="mt-20"
+              >
+                <div className="mb-4 text-center">
+                  <h2 className="text-xl md:text-2xl lg:text-3xl font-bold mb-6">
+                    Welcome Back!
+                  </h2>
+                  <p className="text-neutral-600 lg:text-lg font-semibold">
+                    Sign in to access the Super Admin Dashboard.
+                  </p>
                 </div>
-            </div>
+                <Form.Item
+                  name="email-address"
+                  label={
+                    <p className="text-lg text-neutral-500">Email Address</p>
+                  }
+                >
+                  <Input
+                    required
+                    className="text-neutral-500"
+                    prefix={<AiOutlineMail className="mr-2 h-5 w-5" />}
+                    placeholder="mailto:admin@crescentchange.org"
+                    style={{
+                      padding: "8px",
+                      borderRadius: "8px",
+                      width: "100%",
+                      height: "52px",
+                    }}
+                  />
+                </Form.Item>
+                <Form.Item
+                  name="password"
+                  label={<p className="text-lg text-neutral-500">Password</p>}
+                >
+                  <Input.Password
+                    required
+                    className="text-neutral-500"
+                    prefix={<MdLockOutline className="mr-2 h-5 w-5" />}
+                    placeholder="Enter Your Password"
+                    style={{
+                      padding: "8px",
+                      borderRadius: "8px",
+                      width: "100%",
+                      height: "52px",
+                    }}
+                  />
+                </Form.Item>
+                {/* Forgot password and signup link */}
+                <div className="flex justify-between items-center font-semibold gap-2 text-md my-6">
+                  <ConfigProvider
+                    theme={{
+                      components: {
+                        Checkbox: {
+                          colorPrimary: "rgb(209,255,67)",
+                          colorPrimaryBorder: "rgb(209,255,67)",
+                          colorPrimaryHover: "rgb(209,255,67)",
+                        },
+                      },
+                    }}
+                  >
+                    {" "}
+                    <Checkbox>Remember Password</Checkbox>{" "}
+                  </ConfigProvider>
+                  <Link
+                    to="/auth/forgate-password"
+                    className="text-md underline"
+                  >
+                    Forgot Password?
+                  </Link>
+                </div>
+                <Form.Item>
+                  <Link to="/auth/signUp3">
+                    <button
+                      className="text-center p-2 font-bold bg-primary  w-full py-4 rounded-md "
+                      type="submit"
+                    >
+                      Sign In
+                    </button>
+                  </Link>
+                </Form.Item>
+              </Form>
+            </ConfigProvider>
+          </div>
         </div>
-    );
+      </div>
+
+      <div className="w-full md:w-1/2">
+        <img src={img} alt="sign-up" className="w-full h-full" />
+      </div>
+    </div>
+  );
 };
 
 export default SignIn;

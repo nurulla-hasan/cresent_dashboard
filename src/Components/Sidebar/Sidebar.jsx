@@ -4,12 +4,9 @@ import { AiOutlineSetting } from "react-icons/ai";
 import { FiUser, FiLogOut } from "react-icons/fi";
 import { BiChevronDown } from "react-icons/bi";
 import { Link } from "react-router-dom";
-import { MdDashboard, MdPolicy, MdPrivacyTip } from "react-icons/md";
-import { FaGift, FaMoneyCheckAlt, FaUsers } from "react-icons/fa";
-import { FaEdit } from "react-icons/fa";
-import { RiTerminalWindowLine } from "react-icons/ri";
-import { SiAwsorganizations } from "react-icons/si";
-import { GoOrganization } from "react-icons/go";
+import { MdDashboard } from "react-icons/md";
+import { FaGift, FaMoneyCheckAlt } from "react-icons/fa";
+
 import { SlOrganization } from "react-icons/sl";
 import { TbDeviceDesktopAnalytics } from "react-icons/tb";
 import { IoHeartCircleOutline } from "react-icons/io5";
