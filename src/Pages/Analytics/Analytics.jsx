@@ -4,7 +4,6 @@ import BarChartComponents from "../../Components/Dashboard/AnalyticsInfo/BarChar
 import QuickLinks from "../../Components/Dashboard/AnalyticsInfo/QuickLinks";
 import TopDonors from "../../Components/Dashboard/AnalyticsInfo/TopDonors";
 import DonationChart from "../../Components/Dashboard/AnalyticsInfo/DonationChart";
-import Subscribers from "../../Components/UserManagemnet/Subscribers/Subscribers";
 import SubscriptionChart from "../../Components/Dashboard/AnalyticsInfo/SubscriptionChart";
 
 const Analytics = () => {

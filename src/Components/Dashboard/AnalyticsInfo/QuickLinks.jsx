@@ -7,17 +7,20 @@ const QuickLinks = () => {
     {
       id: 1,
       img: profile,
-      title: "Manage Profile",
+      title: "Donation",
+      link:""
     },
     {
       id: 2,
       img: calender,
-      title: "View Portfolio",
+      title: "Subscriptions",
+      link:""
     },
     {
       id: 3,
       img: star,
-      title: "Manage Causes",
+      title: "Rewards",
+      link:""
     },
   ];
 
@@ -28,8 +31,9 @@ const QuickLinks = () => {
         {data.map((item) => (
           <div
             key={item.id}
-            className="bg-white p-3 rounded-3xl flex flex-col items-center gap-2"
+            className="bg-white p-3 rounded-3xl flex flex-col items-center gap-2 cursor-pointer"
           >
+          
             <img
               src={item.img}
               alt={item.title}

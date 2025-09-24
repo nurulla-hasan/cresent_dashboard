@@ -1,6 +1,6 @@
 import {
-  BarChart,
-  Bar,
+  LineChart,
+  Line,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -25,30 +25,25 @@ const SubscriptionChart = () => {
     { name: "Dec", value: 100 },
   ];
 
- 
-
   return (
-    <div
-      style={{ width: "100%", height: 400 }}
-      className="p-6"
-    >
+    <div style={{ width: "100%", }} className="p-6 my-10 bg-white border rounded-3xl">
       <div className="flex justify-between items-center mb-4">
-      <div className="mb-6">
-          <h3 className=" font-bold text-xl">Rewards Claimed</h3>
+        <div className="mb-6">
+          <h3 className="font-bold text-xl">Subscriptions</h3>
           <p className="text-gray-400">+8.2% from last month</p>
+        </div>
+        <BsArrowUpRight className="h-5 w-5 cursor-pointer" />
       </div>
-          <BsArrowUpRight className="h-5 w-5 cursor-pointer" />
-      </div>
-      <ResponsiveContainer>
-        <BarChart data={data}>
+      <ResponsiveContainer width="100%" height="100%">
+        <LineChart data={data}>
           <XAxis dataKey="name" stroke="#000000" />
           <YAxis stroke="#000000" />
           <CartesianGrid strokeDasharray="3 3" stroke="#d3d3d3" />
           <Tooltip
             contentStyle={{
               backgroundColor: "#ebe9ec",
-              border: "1px  gray",
-              borderRadius:"20px"
+              border: "1px solid gray",
+              borderRadius: "20px",
             }}
             itemStyle={{
               color: "#000000",
@@ -57,13 +52,14 @@ const SubscriptionChart = () => {
               color: "#000000",
             }}
           />
-          <Bar
+          <Line
+            type="monotone"
             dataKey="value"
-            fill="#c08fff"
-            barSize={30}
-            radius={[10, 10, 0, 0]}
+            stroke="#c08fff"
+            strokeWidth={3}
+            dot={{ r: 5 }}
           />
-        </BarChart>
+        </LineChart>
       </ResponsiveContainer>
     </div>
   );
