@@ -1,28 +1,44 @@
+"use client";
 import profile from "../../../assets/image/Donation.png";
 import star from "../../../assets/image/star.png";
 import calender from "../../../assets/image/calender.png";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const QuickLinks = () => {
+  const navigae = useNavigate();
+
   const data = [
     {
       id: 1,
       img: profile,
       title: "Donation",
-      link:""
+      key: "donation",
     },
     {
       id: 2,
       img: calender,
       title: "Subscriptions",
-      link:""
+      key: "subscriptions",
     },
     {
       id: 3,
       img: star,
       title: "Rewards",
-      link:""
+      key: "rewards",
     },
   ];
+
+  const [active, setActive] = useState("donation");
+
+  const handleClick = (key) => {
+    setActive(key);
+
+    if (key === "donation") {
+      navigae("/donationQuickLink");
+    }
+
+  };
 
   return (
     <div>
@@ -31,18 +47,19 @@ const QuickLinks = () => {
         {data.map((item) => (
           <div
             key={item.id}
-            className="bg-white p-3 rounded-3xl flex flex-col items-center gap-2 cursor-pointer"
+            className={`bg-white p-3 rounded-3xl flex flex-col items-center gap-2 cursor-pointer ${
+              active === item.key ? "border-2 border-blue-500" : ""
+            }`}
+            onClick={() => handleClick(item.key)}
           >
-          
-            <img
-              src={item.img}
-              alt={item.title}
-              className=" mb-4 font-semibold"
-            />
-            <p>{item.title}</p>
+            <img src={item.img} alt={item.title} className="mb-4" />
+            <p className="font-semibold">{item.title}</p>
           </div>
         ))}
       </div>
+
+      {/* ✅ Also render DonationQuickLink when active */}
+      {/* {active === "donation" && <DonationQuickLink />} */}
     </div>
   );
 };

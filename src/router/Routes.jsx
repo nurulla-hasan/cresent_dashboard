@@ -24,6 +24,7 @@ import Subscribers from "../Components/UserManagemnet/Subscribers/Subscribers";
 import AllOrganization from "../Pages/OrganizationManagement/AllOrganization/AllOrganization";
 import SubscribersOrganization from "../Pages/OrganizationManagement/SubscribersOrganization/SubscribersOrganization";
 import Rewards from "../Pages/Rewards/Rewards";
+import DonationQuickLink from "../Components/Dashboard/AnalyticsInfo/DonationQuickLink";
 
 
 export const router = createBrowserRouter([
@@ -127,6 +128,11 @@ export const router = createBrowserRouter([
             {
                 path: '/notification',
                 element: <Notifications />
+            },
+            //Quick limks:
+            {
+                path:"donationQuickLink",
+                element:<DonationQuickLink/>
             }
 
         ]

@@ -26,7 +26,7 @@ const DonationChart = () => {
   ];
 
   return (
-    <div style={{ width: "100%", }} className="p-6 my-10 bg-white border rounded-3xl">
+    <div style={{ width: "100%",height:400 }} className="p-6 my-10 bg-white border rounded-3xl">
       <div className="flex justify-between items-center mb-4">
         <div className="mb-6">
           <h3 className="font-bold text-xl">Donation</h3>
@@ -34,7 +34,7 @@ const DonationChart = () => {
         </div>
         <BsArrowUpRight className="h-5 w-5 cursor-pointer" />
       </div>
-      <ResponsiveContainer width="100%" height="100%">
+      <ResponsiveContainer width="100%" height="80%">
         <LineChart data={data}>
           <XAxis dataKey="name" stroke="#000000" />
           <YAxis stroke="#000000" />
