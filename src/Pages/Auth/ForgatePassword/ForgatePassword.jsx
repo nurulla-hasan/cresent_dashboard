@@ -1,5 +1,5 @@
 import { ConfigProvider, Form, Input } from "antd";
-import img from "../../../assets/image/login.png";
+import img from "../../../assets/image/forgate.png";
 import { Link } from "react-router-dom";
 import logo from "../../../assets/image/logo.png";
 import { AiOutlineMail } from "react-icons/ai";
@@ -61,7 +61,7 @@ const ForgatePassword = () => {
                 </Form.Item>
 
                 <Form.Item>
-                  <Link to="/">
+                  <Link to="/varification">
                     <button
                       className="text-center p-2 font-bold bg-primary  w-full py-4 rounded-md "
                       type="submit"

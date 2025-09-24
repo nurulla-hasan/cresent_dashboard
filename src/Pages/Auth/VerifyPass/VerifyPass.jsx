@@ -1,87 +1,84 @@
-import { Form } from "antd";
-import { Link } from "react-router-dom";
-import { useState } from 'react';
-import OtpInput from 'react-otp-input';
+import img from "../../../assets/image/otp.png";
+import logo from "../../../assets/image/logo.png";
+import OTPInput from "react-otp-input";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+
 const VerifyPass = () => {
-    const [otp, setOtp] = useState('');
-    const onFinish = (values) => {
-        console.log("Received values of form: ", values);
-    };
-    const handleResendotp = () => {
+  const [otp, setOtp] = useState(""); // initialize as empty string
+  const nevigate = useNavigate();
+  const handleVerifyOtp = () => {
+    console.log("Verifying OTP:", otp);
+    nevigate("/auth/confirm-password");
+  };
 
-    }
+  const handleResendOtp = () => {
+    console.log("Resend OTP clicked");
+    // Add your resend logic here
+  };
 
+  return (
+    <div className="">
+      <div className="relative grid grid-cols-1 md:grid-cols-2 justify-center items-center p-4">
+        {/* Left section - Login Form */}
+        <div className="bg-white p-10">
+          <img src={logo} alt="Logo" className="absolute top-5" />
 
-    return (
-        <div className="bg-white">
-            <div className="container mx-auto">
-                <div className="w-full md:max-w-screen-md mx-auto flex flex-col md:flex-row justify-between items-center gap-20">
-                    <div className="w-full md:w-[50%] order-2 md:order-1">
-                        <div className=" md:h-[100vh] w-full flex items-center justify-center ">
-                            <Form
-                                name="varify-password"
-                                initialValues={{ remember: true }}
-                                style={{ maxWidth: 550 }}
-                                onFinish={onFinish}
-                                layout="vertical"
-                                className=" bg-white py-10 md:py-28 mx-4 md:mx-0 px-6 md:px-10 rounded-2xl w-[450px] border-2 shadow-xl"
-                            >
-                                <div className="mb-4 text-center">
-                                    <h2
-                                        className=" text-center text-2xl md:text-3xl font-bold mb-6"
-                                    >
-                                        Verification Code
-                                    </h2>
+          <div className="flex justify-center items-center">
+            <div className="">
+              <h1 className="text-3xl text-center font-bold py-5">
+                Enter Verification Code
+              </h1>
+              <p className="text-center text-gray-500">
+                We’ve sent a verification code to{" "}
+                <span className="text-black">userofficialemail@gmail.com</span>
+              </p>
+              <p className="py-3 font-medium">Enter your verification code</p>
+              <div className="pb-7 pt-2 flex justify-center items-center">
+                <OTPInput
+                  value={otp}
+                  onChange={setOtp}
+                  numInputs={6}
+                  renderSeparator={<span className="lg:w-10"> </span>}
+                  renderInput={(props) => (
+                    <input
+                      {...props}
+                      className="md:w-8 h-12 border border-gray-300 text-black text-xl focus:outline-none focus:border-blue-400 mx-1 rounded-md"
+                    />
+                  )}
+                />
+              </div>
 
-                                </div>
+              <button
+                onClick={handleVerifyOtp}
+                className="text-center w-full p-3 font-bold text-xl bg-primary text-black rounded-md "
+              >
+                Verify
+              </button>
 
-                                <Form.Item
-                                    name="otp"
-                                    label={""}
-                                >
-                                    <div className="flex justify-center items-center  my-10">
-                                        <OtpInput
-                                            value={otp}
-                                            onChange={setOtp}
-                                            numInputs={5}
-                                            renderSeparator={<span className="lg:w-5 "> </span>}
-                                            renderInput={(props) => (
-                                                <input
-                                                    {...props}
-                                                    className="w-8 h-8 bg-transparent border border-primary rounded-md text-xl mx-1 "
-                                                />
-                                            )}
-                                        />
-                                    </div>
-
-                                </Form.Item>
-
-
-                                <Form.Item className="text-center">
-                                    <Link to="/new-password" >
-                                        <button
-                                            className="bg-primary text-center w-full  p-2 font-semibold text-white px-10 py-2 rounded-2xl shadow-lg"
-                                            type="submit"
-                                        >
-                                            Varify Code
-                                        </button>
-                                    </Link>
-                                </Form.Item>
-                                <p className="my-5 text-center text-neutral-500"> You have not received the email? <span onClick={handleResendotp} className="text-primary cursor-pointer">  Resend</span> </p>
-                            </Form>
-                        </div>
-
-                    </div>
-                    <div className="w-full md:w-[50%] px-3 text-center mt-20 md:mt-0 order-1 md:order-2">
-
-                        <p className="text-neutral-500 flex justify-center items-center ">Welcome to out forgot password page !
-                            provide your email for
-                            confirm 6 digit verification code.</p>
-                    </div>
-                </div>
+              <p className="text-center pt-5">
+                Didn’t receive the code?
+                <span
+                  onClick={handleResendOtp}
+                  className="pl-2 underline cursor-pointer"
+                >
+                  Resend
+                </span>
+              </p>
             </div>
+          </div>
         </div>
-    );
+
+        <div className="flex justify-end items-end">
+          <img
+            src={img}
+            alt="sign-up"
+            className="w-full h-screen object-cover"
+          />
+        </div>
+      </div>
+    </div>
+  );
 };
 
 export default VerifyPass;
