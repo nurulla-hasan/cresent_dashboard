@@ -9,7 +9,7 @@ const VerifyPass = () => {
   const nevigate = useNavigate();
   const handleVerifyOtp = () => {
     console.log("Verifying OTP:", otp);
-    nevigate("/auth/confirm-password");
+    nevigate("/new-password");
   };
 
   const handleResendOtp = () => {

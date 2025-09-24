@@ -1,114 +1,122 @@
-import { Form, Input } from "antd";
-import { Link } from "react-router-dom";
-import { FaRegEyeSlash, } from "react-icons/fa";
+import { ConfigProvider, Form, Input } from "antd";
+import img from "../../../assets/image/reset.png"; // Path to the image
+import logo from "../../../assets/image/logo.png"; // Path to the logo
+import { useNavigate } from "react-router-dom";
+import { MdLockOutline } from "react-icons/md";
 
-import { useState } from "react";
-import { FaRegEye } from "react-icons/fa6";
 const Newpass = () => {
-    const [showpassword, setShowpassword] = useState("false");
-    const [showConfirmpassword, setShowConfirmPassword] = useState("false");
-    const togglePasswordVisibility = () => {
-        setShowpassword(!showpassword);
-    };
-    const toggoleConfirmPasswordVisible = () => {
-        setShowConfirmPassword(!showConfirmpassword);
-    };
-
-
-
-    const onFinish = (values) => {
-        console.log("Received values of form: ", values);
-    };
-    return (
-        <div className="bg-white">
-            <div className="container mx-auto">
-                <div className="w-full md:max-w-screen-md mx-auto flex flex-col md:flex-row justify-between items-center gap-20  ">
-                    <div className="w-full md:w-[50%] order-2  md:order-1 ">
-                        <div className="md:h-[100vh] w-full flex items-center justify-center ">
-                            <Form
-                                name="login"
-                                initialValues={{ remember: true }}
-                                style={{ maxWidth: 550 }}
-                                onFinish={onFinish}
-                                layout="vertical"
-                                className=" bg-white py-14 md:py-28 mx-4 md:mx-0 px-6 md:px-10 rounded-2xl w-[450px] border-2 shadow-xl"
-                            >
-                                <div className="mb-4 text-center">
-                                    <h2
-                                        className=" text-center text-2xl md:text-3xl font-bold mb-6"
-                                    >
-                                        Set a new password
-                                    </h2>
-
-                                </div>
-
-
-                                <Form.Item name="new-password" label={<p className=" text-md">New Password</p>}>
-
-                                    <div className="flex justify-between items-center relative">
-                                        <Input
-                                            required
-                                            style={{ padding: "6px" }}
-                                            className=" text-md"
-                                            type={showpassword ? "password" : "text"}
-                                            placeholder="kkk!@#1578525"
-                                        />
-                                        <div className="flex items-center absolute right-0 px-2">
-                                            <button onClick={togglePasswordVisibility} type="button">
-                                                {showpassword ? (
-                                                    <FaRegEye className="" />
-                                                ) : (
-                                                    <FaRegEyeSlash className="" />
-                                                )}
-                                            </button>
-                                        </div>
-                                    </div>
-                                </Form.Item>
-                                <Form.Item name="confirm-password" label={<p className=" text-md">Confirm Password</p>}>
-
-                                    <div className="flex justify-between items-center relative">
-                                        <Input
-                                            required
-                                            style={{ padding: "6px" }}
-                                            className=" text-md"
-                                            type={showConfirmpassword ? "password" : "text"}
-                                            placeholder="kkk!@#1578525"
-                                        />
-                                        <div className="flex items-center absolute right-0 px-2">
-                                            <button onClick={toggoleConfirmPasswordVisible} type="button">
-                                                {showConfirmpassword ? (
-                                                    <FaRegEye className="" />
-                                                ) : (
-                                                    <FaRegEyeSlash className="" />
-                                                )}
-                                            </button>
-                                        </div>
-                                    </div>
-
-                                </Form.Item>
-
-                                <Form.Item className="text-center">
-                                    <Link to="/continue-page">
-                                        <button
-                                            className="bg-primary text-center w-full  p-2 font-semibold  text-white   px-10 py-2 rounded-2xl shadow-lg"
-                                            type="submit"
-                                        >
-                                            Confirm
-                                        </button>
-                                    </Link>
-                                </Form.Item>
-                            </Form>
-                        </div>
-
-                    </div>
-                    <div className="w-full md:w-[50%] px-3 text-center  mt-20  md:mt-0">
-                        <p className="text-neutral-500 flex justify-center items-center ">Create a new password.
-                            insure it differs from previous one.</p>
-                    </div>
+  const neviaget = useNavigate();
+  const onFinish = () => {};
+  const handleResetPassword = () => {
+    neviaget("/");
+  };
+  return (
+    <div className="">
+      <div className="relative grid grid-cols-1 md:grid-cols-2 justify-center items-center p-4">
+        <div className="bg-white p-10">
+          <img src={logo} alt="Logo" className="absolute top-5" />
+          <div className="w-full max-w-sm mx-auto mt-20">
+            <ConfigProvider
+              theme={{
+                components: {
+                  Form: {
+                    borderRadius: 0,
+                  },
+                  Input: {
+                    borderRadius: 5,
+                  },
+                },
+              }}
+            >
+              <Form
+                name="login"
+                initialValues={{ remember: false }}
+                style={{ maxWidth: 600 }}
+                onFinish={onFinish}
+                layout="vertical"
+              >
+                <div className="mb-4 text-center">
+                  <h2 className="text-xl md:text-2xl lg:text-3xl font-bold">
+                    Reset Your Password
+                  </h2>
+                  <p className="text-neutral-600 lg:text-lg pt-3 pb-6">
+                    The password must be different than previous password.
+                  </p>
                 </div>
-            </div>
+
+                {/* Email input field */}
+                {/* <Form.Item
+                  name="email"
+                  label={<p className="text-md">Email</p>}
+                >
+                  <Input
+                    required
+                    className="text-md"
+                    placeholder="Enter Email Address"
+                  />
+                </Form.Item> */}
+
+                {/* Password input field */}
+                <Form.Item
+                  name="new-password"
+                  label={
+                    <p className="text-lg text-neutral-500">New Password</p>
+                  }
+                >
+                  <Input.Password
+                    required
+                    className="text-neutral-500"
+                    prefix={<MdLockOutline className="mr-2 h-5 w-5" />}
+                    placeholder="********"
+                    style={{
+                      padding: "8px",
+                      borderRadius: "8px",
+                      width: "100%",
+                      height: "52px",
+                    }}
+                  />
+                </Form.Item>
+                <Form.Item
+                  name="confirm-password"
+                  label={
+                    <p className="text-lg text-neutral-500">Confirm Password</p>
+                  }
+                >
+                  <Input.Password
+                    required
+                    className="text-neutral-500"
+                    prefix={<MdLockOutline className="mr-2 h-5 w-5" />}
+                    placeholder="********"
+                    style={{
+                      padding: "8px",
+                      borderRadius: "8px",
+                      width: "100%",
+                      height: "52px",
+                    }}
+                  />
+                </Form.Item>
+
+                <Form.Item>
+                  <button
+                    onClick={handleResetPassword}
+                    className=" w-full py-4 font-bold bg-primary rounded-md text-xl"
+                    type="submit"
+                  >
+                    Update Password
+                  </button>
+                </Form.Item>
+              </Form>
+            </ConfigProvider>
+          </div>
         </div>
-    );
+
+        {/* Right section - Image */}
+        <div className="flex justify-end items-end">
+          <img src={img} alt="sign-up" className="w-full h-screen" />
+        </div>
+      </div>
+    </div>
+  );
 };
 
 export default Newpass;
