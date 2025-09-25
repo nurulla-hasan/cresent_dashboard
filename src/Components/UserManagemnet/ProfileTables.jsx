@@ -1,20 +1,28 @@
 /* eslint-disable no-unused-vars */
 import { useState } from "react";
-import { Button, DatePicker, Dropdown, Input, Menu, Select, Table } from "antd";
+import {
+  Button,
+  DatePicker,
+  Dropdown,
+  Form,
+  Input,
+  Menu,
+  Modal,
+  Select,
+  Table,
+  Upload,
+} from "antd";
 import { DownOutlined, SearchOutlined } from "@ant-design/icons";
 import { VscEye } from "react-icons/vsc";
-import { RiRestartLine } from "react-icons/ri";
 import user from "../../assets/image/user.png";
 import { MdOtherHouses } from "react-icons/md";
-import { FaUsers } from "react-icons/fa";
+import { FaImage, FaPencilAlt, FaUsers, } from "react-icons/fa";
 import { GoOrganization } from "react-icons/go";
 import { RxCrossCircled } from "react-icons/rx";
-import { FaPencil } from "react-icons/fa6";
 
 const ProfileTables = () => {
   const { Option } = Select;
 
-  // ✅ Added "status" field here
   const originalData = [
     {
       key: "1",
@@ -32,7 +40,7 @@ const ProfileTables = () => {
       email: "kkkarim@gmail.com",
       dateTime: "10 Dec 2023 02:00 PM",
       donationType: "Donor",
-      donationMessage: "“Sending love & hope to everyone you’re helping”",
+      donationMessage: "Sending love & hope to everyone you’re helping",
       amount: 62.75,
       status: "Active",
     },
@@ -52,7 +60,7 @@ const ProfileTables = () => {
       email: "fjsurya@gmail.com",
       dateTime: "15 Dec 2023 09:00 AM",
       donationType: "Donor",
-      donationMessage: "“Sending love & hope to everyone you’re helping”",
+      donationMessage: "Sending love & hope to everyone you’re helping",
       amount: 47.3,
       status: "Active",
     },
@@ -62,7 +70,7 @@ const ProfileTables = () => {
       email: "lindablair98@gmail.com",
       dateTime: "18 Dec 2023 01:00 PM",
       donationType: "Business",
-      donationMessage: "“Sending love & hope to everyone you’re helping”",
+      donationMessage: "Sending love & hope to everyone you’re helping",
       amount: 23.9,
       status: "Pending",
     },
@@ -70,7 +78,44 @@ const ProfileTables = () => {
 
   const [data, setData] = useState(originalData);
   const [searchText, setSearchText] = useState("");
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [previewImage, setPreviewImage] = useState(null);
+  const [selectedProfile, setSelectedProfile] = useState(null);
+  const [form] = Form.useForm();
 
+  // 📸 Handle image upload
+  const handleBeforeUpload = (file) => {
+    setPreviewImage(URL.createObjectURL(file));
+    form.setFieldsValue({ profileImage: file });
+    return false;
+  };
+
+  // ✏️ Open edit modal
+  const handleEdit = (record) => {
+    setSelectedProfile(record);
+    form.setFieldsValue({
+      firstName: record.name.split(" ")[0],
+      lastName: record.name.split(" ")[1],
+      email: record.email,
+      mobile: "+61 470 292 023",
+      password: "********",
+    });
+    setPreviewImage(user);
+    setIsModalVisible(true);
+  };
+
+  const handleCancel = () => {
+    setIsModalVisible(false);
+    form.resetFields();
+    setPreviewImage(null);
+  };
+
+  const handleSave = (values) => {
+    console.log("Updated values:", values);
+    setIsModalVisible(false);
+  };
+
+  // 🔁 Sorting function
   const handleSort = (key, order) => {
     const sorted = [...data].sort((a, b) => {
       if (key === "amount") {
@@ -89,14 +134,12 @@ const ProfileTables = () => {
     setData(sorted);
   };
 
+  // 🔎 Role filter
   const handleRoleFilter = (role) => {
     if (role === "All") {
       setData(originalData);
     } else {
-      const filtered = originalData.filter(
-        (item) => item.donationType === role
-      );
-      setData(filtered);
+      setData(originalData.filter((item) => item.donationType === role));
     }
   };
 
@@ -126,11 +169,7 @@ const ProfileTables = () => {
       key: "email",
       render: (text, record) => (
         <div className="flex gap-2 items-center">
-          <img
-            src={user}
-            alt={record.name}
-            className="h-10 w-10 rounded-full"
-          />
+          <img src={user} alt={record.name} className="h-10 w-10 rounded-full" />
           <div>
             <p className="font-medium">{record.name}</p>
             <p className="text-gray-400 text-sm">{record.email}</p>
@@ -156,7 +195,6 @@ const ProfileTables = () => {
       dataIndex: "dateTime",
       key: "dateTime",
     },
-
     {
       title: (
         <div className="flex items-center gap-2">
@@ -179,17 +217,17 @@ const ProfileTables = () => {
       render: (value) => (
         <div className="px-4 py-2 rounded-3xl flex items-center gap-2">
           {value === "Business" && (
-            <div className="flex justify-center items-center gap-1 bg-blue-100 text-blue-600 px-4 py-1 rounded-2xl">
+            <div className="flex items-center gap-1 bg-blue-100 text-blue-600 px-4 py-1 rounded-2xl">
               <MdOtherHouses className="h-5 w-5" /> Business
             </div>
           )}
           {value === "Organization" && (
-            <div className="flex justify-center items-center gap-1 bg-green-100 text-green-600 px-4 py-1 rounded-2xl">
+            <div className="flex items-center gap-1 bg-green-100 text-green-600 px-4 py-1 rounded-2xl">
               <GoOrganization className="h-5 w-5" /> Organization
             </div>
           )}
           {value === "Donor" && (
-            <div className="flex justify-center items-center gap-1 bg-pink-100 text-pink-600 px-4 py-1 rounded-2xl">
+            <div className="flex items-center gap-1 bg-pink-100 text-pink-600 px-4 py-1 rounded-2xl">
               <FaUsers className="h-5 w-5" /> Donor
             </div>
           )}
@@ -200,39 +238,36 @@ const ProfileTables = () => {
       title: "Status",
       dataIndex: "status",
       key: "status",
-      render: (status) => {
-        return (
-          <span
-            className={`px-4 py-1 rounded-2xl text-sm font-medium 
-          ${
+      render: (status) => (
+        <span
+          className={`px-4 py-1 rounded-2xl text-sm font-medium ${
             status === "Active"
               ? "bg-green-100 text-green-600"
               : status === "Pending"
               ? "bg-yellow-100 text-yellow-600"
-              : status === "Suspended"
-              ? "bg-gray-200 text-gray-600"
-              : ""
+              : "bg-gray-200 text-gray-600"
           }`}
-          >
-            {status}
-          </span>
-        );
-      },
+        >
+          {status}
+        </span>
+      ),
     },
-
     {
       title: "Action",
       key: "action",
-      render: () => (
+      render: (_, record) => (
         <div className="flex justify-center items-center gap-3 text-lg">
-          <div className="bg-neutral-100 h-8 w-8 rounded-full p-1 flex justify-center items-center">
-            <VscEye className="cursor-pointer " />
+          <div className="bg-neutral-100 h-8 w-8 rounded-full p-1 flex justify-center items-center cursor-pointer">
+            <VscEye />
           </div>
-          <div className="bg-neutral-100 h-8 w-8 rounded-full p-1 flex justify-center items-center">
-            <FaPencil className="cursor-pointer" />
+          <div
+            onClick={() => handleEdit(record)}
+            className="bg-neutral-100 h-8 w-8 rounded-full p-1 flex justify-center items-center cursor-pointer"
+          >
+            <FaPencilAlt />
           </div>
-          <div className="bg-neutral-100 h-8 w-8 rounded-full p-1 flex justify-center items-center">
-            <RxCrossCircled className="cursor-pointer" />
+          <div className="bg-neutral-100 h-8 w-8 rounded-full p-1 flex justify-center items-center cursor-pointer">
+            <RxCrossCircled />
           </div>
         </div>
       ),
@@ -274,6 +309,79 @@ const ProfileTables = () => {
         pagination={{ pageSize: 5 }}
         rowKey="key"
       />
+
+      {/* ✨ Edit Profile Modal */}
+      <Modal
+        title="Edit Profile"
+        open={isModalVisible}
+        onCancel={handleCancel}
+        footer={null}
+        centered
+      >
+        <Form layout="vertical" form={form} onFinish={handleSave}>
+          <div className="flex justify-center mb-4">
+            <Upload
+              showUploadList={false}
+              beforeUpload={handleBeforeUpload}
+              accept="image/*"
+            >
+              <div className="border border-dashed border-gray-300 p-4 rounded-full cursor-pointer flex flex-col items-center">
+                {previewImage ? (
+                  <img
+                    src={previewImage}
+                    alt="Preview"
+                    className="h-24 w-24 rounded-full object-cover"
+                  />
+                ) : (
+                  <>
+                    <FaImage className="text-gray-400 h-8 w-8" />
+                    <p className="text-gray-400 text-sm mt-2">Upload Image</p>
+                  </>
+                )}
+              </div>
+            </Upload>
+          </div>
+
+          <Form.Item
+            name="firstName"
+            label="First Name"
+            rules={[{ required: true }]}
+          >
+            <Input placeholder="Enter first name" />
+          </Form.Item>
+          <Form.Item
+            name="lastName"
+            label="Last Name"
+            rules={[{ required: true }]}
+          >
+            <Input placeholder="Enter last name" />
+          </Form.Item>
+          <Form.Item
+            name="email"
+            label="Email"
+            rules={[{ required: true, type: "email" }]}
+          >
+            <Input placeholder="Enter email" />
+          </Form.Item>
+          <Form.Item
+            name="mobile"
+            label="Mobile"
+            rules={[{ required: true }]}
+          >
+            <Input placeholder="Enter phone number" />
+          </Form.Item>
+          <Form.Item name="password" label="Update Password">
+            <Input.Password placeholder="Enter new password" />
+          </Form.Item>
+
+          <div className="flex justify-end gap-3 mt-4">
+            <Button onClick={handleCancel}>Discard Changes</Button>
+            <Button type="primary" htmlType="submit">
+              Apply Changes
+            </Button>
+          </div>
+        </Form>
+      </Modal>
     </div>
   );
 };
