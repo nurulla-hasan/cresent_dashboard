@@ -1,9 +1,12 @@
 /* eslint-disable no-unused-vars */
-import { Table, Tag, Button, Input, Dropdown, Menu } from "antd";
+import { Table, Tag, Button, Input, Dropdown, Menu, DatePicker } from "antd";
 import { DownOutlined, SearchOutlined } from "@ant-design/icons";
 import { useState } from "react";
 import { FaArrowDown } from "react-icons/fa";
 import { BsArrowUpRight } from "react-icons/bs";
+import { Link } from "react-router-dom";
+import ProfileTables from "../ProfileTables";
+import PendingApproval from "../PendingApproval";
 
 const AllUsers = () => {
   const [searchText, setSearchText] = useState("");
@@ -166,20 +169,24 @@ const AllUsers = () => {
                   <span className="text-green-500">+5.2%</span> vs last month
                 </p>
               </div>
-              <div className="bg-white rounded-full h-10 w-10 p-1 flex justify-center items-center">
-                <BsArrowUpRight />
-              </div>
+              <Link to="/donationQuickLink">
+                <div className="bg-white rounded-full h-10 w-10 p-1 flex justify-center items-center">
+                  <BsArrowUpRight />
+                </div>
+              </Link>
             </div>
 
             <h2 className="text-2xl font-semibold">
               120,340{" "}
-              <span className="text-sm text-gray-400 ml-2">active profiles</span>
+              <span className="text-sm text-gray-400 ml-2">
+                active profiles
+              </span>
             </h2>
           </div>
           <div className="bg-gray-100 p-6 rounded-3xl">
             <div className="flex justify-between items-center gap-2 mb-8">
               <div>
-                <p className="tetx-xl font-semibold">Active Organizations</p>
+                <p className="tetx-xl font-semibold">Organizations</p>
                 <p className="text-neutral-400 ">
                   {" "}
                   <span className="text-green-500">+5.2%</span> vs last month
@@ -192,7 +199,9 @@ const AllUsers = () => {
 
             <h2 className="text-2xl font-semibold">
               120,340{" "}
-              <span className="text-sm text-gray-400 ml-2">active profiles</span>
+              <span className="text-sm text-gray-400 ml-2">
+                active profiles
+              </span>
             </h2>
           </div>
           <div className="bg-gray-100 p-6 rounded-3xl">
@@ -211,7 +220,9 @@ const AllUsers = () => {
 
             <h2 className="text-2xl font-semibold">
               120
-              <span className="text-sm text-gray-400 ml-2">active profiles</span>
+              <span className="text-sm text-gray-400 ml-2">
+                active profiles
+              </span>
             </h2>
           </div>
           <div className="bg-gray-100 p-6 rounded-3xl">
@@ -230,60 +241,18 @@ const AllUsers = () => {
 
             <h2 className="text-2xl font-semibold">
               1
-              <span className="text-sm text-gray-400 ml-2">pending profiles</span>
+              <span className="text-sm text-gray-400 ml-2">
+                pending profiles
+              </span>
             </h2>
           </div>
         </div>
       </div>
 
       {/* ---------- Profiles Table ---------- */}
-      <div className="bg-white p-6 rounded-xl shadow-sm mb-10">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-lg font-semibold">Profiles</h2>
-          <div className="flex items-center gap-2">
-            <Input
-              prefix={<SearchOutlined />}
-              placeholder="Search..."
-              onChange={(e) => setSearchText(e.target.value)}
-              className="w-60"
-            />
-            <Dropdown overlay={menu} trigger={["click"]}>
-              <Button>
-                Filter <DownOutlined />
-              </Button>
-            </Dropdown>
-          </div>
-        </div>
-        <Table
-          columns={columns}
-          dataSource={data}
-          pagination={{ pageSize: 5 }}
-        />
-      </div>
+      <ProfileTables />
 
-      {/* ---------- Pending Approvals Table ---------- */}
-      <div className="bg-white p-6 rounded-xl shadow-sm">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-lg font-semibold">Pending Approvals</h2>
-          <div className="flex items-center gap-2">
-            <Input
-              prefix={<SearchOutlined />}
-              placeholder="Search..."
-              className="w-60"
-            />
-            <Dropdown overlay={menu} trigger={["click"]}>
-              <Button>
-                Filter <DownOutlined />
-              </Button>
-            </Dropdown>
-          </div>
-        </div>
-        <Table
-          columns={columns}
-          dataSource={data}
-          pagination={{ pageSize: 5 }}
-        />
-      </div>
+      <PendingApproval />
     </div>
   );
 };
