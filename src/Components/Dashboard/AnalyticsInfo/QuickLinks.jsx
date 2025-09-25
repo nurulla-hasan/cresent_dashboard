@@ -6,7 +6,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const QuickLinks = () => {
-  const navigae = useNavigate();
+  const navigate = useNavigate();
 
   const data = [
     {
@@ -35,7 +35,11 @@ const QuickLinks = () => {
     setActive(key);
 
     if (key === "donation") {
-      navigae("/donationQuickLink");
+      navigate("/donationQuickLink");
+    }else if(key==="subscriptions"){
+      navigate("/subscriptions")
+    }else{
+        navigate("/rewards") 
     }
 
   };

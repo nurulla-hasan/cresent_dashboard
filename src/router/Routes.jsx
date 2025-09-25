@@ -23,6 +23,8 @@ import AllOrganization from "../Pages/OrganizationManagement/AllOrganization/All
 import SubscribersOrganization from "../Pages/OrganizationManagement/SubscribersOrganization/SubscribersOrganization";
 import Rewards from "../Pages/Rewards/Rewards";
 import DonationQuickLink from "../Components/Dashboard/AnalyticsInfo/DonationQuickLink";
+import SubscriptionQuickLinks from "../Components/Dashboard/AnalyticsInfo/SubscriptionQuickLinks";
+import RewardsQuickLinks from "../Components/Dashboard/AnalyticsInfo/RewardsQuickLinks";
 
 
 export const router = createBrowserRouter([
@@ -121,6 +123,14 @@ export const router = createBrowserRouter([
             {
                 path:"donationQuickLink",
                 element:<DonationQuickLink/>
+            },
+            {
+                path:"subscriptions",
+                element:<SubscriptionQuickLinks/>
+            },
+            {
+                path:"rewards",
+                element:<RewardsQuickLinks/>
             }
 
         ]
