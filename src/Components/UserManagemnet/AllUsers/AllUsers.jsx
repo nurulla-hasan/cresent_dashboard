@@ -1,251 +1,289 @@
 /* eslint-disable no-unused-vars */
-import { Avatar, ConfigProvider, Input, Space, Table } from "antd";
+import { Table, Tag, Button, Input, Dropdown, Menu } from "antd";
+import { DownOutlined, SearchOutlined } from "@ant-design/icons";
 import { useState } from "react";
+import { FaArrowDown } from "react-icons/fa";
+import { BsArrowUpRight } from "react-icons/bs";
 
-import { Button, Modal } from "antd";
-import { FaEye } from "react-icons/fa";
-import { AllImages } from "../../../assets/image/AllImages";
-import { FiUserCheck } from "react-icons/fi";
-import { LiaUserSlashSolid } from "react-icons/lia";
-import { SearchOutlined } from "@ant-design/icons";
-import { LuRefreshCcw } from "react-icons/lu";
 const AllUsers = () => {
-  const userData = [
+  const [searchText, setSearchText] = useState("");
+
+  // ----------- Static Table Data -----------
+  const data = [
     {
-      id: "#1239",
-      name: "Mr. Mahmud",
-      email: "mr101@mail.ru",
-      donation_amount: 20,
-      contact: "(+33) 7 00 55 59 27",
-      location: "Corona, Michigan",
-      address: "76/4 R no. 60/1 Rue des Saints-Paris, 75005 Paris",
-      dob: "17 Dec, 2024",
-      gender: "Male",
-      action: "↗",
-      is_active: "true",
+      key: "1",
+      name: "Josh Bill",
+      email: "josh@gmail.com",
+      lastActive: "12 Dec 2023 09:30 PM",
+      role: "Business",
+      status: "Pending",
     },
     {
-      id: "#1238",
-      name: "Lily",
-      email: "xterris@gmail.com",
-      donation_amount: 20,
-      contact: "(+33) 7 00 55 59 27",
-      location: "Great Falls, Maryland",
-      address: "123 Rue des Lilas, Paris, 75008",
-      dob: "15 Jan, 2022",
-      gender: "Female",
-      action: "↗",
-      is_active: "true",
+      key: "2",
+      name: "HFL Foundation",
+      email: "contact@hflfoundation.org",
+      lastActive: "12 Dec 2023 09:30 PM",
+      role: "Organization",
+      status: "Active",
     },
     {
-      id: "#1237",
-      name: "Kathry",
-      email: "irnabela@gmail.com",
-      donation_amount: 20,
-      contact: "(+33) 7 00 55 59 27",
-      location: "Syracuse, Connecticut",
-      address: "45 Avenue des Champs, Paris, 75001",
-      dob: "11 Jul, 2021",
-      gender: "Female",
-      action: "↗",
-      is_active: "true",
+      key: "3",
+      name: "Josh Adam",
+      email: "joshadam@gmail.com",
+      lastActive: "12 Dec 2023 09:30 PM",
+      role: "Donor",
+      status: "Suspended",
+    },
+    {
+      key: "4",
+      name: "Fajar Surya",
+      email: "fajar@gmail.com",
+      lastActive: "12 Dec 2023 09:30 PM",
+      role: "Donor",
+      status: "Active",
+    },
+    {
+      key: "5",
+      name: "Linda Blair",
+      email: "lindablair@gmail.com",
+      lastActive: "12 Dec 2023 09:30 PM",
+      role: "Donor",
+      status: "Active",
     },
   ];
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedUser, setSelectedUser] = useState(null);
-  const [email, setEmail] = useState("");
 
-
-  const showModal = (record) => {
-    setSelectedUser(record);
-    setIsModalOpen(true);
-  };
-
-  const handleCancel = () => {
-    setIsModalOpen(false);
-    setSelectedUser(null);
-  };
-
-  const handleSearch = () => {
-    // refetc();
-  };
-
-  const handleSession = (record) => {
-    console.log(record);
-
-
-  }
-
+  // ----------- Table Columns -----------
   const columns = [
     {
-      title: 'Sl No',
-      dataIndex: 'slno',
-      key: 'slno',
-      render: (text, record, index) => index + 1
-    },
-    {
-      title: 'Name',
-      key: 'name',
-      render: (_, record) => (
-        <div className="flex items-center gap-2">
-          <Avatar size={40} className="shadow-md" src={record?.profileImage || AllImages.user} />
-          <span>{record.name}</span>
+      title: "Name/Email",
+      dataIndex: "name",
+      key: "name",
+      render: (text, record) => (
+        <div>
+          <p className="font-medium">{record.name}</p>
+          <p className="text-gray-500 text-sm">{record.email}</p>
         </div>
       ),
     },
     {
-      title: 'Email',
-      dataIndex: 'email',
-      key: 'email',
+      title: "Last Active",
+      dataIndex: "lastActive",
+      key: "lastActive",
     },
     {
-      title: 'Contact No',
-      key: 'contact',
-      render: (_, record) => {
-        const contact = record.contact || 'N/A';
-        return (
-          <p>{contact}</p>
-        )
-      }
-    },
-    {
-      title: 'Location',
-      key: 'address',
-      render: (_, record) => {
-        const address = record?.address || 'N/A';
-        return (
-          <p>{address}</p>
-        )
-      }
-    },
-    {
-      title: 'Donation Amount',
-      key: 'donation_amount',
-      render: (_, record) => {
-        const totalBooking = record?.donation_amount || 'N/A';
-        return (
-          <p>{totalBooking}</p>
-        )
-      }
-
-    },
-    {
-      title: 'Action',
-      key: 'action',
-      render: (_, record) => (
-        <ConfigProvider theme={{
-          components: {
-            "Button": {
-              "defaultHoverBorderColor": "rgb(47,84,235)",
-              "defaultHoverColor": "rgb(47,84,235)",
-              "defaultBorderColor": "rgb(47,84,235)"
-            }
+      title: "Role",
+      dataIndex: "role",
+      key: "role",
+      render: (role) => (
+        <Tag
+          color={
+            role === "Donor" ? "purple" : role === "Business" ? "blue" : "green"
           }
-        }}>
-          <Space size="middle">
-            <Button onClick={() => showModal(record)} icon={<FaEye className="text-primary" />} />
-
-            <Button
-              onClick={() => handleSession(record)}
-              icon={
-                record?.is_active === true ? (
-                  <FiUserCheck className="h-5 w-5 text-green-500" />
-
-                ) : (
-                  <LiaUserSlashSolid className="h-5 w-5 text-red-500" />
-                )
-              }
-            />
-          </Space>
-        </ConfigProvider>
+        >
+          {role}
+        </Tag>
       ),
-    }
+    },
+    {
+      title: "Status",
+      dataIndex: "status",
+      key: "status",
+      render: (status) => (
+        <Tag
+          color={
+            status === "Active"
+              ? "green"
+              : status === "Pending"
+              ? "gold"
+              : status === "Suspended"
+              ? "red"
+              : "default"
+          }
+        >
+          {status}
+        </Tag>
+      ),
+    },
+    {
+      title: "Action",
+      key: "action",
+      render: () => (
+        <div className="flex gap-2">
+          <Button type="text">👁</Button>
+          <Button type="text">✏️</Button>
+          <Button type="text">🗑</Button>
+        </div>
+      ),
+    },
   ];
 
+  // ----------- Dropdown Filter Menu -----------
+  const menu = (
+    <Menu>
+      <Menu.Item>Sort A - Z</Menu.Item>
+      <Menu.Item>Sort Z - A</Menu.Item>
+      <Menu.Item>Recent First</Menu.Item>
+      <Menu.Item>Oldest First</Menu.Item>
+    </Menu>
+  );
 
   return (
-    <div className="">
-      <div className="flex flex-col md:flex-row justify-between md:items-center mb-10">
-        <h3 className="text-xl md:text-2xl font-semibold text-textColor px-2 md:px-0">
-          All Users
-        </h3>
-        <div className="mt-4 md:mt-0 flex justify-between items-center gap-2">
-          <div>
-            <ConfigProvider
-              theme={{
-                components: {
-                  Input: {
-                    borderRadius: 0,
-                    hoverBorderColor: "none",
-                    activeBorderColor: "none",
-                  },
-                },
-              }}
-            >
-              <div className="flex gap-2 items-center relative">
+    <div className="p-6 bg-gray-50 min-h-screen">
+      {/* ---------- Top Title ---------- */}
+      <div className="flex justify-between items-center mb-6">
+        <div>
+          <h1 className="text-2xl font-semibold">User Management</h1>
+          <p className="text-neutral-400">
+            Manage users, organizations, and businesses in one place.
+          </p>
+        </div>
+        <button className="bg-white px-4 py-2 rounded-3xl border flex justify-between items-center gap-2">
+          <FaArrowDown /> Export
+        </button>
+      </div>
 
-                <Input
-                  placeholder="Search by email"
-                  allowClear
-                  size="large"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  onPressEnter={handleSearch}
-                  prefix={
-                    <SearchOutlined
-                      style={{ cursor: "pointer" }}
-                      onClick={handleSearch}
-                    />
-                  }
-                />
-
-
-                <button
-                  onClick={handleSearch}
-                  className="absolute right-0 top-1/2 transform -translate-y-1/2 z-10 bg-primaryColor text-white p-2 rounded-r-lg"
-                >
-                  search
-                </button>
+      {/* ---------- Stats Cards ---------- */}
+      <div className="bg-white p-6 rounded-3xl my-10 border">
+        <div>
+          <h1 className="text-2xl font-semibold mb-12">
+            Total Registered Profiles
+          </h1>
+          <h1 className="text-4xl font-bold mb-6">
+            145,230{" "}
+            <span className="text-green-500 text-sm font-normal">+8.2% </span>{" "}
+            <span className="text-gray-400 text-sm font-normal">
+              vs last month
+            </span>{" "}
+          </h1>
+        </div>
+        <div className="grid grid-cols-4 gap-4 mb-8 ">
+          <div className="bg-gray-100 p-6 rounded-3xl">
+            <div className="flex justify-between items-center gap-2 mb-8">
+              <div>
+                <p className="tetx-xl font-semibold">Donors</p>
+                <p className="text-neutral-400 ">
+                  {" "}
+                  <span className="text-green-500">+5.2%</span> vs last month
+                </p>
               </div>
-            </ConfigProvider>
-          </div>
+              <div className="bg-white rounded-full h-10 w-10 p-1 flex justify-center items-center">
+                <BsArrowUpRight />
+              </div>
+            </div>
 
+            <h2 className="text-2xl font-semibold">
+              120,340{" "}
+              <span className="text-sm text-gray-400 ml-2">active profiles</span>
+            </h2>
+          </div>
+          <div className="bg-gray-100 p-6 rounded-3xl">
+            <div className="flex justify-between items-center gap-2 mb-8">
+              <div>
+                <p className="tetx-xl font-semibold">Active Organizations</p>
+                <p className="text-neutral-400 ">
+                  {" "}
+                  <span className="text-green-500">+5.2%</span> vs last month
+                </p>
+              </div>
+              <div className="bg-white rounded-full h-10 w-10 p-1 flex justify-center items-center">
+                <BsArrowUpRight />
+              </div>
+            </div>
+
+            <h2 className="text-2xl font-semibold">
+              120,340{" "}
+              <span className="text-sm text-gray-400 ml-2">active profiles</span>
+            </h2>
+          </div>
+          <div className="bg-gray-100 p-6 rounded-3xl">
+            <div className="flex justify-between items-center gap-2 mb-8">
+              <div>
+                <p className="tetx-xl font-semibold">Businesses</p>
+                <p className="text-neutral-400 ">
+                  {" "}
+                  <span className="text-red-500">-5.2%</span> vs last month
+                </p>
+              </div>
+              <div className="bg-white rounded-full h-10 w-10 p-1 flex justify-center items-center">
+                <BsArrowUpRight />
+              </div>
+            </div>
+
+            <h2 className="text-2xl font-semibold">
+              120
+              <span className="text-sm text-gray-400 ml-2">active profiles</span>
+            </h2>
+          </div>
+          <div className="bg-gray-100 p-6 rounded-3xl">
+            <div className="flex justify-between items-center gap-2 mb-8">
+              <div>
+                <p className="tetx-xl font-semibold">Pending Approvals</p>
+                {/* <p className="text-neutral-400 ">
+                  {" "}
+                  <span className="text-red-500">-5.2%</span> vs last month
+                </p> */}
+              </div>
+              <div className="bg-white rounded-full h-10 w-10 p-1 flex justify-center items-center">
+                <BsArrowUpRight />
+              </div>
+            </div>
+
+            <h2 className="text-2xl font-semibold">
+              1
+              <span className="text-sm text-gray-400 ml-2">pending profiles</span>
+            </h2>
+          </div>
         </div>
       </div>
-      <div className="bg-white overflow-x-auto">
-        <Table columns={columns} dataSource={userData || []} pagination={false} rowKey="id" />
+
+      {/* ---------- Profiles Table ---------- */}
+      <div className="bg-white p-6 rounded-xl shadow-sm mb-10">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-lg font-semibold">Profiles</h2>
+          <div className="flex items-center gap-2">
+            <Input
+              prefix={<SearchOutlined />}
+              placeholder="Search..."
+              onChange={(e) => setSearchText(e.target.value)}
+              className="w-60"
+            />
+            <Dropdown overlay={menu} trigger={["click"]}>
+              <Button>
+                Filter <DownOutlined />
+              </Button>
+            </Dropdown>
+          </div>
+        </div>
+        <Table
+          columns={columns}
+          dataSource={data}
+          pagination={{ pageSize: 5 }}
+        />
       </div>
 
-      <Modal open={isModalOpen} onCancel={handleCancel} footer={null}>
-        {selectedUser && (
-          <div className="p-2">
-            <div className="bg-secondary py-5 text-center">
-              <Avatar size={200} src={selectedUser?.profileImage || AllImages.user} />
-              <h2 className="text-2xl font-bold mt-4 text-textColor">Name: {selectedUser.name}</h2>
-            </div>
-            <div className="my-6">
-              <div className="flex gap-2 mb-4">
-                <p className="text-gray-600 font-semibold">Email :</p>
-                <p>{selectedUser.email}</p>
-              </div>
-              <div className="flex gap-2 mb-4">
-                <p className="text-gray-600 font-semibold">Contact No :</p>
-                <p>{selectedUser?.contact || 'N/A'}</p>
-              </div>
-              <div className="flex gap-2 mb-4">
-                <p className="text-gray-600 font-semibold">Donation Amount:</p>
-                <p>{selectedUser?.donation_amount || 'N/A'}</p>
-              </div>
-
-              <div className="flex gap-2 mb-4">
-                <p className="text-gray-600 font-semibold">Address :</p>
-                <p>{selectedUser.address || 'N/A'}</p>
-              </div>
-
-            </div>
+      {/* ---------- Pending Approvals Table ---------- */}
+      <div className="bg-white p-6 rounded-xl shadow-sm">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-lg font-semibold">Pending Approvals</h2>
+          <div className="flex items-center gap-2">
+            <Input
+              prefix={<SearchOutlined />}
+              placeholder="Search..."
+              className="w-60"
+            />
+            <Dropdown overlay={menu} trigger={["click"]}>
+              <Button>
+                Filter <DownOutlined />
+              </Button>
+            </Dropdown>
           </div>
-        )}
-      </Modal>
+        </div>
+        <Table
+          columns={columns}
+          dataSource={data}
+          pagination={{ pageSize: 5 }}
+        />
+      </div>
     </div>
   );
 };
