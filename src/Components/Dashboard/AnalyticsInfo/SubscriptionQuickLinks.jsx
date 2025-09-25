@@ -1,17 +1,27 @@
 import { useState } from "react";
 import { Pagination, Select } from "antd";
-
 import { Table } from "antd";
-
 import { Input } from "antd";
 import { MoreOutlined } from "@ant-design/icons";
+import { RiRestartLine } from "react-icons/ri";
+import { VscEye } from "react-icons/vsc";
+import { DownOutlined } from "@ant-design/icons";
+import user from "../../../assets/image/user.png";
+import { FaArrowDownLong } from "react-icons/fa6";
 const SubscriptionQuickLinks = () => {
-  const [activeTab, setActiveTab] = useState("All Donors");
   const { Search } = Input;
   const { Option } = Select;
   const onSearch = (value) => {
     console.log("Search input: ", value);
   };
+
+  const [sortOrder, setSortOrder] = useState({
+    name: "ascend",
+    dateTime: "descend",
+    amount: "descend",
+    donationType: "ascend",
+  });
+
   const data = [
     {
       key: "1",
@@ -60,24 +70,122 @@ const SubscriptionQuickLinks = () => {
     },
   ];
 
+  const handleSort = (key, order) => {
+    setSortOrder({ ...sortOrder, [key]: order });
+    // Update sorting logic here based on the selected filters
+    data.sort((a, b) => {
+      if (key === "amount") {
+        return order === "ascend" ? a.amount - b.amount : b.amount - a.amount;
+      } else if (key === "name") {
+        return order === "ascend"
+          ? a.name.localeCompare(b.name)
+          : b.name.localeCompare(a.name);
+      } else if (key === "dateTime") {
+        return order === "ascend"
+          ? new Date(a.dateTime) - new Date(b.dateTime)
+          : new Date(b.dateTime) - new Date(a.dateTime);
+      } else {
+        return 0;
+      }
+    });
+  };
+
   const columns = [
     {
-      title: "Name",
-      dataIndex: "name",
-      key: "name",
-    },
-    {
-      title: "Email Address",
+      title: (
+        <div className="flex items-center gap-2">
+          Name/Email
+          <Select
+            defaultValue="ascend"
+            style={{ width: 80 }}
+            onChange={(value) => handleSort("name", value)}
+            suffixIcon={<DownOutlined />}
+          >
+            <Option value="ascend">Ascend</Option>
+            <Option value="descend">Descend</Option>
+          </Select>
+        </div>
+      ),
       dataIndex: "email",
       key: "email",
+      render: (text, record) => (
+        <div className="flex gap-1">
+          {/* Assuming 'user' is the image URL */}
+          <img
+            src={user}
+            alt={record.name}
+            className="h-10 w-10 rounded-full"
+          />
+          <div>
+            <p>{record.name}</p>
+            <p className="text-gray-400">{record.email}</p>
+          </div>
+        </div>
+      ),
     },
     {
-      title: "Date & Time",
+      title: "Type",
+      dataIndex: "donationMessage",
+      render: () => (
+        <div className="flex justify-center items-center gap-2">
+          <img src="" alt="" />
+          <p>Business</p>
+        </div>
+      ),
+    },
+    {
+      title: (
+        <div className="flex items-center gap-2">
+          Amount
+          <Select
+            defaultValue="descend"
+            style={{ width: 80 }}
+            onChange={(value) => handleSort("amount", value)}
+            suffixIcon={<DownOutlined />}
+          >
+            <Option value="ascend">Lowest</Option>
+            <Option value="descend">Highest</Option>
+          </Select>
+        </div>
+      ),
+      dataIndex: "amount",
+      key: "amount",
+      render: (amount) => `$${amount.toFixed(2)}`,
+    },
+    {
+      title: (
+        <div className="flex items-center gap-2">
+          Date & Time
+          <Select
+            defaultValue="descend"
+            style={{ width: 80 }}
+            onChange={(value) => handleSort("dateTime", value)}
+            suffixIcon={<DownOutlined />}
+          >
+            <Option value="ascend">Oldest</Option>
+            <Option value="descend">Recent</Option>
+          </Select>
+        </div>
+      ),
       dataIndex: "dateTime",
       key: "dateTime",
     },
     {
-      title: "Donation Type",
+      title: (
+        <div className="flex items-center gap-2">
+          Donation Type
+          <Select
+            defaultValue="One Time"
+            style={{ width: 120 }}
+            onChange={(value) => handleSort("donationType", value)}
+            suffixIcon={<DownOutlined />}
+          >
+            <Option value="One Time">One Time</Option>
+            <Option value="Recurring">Recurring</Option>
+            <Option value="Round Up">Round Up</Option>
+          </Select>
+        </div>
+      ),
       dataIndex: "donationType",
       key: "donationType",
     },
@@ -87,49 +195,34 @@ const SubscriptionQuickLinks = () => {
       key: "donationMessage",
     },
     {
-      title: "Amount",
-      dataIndex: "amount",
-      key: "amount",
-      render: (amount) => `$${amount.toFixed(2)}`,
-    },
-    {
       title: "Action",
       key: "action",
       render: () => (
-        <div>
-          <a href="#">View</a> | <a href="#">Reset</a>
+        <div className="flex justify-center items-center gap-2">
+          <VscEye className="h-5 w-5" />
+          <FaArrowDownLong className="h-5 w-5" />
+          <RiRestartLine className="h-5 w-5" />
         </div>
       ),
     },
   ];
+
   return (
     <div>
       <div className="flex justify-between items-center gap-5">
         <div>
-          <h1 className="text-3xl font-bold mb-4">Reports</h1>
+          <h1 className="text-3xl font-bold mb-4">Subscriptions Overview</h1>
           <p className="text-lg text-gray-600 mb-4">
-            Generate, track, and export your donation insights.
+            Track activity, view invoices, and keep renewals healthy.
           </p>
         </div>
-        <div className="flex justify-start items-center gap-5 mb-5">
-          {["All Donors", "Export"].map((tab) => (
-            <button
-              key={tab}
-              className={`px-4 py-2 rounded-3xl ${
-                activeTab === tab ? "bg-black text-white" : "bg-white border"
-              }`}
-              onClick={() => setActiveTab(tab)}
-            >
-              {tab}
-            </button>
-          ))}
-        </div>
+   
       </div>
 
       <div>
         <div className="grid grid-cols-1 md:grid-cols-3 justify-center  items-center gap-3">
           <div className="bg-white p-6 rounded-3xl border">
-            <p className="text-lg font-medium">Total Donations</p>
+            <p className="text-lg font-medium">Active Subscriptions</p>
             <h1 className="text-2xl font-medium mt-10">
               {" "}
               <span className="text-gray-400">$</span> 4000{" "}
@@ -137,26 +230,29 @@ const SubscriptionQuickLinks = () => {
               <span className="text-gray-400 text-sm">vs last month</span>{" "}
             </h1>
           </div>
+
           <div className="bg-white p-6 rounded-3xl border">
-            <p className="text-lg font-medium">Total Donors</p>
+            <p className="text-lg font-medium">Canceled Subscriptions</p>
+            <h1 className="text-2xl font-medium mt-10">
+              {" "}
+              <span className="text-gray-400">$</span> 400{" "}
+              <span className="text-gray-400 text-sm">vs last month</span>{" "}
+            </h1>
+          </div>
+          <div className="bg-white p-6 rounded-3xl border">
+            <p className="text-lg font-medium">Renewal Rate</p>
             <h1 className="text-2xl font-medium mt-10">
               {" "}
               <span className="text-gray-400">$</span> 4000{" "}
               <span className="text-sm text-green-500">5.4%</span>{" "}
-            </h1>
-          </div>
-          <div className="bg-white p-6 rounded-3xl border">
-            <p className="text-lg font-medium">Avg. Donation</p>
-            <h1 className="text-2xl font-medium mt-10">
-              {" "}
-              <span className="text-gray-400">$</span> 400{" "}
-              <span className="text-sm text-gray-400">per user</span>{" "}
+              <span className="text-gray-400 text-sm">vs last month</span>{" "}
             </h1>
           </div>
         </div>
+
         <div className="bg-white p-6 rounded-3xl border my-6">
           <div className="flex justify-between items-center gap-5">
-            <h1 className="text-xl font-medium">Donation History</h1>
+            <h1 className="text-xl font-medium">Subscription Listing</h1>
 
             <div className="flex items-center gap-3">
               <div className="mt-4 md:mt-0">
@@ -179,7 +275,7 @@ const SubscriptionQuickLinks = () => {
                   Monthly
                 </button>
               </div>
-              {/* export korte hobe */}
+
               <div className="group relative mt-4 md:mt-0">
                 <MoreOutlined className="text-xl cursor-pointer" />
                 <span className="absolute left-0 bottom-0 text-xs opacity-0 group-hover:opacity-100 transition-opacity duration-200">
