@@ -184,25 +184,7 @@ const OrganizationSubscription = () => {
     {
       title: (
         <div className="flex items-center gap-2">
-          Last Active
-          <Select
-            defaultValue="descend"
-            style={{ width: 100 }}
-            onChange={(value) => handleSort("dateTime", value)}
-            suffixIcon={<DownOutlined />}
-          >
-            <Option value="ascend">Oldest</Option>
-            <Option value="descend">Recent</Option>
-          </Select>
-        </div>
-      ),
-      dataIndex: "dateTime",
-      key: "dateTime",
-    },
-    {
-      title: (
-        <div className="flex items-center gap-2">
-          Role
+          Type
           <Select
             defaultValue="All"
             style={{ width: 130 }}
@@ -239,6 +221,43 @@ const OrganizationSubscription = () => {
       ),
     },
     {
+      title: (
+        <div className="flex items-center gap-2">
+          Start Date
+          <Select
+            defaultValue="descend"
+            style={{ width: 100 }}
+            onChange={(value) => handleSort("dateTime", value)}
+            suffixIcon={<DownOutlined />}
+          >
+            <Option value="ascend">Oldest</Option>
+            <Option value="descend">Recent</Option>
+          </Select>
+        </div>
+      ),
+      dataIndex: "dateTime",
+      key: "dateTime",
+    },
+    {
+      title: (
+        <div className="flex items-center gap-2">
+          Renewal Date
+          <Select
+            defaultValue="descend"
+            style={{ width: 100 }}
+            onChange={(value) => handleSort("dateTime", value)}
+            suffixIcon={<DownOutlined />}
+          >
+            <Option value="ascend">Oldest</Option>
+            <Option value="descend">Recent</Option>
+          </Select>
+        </div>
+      ),
+      dataIndex: "dateTime",
+      key: "dateTime",
+    },
+
+    {
       title: "Status",
       dataIndex: "status",
       key: "status",
@@ -264,12 +283,12 @@ const OrganizationSubscription = () => {
           <div className="bg-neutral-100 h-8 w-8 rounded-full p-1 flex justify-center items-center cursor-pointer">
             <VscEye />
           </div>
-          <div
+          {/* <div
             onClick={() => handleEdit(record)}
             className="bg-neutral-100 h-8 w-8 rounded-full p-1 flex justify-center items-center cursor-pointer"
           >
             <FaPencilAlt />
-          </div>
+          </div> */}
           <div className="bg-neutral-100 h-8 w-8 rounded-full p-1 flex justify-center items-center cursor-pointer">
             <RxCrossCircled />
           </div>
