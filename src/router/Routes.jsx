@@ -82,19 +82,19 @@ export const router = createBrowserRouter([
                 path: '/payment-management',
                 element: <Payment></Payment>
             },
-            {
-                path: '/add-category',
-                element: <Category></Category>
-            },
-            {
-                path: '/add-reward',
-                element: <Rewards></Rewards>
-            },
+            // {
+            //     path: '/add-category',
+            //     element: <Category></Category>
+            // },
+            // {
+            //     path: '/add-reward',
+            //     element: <Rewards></Rewards>
+            // },
 
-            {
-                path: '/make-admin',
-                element: <MakeAdmin />
-            },
+            // {
+            //     path: '/make-admin',
+            //     element: <MakeAdmin />
+            // },
 
             // setting:
           
