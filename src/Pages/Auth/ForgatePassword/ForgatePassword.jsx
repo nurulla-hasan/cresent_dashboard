@@ -1,7 +1,7 @@
 import { ConfigProvider, Form, Input } from "antd";
 import img from "../../../assets/image/forgate.png";
 import { Link } from "react-router-dom";
-import logo from "../../../assets/image/logo.png";
+import logo from "../../../assets/image/Logo.png";
 import { AiOutlineMail } from "react-icons/ai";
 
 const ForgatePassword = () => {
