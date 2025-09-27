@@ -1,5 +1,5 @@
 import img from "../../../assets/image/otp.png";
-import logo from "../../../assets/image/logo.png";
+import logo from "../../../assets/image/Logo.png";
 import OTPInput from "react-otp-input";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";

@@ -1,7 +1,7 @@
 import { Checkbox, ConfigProvider, Form, Input } from "antd";
 import img from "../../../assets/image/login.png"; // Adjust path as necessary
 import { Link } from "react-router-dom";
-import logo from "../../../assets/image/logo.png"; // Adjust path as necessary
+import logo from "../../../assets/image/Logo.png"; // Adjust path as necessary
 import { AiOutlineMail } from "react-icons/ai";
 import { MdLockOutline } from "react-icons/md";
 

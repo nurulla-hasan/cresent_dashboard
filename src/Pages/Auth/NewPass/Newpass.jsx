@@ -1,6 +1,6 @@
 import { ConfigProvider, Form, Input } from "antd";
 import img from "../../../assets/image/reset.png"; // Path to the image
-import logo from "../../../assets/image/logo.png"; // Path to the logo
+import logo from "../../../assets/image/Logo.png"; // Path to the logo
 import { useNavigate } from "react-router-dom";
 import { MdLockOutline } from "react-icons/md";
 

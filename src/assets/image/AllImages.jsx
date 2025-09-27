@@ -1,4 +1,4 @@
-import brandlogo from "./logo.png"
+import brandlogo from "./Logo.png"
 import user from "./user.png"
 import home from "./home.png"
 import blockUser from "./blockUser.png"
