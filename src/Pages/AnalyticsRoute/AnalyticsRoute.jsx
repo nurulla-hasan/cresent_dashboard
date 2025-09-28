@@ -193,7 +193,7 @@ const AnalyticsRoute = () => {
 
       {/* Donations Trend */}
       <div className="bg-white p-6 rounded-3xl border ">
-        <div className="">
+        <div className="h-[400px] w-full py-6">
           <h1 className="text-2xl font-medium mb-6">Donation Trend</h1>
 
           <ResponsiveContainer
@@ -220,31 +220,30 @@ const AnalyticsRoute = () => {
         </div>
       </div>
 
-      {/* Top Causes + Pie + Export */}
-      <div className="my-6">
-        <div className="lg:col-span-2">
-          <div className="flex items-start justify-between mb-6">
-            <div>
-              <Title level={4} className="!mb-1">
-                Top Causes
-              </Title>
-              <p type="secondary" className="!mb-0">
-                Which causes are receiving the most support.
-              </p>
+      {/* Top Causes + Pie */}
+      <div className="bg-white p-6 rounded-3xl my-10 border">
+        <div className="grid grid-cols-1 md:grid-cols-2 justify-center items-center gap-5">
+          <div className="">
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h1 className="text-2xl font-medium">Top Causes</h1>
+                <p className="text-gray-400">
+                  {" "}
+                  Which causes are receiving the most support.
+                </p>
+              </div>
+              <Link to="#" className="text-xs text-blue-600 hover:underline">
+                View all causes
+              </Link>
             </div>
-            <Link to="#" className="text-xs text-blue-600 hover:underline mt-1">
-              View all causes
-            </Link>
-          </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="flex flex-col gap-4">
               {causes.map((c) => (
                 <div key={c.id} className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <span
                       className="inline-block h-3 w-3 rounded-full"
-                      style={{ background: c.color }}
+                      style={{ backgroundColor: c.color }}
                     />
                     <div>
                       <div className="font-medium">{c.name}</div>
@@ -255,47 +254,50 @@ const AnalyticsRoute = () => {
                 </div>
               ))}
             </div>
+          </div>
 
-            <div className="h-64">
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <RechartsTooltip />
-                  <Pie
-                    data={causes}
-                    dataKey="percent"
-                    nameKey="name"
-                    innerRadius={60}
-                    outerRadius={90}
-                    paddingAngle={1}
-                    cornerRadius={6}
-                  >
-                    {causes.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.color} />
-                    ))}
-                  </Pie>
-                </PieChart>
-              </ResponsiveContainer>
-            </div>
+          {/* Right Section: Pie Chart */}
+          <div className="h-full w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <PieChart>
+                <RechartsTooltip />
+                <Pie
+                  data={causes}
+                  dataKey="percent"
+                  nameKey="name"
+                  cx="50%"
+                  cy="50%"
+                  outerRadius="100%"
+                  innerRadius={0}
+                  paddingAngle={1}
+                  cornerRadius={6}
+                >
+                  {causes.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={entry.color} />
+                  ))}
+                </Pie>
+              </PieChart>
+            </ResponsiveContainer>
           </div>
         </div>
-        {/* Export */}
-        <div>
-          <Title level={4} className="!mb-2">
-            Export Analytics Data
-          </Title>
-          <p type="secondary">Download a full report of filtered analytics.</p>
-          <Divider className="my-4" />
-          <Button
-            type="primary"
-            icon={<DownloadOutlined />}
-            className="rounded-full"
-          >
-            Export
-          </Button>
-          <div className="mt-3 text-xs text-gray-500">
-            The export includes current range (<b>{active}</b>) and all visible
-            data.
-          </div>
+      </div>
+
+      <div>
+        <Title level={4} className="!mb-2">
+          Export Analytics Data
+        </Title>
+        <p type="secondary">Download a full report of filtered analytics.</p>
+        <Divider className="my-4" />
+        <Button
+          type="primary"
+          icon={<DownloadOutlined />}
+          className="rounded-full"
+        >
+          Export
+        </Button>
+        <div className="mt-3 text-xs text-gray-500">
+          The export includes current range (<b>{active}</b>) and all visible
+          data.
         </div>
       </div>
     </div>
