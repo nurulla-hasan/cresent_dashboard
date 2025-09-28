@@ -22,9 +22,8 @@ import DonationQuickLink from "../Components/Dashboard/AnalyticsInfo/DonationQui
 import SubscriptionQuickLinks from "../Components/Dashboard/AnalyticsInfo/SubscriptionQuickLinks";
 import RewardsQuickLinks from "../Components/Dashboard/AnalyticsInfo/RewardsQuickLinks";
 import AnalyticsRoute from "../Pages/AnalyticsRoute/AnalyticsRoute";
-import DonorApp from "../Pages/DonorApp/DOnorApp";
-import BusinessReview from "../Pages/DonorApp/BusinessReview";
 import BusinessAdmin from "../Pages/BusinessAdmin/BusinessAdmin";
+import DonorApp from "../Pages/DonorApp/DonorApp";
 
 export const router = createBrowserRouter([
   {
