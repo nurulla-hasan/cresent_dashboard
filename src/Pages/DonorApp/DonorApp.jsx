@@ -1,5 +1,7 @@
 import { FaArrowDown, FaPen, FaPlus } from "react-icons/fa";
 import DonorDataTable from "./DonorDataTable";
+import BadgeTable from "./BadgeTable";
+import BusinessReview from "./BusinessReview";
 
 const DonorApp = () => {
   return (
@@ -26,6 +28,8 @@ const DonorApp = () => {
         </div>
       </div>
       <DonorDataTable />
+      <BadgeTable />
+      <BusinessReview />
     </div>
   );
 };
