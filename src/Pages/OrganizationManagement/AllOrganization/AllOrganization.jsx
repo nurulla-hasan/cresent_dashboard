@@ -1,5 +1,6 @@
 import { FaArrowDown, FaPlus } from "react-icons/fa";
 import OrganizationTable from "../OrganizationTable";
+import CauseManagement from "../CauseManagement";
 
 const AllOrganization = () => {
   return (
@@ -21,7 +22,8 @@ const AllOrganization = () => {
           </button>
         </div>
       </div>
-<OrganizationTable></OrganizationTable>
+      <OrganizationTable></OrganizationTable>
+      <CauseManagement />
     </div>
   );
 };

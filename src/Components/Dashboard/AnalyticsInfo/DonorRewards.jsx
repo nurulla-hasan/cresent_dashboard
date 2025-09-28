@@ -5,7 +5,6 @@ import {
   Form,
   Input,
   InputNumber,
-  Card,
   notification,
   Dropdown,
   Menu,
@@ -16,9 +15,7 @@ import {
   DeleteOutlined,
   EllipsisOutlined,
 } from "@ant-design/icons";
-import free from "../../../assets/image/free.png";
-import entire from "../../../assets/image/entire.png";
-import muffin from "../../../assets/image/muffin.png";
+import muffin from "../../../assets/image/muffin.png"; 
 // Data for the rewards (mock data as per your design)
 const initialRewards = [
   {
