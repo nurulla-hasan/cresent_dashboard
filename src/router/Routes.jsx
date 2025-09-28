@@ -1,6 +1,4 @@
-import {
-    createBrowserRouter,
-} from "react-router-dom";
+import { createBrowserRouter } from "react-router-dom";
 import MainLayout from "../Layout/Main/Main";
 import Analytics from "../Pages/Analytics/Analytics";
 import SignIn from "../Pages/Auth/SignIn/SignIn";
@@ -25,114 +23,115 @@ import Rewards from "../Pages/Rewards/Rewards";
 import DonationQuickLink from "../Components/Dashboard/AnalyticsInfo/DonationQuickLink";
 import SubscriptionQuickLinks from "../Components/Dashboard/AnalyticsInfo/SubscriptionQuickLinks";
 import RewardsQuickLinks from "../Components/Dashboard/AnalyticsInfo/RewardsQuickLinks";
-
+import AnalyticsRoute from "../Pages/AnalyticsRoute/AnalyticsRoute";
 
 export const router = createBrowserRouter([
-    {
-        path: "/sign-in",
-        element: <SignIn></SignIn>
-    },
+  {
+    path: "/sign-in",
+    element: <SignIn></SignIn>,
+  },
 
-    {
-        path: "/forgate-password",
-        element: <ForgatePassword></ForgatePassword>
-    },
-    {
-        path: "/varification",
-        element: <VerifyPass></VerifyPass>
-    },
+  {
+    path: "/forgate-password",
+    element: <ForgatePassword></ForgatePassword>,
+  },
+  {
+    path: "/varification",
+    element: <VerifyPass></VerifyPass>,
+  },
 
-    {
-        path: "/new-password",
-        element: <Newpass></Newpass>
-    },
-    {
-        path: "/continue-page",
-        element: <ContinuePage />
-    },
-    {
+  {
+    path: "/new-password",
+    element: <Newpass></Newpass>,
+  },
+  {
+    path: "/continue-page",
+    element: <ContinuePage />,
+  },
+  {
+    path: "/",
+    element: <MainLayout />,
+    children: [
+      {
         path: "/",
-        element: <MainLayout />,
-        children: [
-            {
-                path: "/",
-                element: <Analytics />
-            },
-            {
-                path: "/user-management/all-users",
-                element: <AllUsers />
-            },
-            {
-                path: "/user-management/subscribers",
-                element: <Subscribers />
-            },
-            {
-                path: '/organization-management/all-organizations',
-                element: <AllOrganization />
-            },
-            {
-                path: '/organization-management/subscribers-organizations',
-                element: <SubscribersOrganization />
-            },
-            {
-                path: '/subdcription-management',
-                element: <Subscription />
-            },
-            {
-                path: '/payment-management',
-                element: <Payment></Payment>
-            },
-            // {
-            //     path: '/add-category',
-            //     element: <Category></Category>
-            // },
-            // {
-            //     path: '/add-reward',
-            //     element: <Rewards></Rewards>
-            // },
+        element: <Analytics />,
+      },
+      {
+        path: "/user-management/all-users",
+        element: <AllUsers />,
+      },
+      {
+        path: "/user-management/subscribers",
+        element: <Subscribers />,
+      },
+      {
+        path: "/organization-management/all-organizations",
+        element: <AllOrganization />,
+      },
+      {
+        path: "/organization-management/subscribers-organizations",
+        element: <SubscribersOrganization />,
+      },
+      {
+        path: "/subdcription-management",
+        element: <Subscription />,
+      },
+      {
+        path: "/payment-management",
+        element: <Payment></Payment>,
+      },
+      {
+        path: "/analytics",
+        element: <AnalyticsRoute />,
+      },
+      // {
+      //     path: '/add-category',
+      //     element: <Category></Category>
+      // },
+      // {
+      //     path: '/add-reward',
+      //     element: <Rewards></Rewards>
+      // },
 
-            // {
-            //     path: '/make-admin',
-            //     element: <MakeAdmin />
-            // },
+      // {
+      //     path: '/make-admin',
+      //     element: <MakeAdmin />
+      // },
 
-            // setting:
-          
-            {
-                path: "/settings/contact-us",
-                element: <ContactUS />
-            },
+      // setting:
 
+      {
+        path: "/settings/contact-us",
+        element: <ContactUS />,
+      },
 
-        
-            {
-                path: "/settings/banner",
-                element: <Banner />
-            },
+      {
+        path: "/settings/banner",
+        element: <Banner />,
+      },
 
-            // Admin profile:
-            {
-                path: '/admin-profile',
-                element: <AdminProfile />
-            },
-            {
-                path: '/notification',
-                element: <Notifications />
-            },
-            //Quick limks:
-            {
-                path:"donationQuickLink",
-                element:<DonationQuickLink/>
-            },
-            {
-                path:"subscriptions",
-                element:<SubscriptionQuickLinks/>
-            },
-            {
-                path:"rewards",
-                element:<RewardsQuickLinks/>
-            }
-
-        ]
-    },
+      // Admin profile:
+      {
+        path: "/admin-profile",
+        element: <AdminProfile />,
+      },
+      {
+        path: "/notification",
+        element: <Notifications />,
+      },
+      //Quick limks:
+      {
+        path: "donationQuickLink",
+        element: <DonationQuickLink />,
+      },
+      {
+        path: "subscriptions",
+        element: <SubscriptionQuickLinks />,
+      },
+      {
+        path: "rewards",
+        element: <RewardsQuickLinks />,
+      },
+    ],
+  },
 ]);
