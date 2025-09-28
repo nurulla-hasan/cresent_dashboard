@@ -5,7 +5,7 @@ import { FiUser, FiLogOut } from "react-icons/fi";
 import { BiChevronDown } from "react-icons/bi";
 import { Link } from "react-router-dom";
 import { MdDashboard } from "react-icons/md";
-import { FaGift, FaMoneyCheckAlt } from "react-icons/fa";
+import { FaMoneyCheckAlt } from "react-icons/fa";
 
 import { SlOrganization } from "react-icons/sl";
 import { TbDeviceDesktopAnalytics } from "react-icons/tb";
@@ -60,15 +60,15 @@ const Sidebar = ({ closeDrawer }) => {
       label: "Donor App",
       Link: "/donor-app",
     },
-    {
-      icon: <FaGift className="h-5 w-5" />,
-      label: "Rewards",
-      Link: "/add-reward",
-    },
+    // {
+    //   icon: <FaGift className="h-5 w-5" />,
+    //   label: "Rewards",
+    //   Link: "/add-reward",
+    // },
     {
       icon: <FaMoneyCheckAlt className="h-5 w-5" />,
       label: "Business Admin ",
-      Link: "/make-admin",
+      Link: "/business-admin",
     },
 
     {

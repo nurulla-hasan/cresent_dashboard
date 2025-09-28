@@ -23,6 +23,8 @@ import SubscriptionQuickLinks from "../Components/Dashboard/AnalyticsInfo/Subscr
 import RewardsQuickLinks from "../Components/Dashboard/AnalyticsInfo/RewardsQuickLinks";
 import AnalyticsRoute from "../Pages/AnalyticsRoute/AnalyticsRoute";
 import DonorApp from "../Pages/DonorApp/DOnorApp";
+import BusinessReview from "../Pages/DonorApp/BusinessReview";
+import BusinessAdmin from "../Pages/BusinessAdmin/BusinessAdmin";
 
 export const router = createBrowserRouter([
   {
@@ -92,10 +94,10 @@ export const router = createBrowserRouter([
       //     element: <Rewards></Rewards>
       // },
 
-      // {
-      //     path: '/make-admin',
-      //     element: <MakeAdmin />
-      // },
+      {
+          path: '/business-admin',
+          element: <BusinessAdmin/>
+      },
 
       // setting:
 
