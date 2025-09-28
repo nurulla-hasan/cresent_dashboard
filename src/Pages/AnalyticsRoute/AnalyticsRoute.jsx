@@ -16,8 +16,9 @@ import {
   YAxis,
   Cell,
 } from "recharts";
-import { Button, Divider } from "antd";
-import { FaArrowDown } from "react-icons/fa";
+import { Button, Checkbox, Divider, Modal, Select, Space } from "antd";
+import { FaArrowDown, FaFilter } from "react-icons/fa";
+const { Option } = Select;
 const AnalyticsRoute = () => {
   const [active, setActive] = useState("Today");
 
@@ -95,6 +96,20 @@ const AnalyticsRoute = () => {
     { name: "Nov", Organization: 35, Business: 30, Donor: 30 },
     { name: "Dec", Organization: 40, Business: 30, Donor: 30 },
   ];
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [userTypes, setUserTypes] = useState(["Organizations"]);
+  const [causeCategory, setCauseCategory] = useState("Emergency Relief");
+  const [donationTypes, setDonationTypes] = useState(["Recurring"]);
+
+  const userOptions = ["Donors", "Organizations", "Businesses"];
+  const donationOptions = ["Round-up", "Recurring", "One-time"];
+  const causeOptions = ["Emergency Relief", "Education", "Refugee Support"];
+
+  const handleClear = () => {
+    setUserTypes([]);
+    setCauseCategory("Emergency Relief");
+    setDonationTypes([]);
+  };
 
   return (
     <div>
@@ -106,7 +121,14 @@ const AnalyticsRoute = () => {
             platform.
           </p>
         </div>
-        <div className="w-full md:w-[30%] flex justify-start items-center gap-5">
+        <div className="w-full md:w-[40%] flex justify-start items-center gap-5">
+          <button
+            onClick={() => setIsModalVisible(true)}
+            className="bg-white px-6 py-2 rounded-3xl flex items-center gap-2"
+          >
+            <FaFilter />
+            Filter
+          </button>
           <button
             className={btnClass("Today")}
             onClick={() => setActive("Today")}
@@ -294,6 +316,58 @@ const AnalyticsRoute = () => {
           Export <FaArrowDown />
         </button>
       </div>
+
+      <Modal
+        title="Filter"
+        open={isModalVisible}
+        onCancel={() => setIsModalVisible(false)}
+        footer={
+          <Space>
+            <Button onClick={handleClear}>Clear All</Button>
+            <Button type="primary" onClick={() => setIsModalVisible(false)}>
+              Apply Filter
+            </Button>
+          </Space>
+        }
+        centered
+        width={560}
+      >
+        <p className="text-gray-400 mb-6">
+          Filter insights by time, user type, or cause.
+        </p>
+        <div className="mb-4">
+          <label className="block mb-2 font-medium">User Type</label>
+          <Checkbox.Group
+            options={userOptions}
+            value={userTypes}
+            onChange={(checkedValues) => setUserTypes(checkedValues)}
+          />
+        </div>
+
+        <div className="mb-4">
+          <label className="block mb-2 font-medium">Cause Categories</label>
+          <Select
+            value={causeCategory}
+            onChange={(value) => setCauseCategory(value)}
+            style={{ width: "100%" }}
+          >
+            {causeOptions.map((cause) => (
+              <Option key={cause} value={cause}>
+                {cause}
+              </Option>
+            ))}
+          </Select>
+        </div>
+
+        <div className="mb-4">
+          <label className="block mb-2 font-medium">Donation Type</label>
+          <Checkbox.Group
+            options={donationOptions}
+            value={donationTypes}
+            onChange={(checkedValues) => setDonationTypes(checkedValues)}
+          />
+        </div>
+      </Modal>
     </div>
   );
 };
