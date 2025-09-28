@@ -7,8 +7,7 @@ import Newpass from "../Pages/Auth/NewPass/Newpass";
 import VerifyPass from "../Pages/Auth/VerifyPass/VerifyPass";
 import ContinuePage from "../Pages/Auth/ContinuePage/ContinuePage";
 import Payment from "../Pages/Payment/Payment";
-import MakeAdmin from "../Pages/MakeAdmin/MakeAdmin";
-import Category from "../Pages/Category/Category";
+
 import Subscription from "../Pages/Subscription/Subscription";
 import ContactUS from "../Pages/Settings/ContactUS/ContactUS";
 
@@ -19,11 +18,11 @@ import AllUsers from "../Components/UserManagemnet/AllUsers/AllUsers";
 import Subscribers from "../Components/UserManagemnet/Subscribers/Subscribers";
 import AllOrganization from "../Pages/OrganizationManagement/AllOrganization/AllOrganization";
 import SubscribersOrganization from "../Pages/OrganizationManagement/SubscribersOrganization/SubscribersOrganization";
-import Rewards from "../Pages/Rewards/Rewards";
 import DonationQuickLink from "../Components/Dashboard/AnalyticsInfo/DonationQuickLink";
 import SubscriptionQuickLinks from "../Components/Dashboard/AnalyticsInfo/SubscriptionQuickLinks";
 import RewardsQuickLinks from "../Components/Dashboard/AnalyticsInfo/RewardsQuickLinks";
 import AnalyticsRoute from "../Pages/AnalyticsRoute/AnalyticsRoute";
+import DonorApp from "../Pages/DonorApp/DOnorApp";
 
 export const router = createBrowserRouter([
   {
@@ -84,10 +83,10 @@ export const router = createBrowserRouter([
         path: "/analytics",
         element: <AnalyticsRoute />,
       },
-      // {
-      //     path: '/add-category',
-      //     element: <Category></Category>
-      // },
+      {
+        path: "/donor-app",
+        element: <DonorApp />,
+      },
       // {
       //     path: '/add-reward',
       //     element: <Rewards></Rewards>

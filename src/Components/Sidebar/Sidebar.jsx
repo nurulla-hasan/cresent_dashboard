@@ -58,7 +58,7 @@ const Sidebar = ({ closeDrawer }) => {
     {
       icon: <IoHeartCircleOutline className="h-5 w-5" />,
       label: "Donor App",
-      Link: "/add-category",
+      Link: "/donor-app",
     },
     {
       icon: <FaGift className="h-5 w-5" />,
