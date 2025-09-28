@@ -17,6 +17,7 @@ import {
   Cell,
 } from "recharts";
 import { Button, Divider } from "antd";
+import { FaArrowDown } from "react-icons/fa";
 const AnalyticsRoute = () => {
   const [active, setActive] = useState("Today");
 
@@ -221,7 +222,7 @@ const AnalyticsRoute = () => {
       </div>
 
       {/* Top Causes + Pie */}
-      <div className="bg-white p-6 rounded-3xl my-10 border">
+      <div className="bg-white p-6 rounded-3xl my-6 border">
         <div className="grid grid-cols-1 md:grid-cols-2 justify-center items-center gap-5">
           <div className="">
             <div className="flex items-center justify-between mb-6">
@@ -282,23 +283,16 @@ const AnalyticsRoute = () => {
         </div>
       </div>
 
-      <div>
-        <Title level={4} className="!mb-2">
-          Export Analytics Data
-        </Title>
-        <p type="secondary">Download a full report of filtered analytics.</p>
-        <Divider className="my-4" />
-        <Button
-          type="primary"
-          icon={<DownloadOutlined />}
-          className="rounded-full"
-        >
-          Export
-        </Button>
-        <div className="mt-3 text-xs text-gray-500">
-          The export includes current range (<b>{active}</b>) and all visible
-          data.
+      <div className="bg-white p-6 rounded-3xl my-6 border flex justify-between items-center gap-5">
+        <div>
+          <h1 className="text-2xl font-medium">Export Analytics Data</h1>
+          <p className="text-gray-400">
+            Download a full report of filtered analytics.
+          </p>
         </div>
+        <button className="px-6 py-3 rounded-3xl bg-black text-white flex justify-center items-center gap-2">
+          Export <FaArrowDown />
+        </button>
       </div>
     </div>
   );
