@@ -1,94 +1,77 @@
 /* eslint-disable react/prop-types */
 import { useState } from "react";
-import { AiOutlineSetting } from "react-icons/ai";
-import { FiUser, FiLogOut } from "react-icons/fi";
 import { BiChevronDown } from "react-icons/bi";
-import { Link } from "react-router-dom";
-import { MdDashboard } from "react-icons/md";
-import { FaMoneyCheckAlt } from "react-icons/fa";
+import { Link, useNavigate } from "react-router-dom";
 
-import { SlOrganization } from "react-icons/sl";
-import { TbDeviceDesktopAnalytics } from "react-icons/tb";
-import { IoHeartCircleOutline } from "react-icons/io5";
+import dashboard from "../../assets/image/dashboard.png";
+import users from "../../assets/image/users.png";
+import subscription from "../../assets/image/subscription.png";
+import analytics from "../../assets/image/analytics.png";
+import organization from "../../assets/image/organization.png";
+import donor from "../../assets/image/donor.png";
+import business from "../../assets/image/business.png";
+import setting from "../../assets/image/settings.png";
+import logout from "../../assets/image/logout.png";
+
 const Sidebar = ({ closeDrawer }) => {
   const [active, setActive] = useState("Dashboard");
   const [openDropdown, setOpenDropdown] = useState("");
+  const navigate = useNavigate();
 
   const handleActiveRoute = (item) => {
     setActive(item);
     setOpenDropdown("");
+    if (closeDrawer) closeDrawer();
   };
 
   const handleSubItemClick = (subItem) => {
     setActive(subItem);
-    closeDrawer();
+    if (closeDrawer) closeDrawer();
   };
+
   const toggleDropdown = (label) => {
     setOpenDropdown(openDropdown === label ? "" : label);
   };
 
+  const handleLogout = () => {
+    // clear user session/token
+    localStorage.removeItem("authToken");
+    sessionStorage.clear();
+
+    // redirect to login page
+    navigate("/sign-in");
+  };
+
   const menuItems = [
+    { icon: dashboard, label: "Dashboard", Link: "/" },
+    { icon: users, label: "User Management", Link: "/user-management/all-users" },
+    { icon: subscription, label: "Subscription & Payment", Link: "/subscription-management" },
+    { icon: analytics, label: "Analytics", Link: "/analytics" },
     {
-      icon: <MdDashboard className="h-5 w-5" />,
-      label: "dashboard",
-      Link: "/",
-    },
-    {
-      icon: <FiUser className="h-5 w-5" />,
-      label: "User Management",
-      Link: "/user-management/all-users",
-    },
-    {
-      icon: <FaMoneyCheckAlt className="h-5 w-5" />,
-      label: "Subdcription & Payment ",
-      Link: "/subdcription-management",
-    },
-    {
-      icon: <TbDeviceDesktopAnalytics className="h-5 w-5" />,
-      label: "Analytics ",
-      Link: "/analytics",
-    },
-    {
-      icon: <SlOrganization className="h-5 w-5" />,
-      label: "Organizations ",
+      icon: organization,
+      label: "Organizations",
       Link: "/organization-management/all-organizations",
-      //
     },
-
+    { icon: donor, label: "Donor App", Link: "/donor-app" },
+    { icon: business, label: "Business Admin", Link: "/business-admin" },
+    // Settings section with mt-20
     {
-      icon: <IoHeartCircleOutline className="h-5 w-5" />,
-      label: "Donor App",
-      Link: "/donor-app",
-    },
-    // {
-    //   icon: <FaGift className="h-5 w-5" />,
-    //   label: "Rewards",
-    //   Link: "/add-reward",
-    // },
-    {
-      icon: <FaMoneyCheckAlt className="h-5 w-5" />,
-      label: "Business Admin ",
-      Link: "/business-admin",
-    },
-
-    {
-      icon: <AiOutlineSetting className="h-5 w-5" />,
+      icon: setting,
       label: "Settings",
       Link: "/settings/contact-us",
+      className: "mt-32",
     },
   ];
 
   return (
-    <div className="bg-[#f9f7f9] h-full border-r ">
-      <div className="flex flex-col md:h-full ">
+    <div className="bg-[#f9f7f9] h-full border-r">
+      <div className="flex flex-col md:h-full">
         <div className="flex flex-col gap-2 md:my-5 mb-10 px-4 py-8">
           {menuItems.map((item) => (
-            <div key={item.label}>
+            <div key={item.label} className={item.className || ""}>
               <div
-                className={` flex justify-between items-center p-4 cursor-pointer rounded-2xl  ${
-                  active === item.label
-                    ? "bg-primary  font-semibold"
-                    : "bg-white text-black font-semibold"
+                className={`text-lg flex justify-between items-center p-4 cursor-pointer rounded-2xl ${
+                  active === item.label ? "bg-primary" : "text-black"
                 }`}
                 onClick={() =>
                   item.isDropdown
@@ -98,7 +81,7 @@ const Sidebar = ({ closeDrawer }) => {
               >
                 <Link to={item.Link}>
                   <div className="flex items-center gap-3">
-                    {item.icon}
+                    <img src={item.icon} alt={item.label} />
                     <p>{item.label}</p>
                     {item.isDropdown && (
                       <BiChevronDown
@@ -110,16 +93,15 @@ const Sidebar = ({ closeDrawer }) => {
                   </div>
                 </Link>
               </div>
-              {/* Dropdown for sub-items */}
               {item.isDropdown && openDropdown === item.label && (
                 <div className="flex flex-col">
                   {item.subItems.map((subItem) => (
                     <Link to={subItem.Link} key={subItem.label}>
                       <div
-                        className={`py-2 px-5 cursor-pointer  ${
+                        className={`py-2 px-5 cursor-pointer ${
                           active === subItem.label
-                            ? " bg-primary font-bold"
-                            : "text-black"
+                            ? "bg-primary font-bold"
+                            : "text-black hover:bg-primary"
                         }`}
                         onClick={() => handleSubItemClick(subItem.label)}
                       >
@@ -134,16 +116,15 @@ const Sidebar = ({ closeDrawer }) => {
               )}
             </div>
           ))}
-          {/* Logout */}
-          <Link className="text-black hover:text-black" to="/sign-in">
-            <div
-              className="bg-primary w-72 md:mt-20 py-3 flex justify-center items-center cursor-pointer hover:bg-primary "
-              onClick={() => console.log("Logged out")}
-            >
-              <FiLogOut className="text-xl" />
-              <p className="ml-2">Log out</p>
-            </div>
-          </Link>
+
+          {/* Logout button */}
+          <button
+            onClick={handleLogout}
+            className="flex items-center gap-2  rounded-2xl text-black hover:bg-primary py-4 px-5 cursor-pointer"
+          >
+            <img src={logout} alt="Logout" />
+            <p>Logout</p>
+          </button>
         </div>
       </div>
     </div>
