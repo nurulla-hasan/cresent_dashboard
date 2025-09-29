@@ -41,17 +41,9 @@ const Subscription = () => {
       </div>
       <div className="grid grid-cols-2 gap-4 mb-8 ">
         <div className="bg-gray-100 p-6 rounded-3xl">
-          <div className="flex justify-between items-center gap-2 mb-8">
+          <div className="flex justify-between items-center gap-2 mb-20">
             <div>
-              <p className="text-xl font-semibold mb-20">Overview</p>
-              <p className="text-neutral-400 text-2xl">
-                1,420
-                <span className="text-green-500 text-sm">Active</span>{" "}
-                <span className="text-sm ">
-                  {" "}
-                  subscriptions across donors, businesses, and organizations.
-                </span>
-              </p>
+              <p className="tetx-xl font-semibold">Overview</p>
             </div>
             <Link to="/donationQuickLink">
               <div className="bg-white rounded-full h-10 w-10 p-1 flex justify-center items-center">
@@ -59,7 +51,17 @@ const Subscription = () => {
               </div>
             </Link>
           </div>
+
+          <p className="text-neutral-400 text-2xl">
+            1,420
+            <span className="text-green-500 text-sm">Active</span>{" "}
+            <span className="text-sm ">
+              {" "}
+              subscriptions across donors, businesses, and organizations.
+            </span>
+          </p>
         </div>
+
         <div className="bg-gray-100 p-6 rounded-3xl">
           <p className="text-xl font-semibold mb-20">Breakdown</p>
           <div className="my-6 flex justify-center items-center gap-2">
@@ -75,7 +77,7 @@ const Subscription = () => {
               </div>
               <h1 className="text-2xl font-bold">500</h1>
             </div>
-           <div>
+            <div>
               <div className="flex justify-center items-center gap-1">
                 <div className="h-2 w-2 bg-blue-200"></div>
                 <p>Business</p>
