@@ -11,7 +11,7 @@ import PendingApproval from "../PendingApproval";
 const AllUsers = () => {
   const [searchText, setSearchText] = useState("");
 
-  // ----------- Static Table Data -----------
+
   const data = [
     {
       key: "1",
@@ -55,7 +55,6 @@ const AllUsers = () => {
     },
   ];
 
-  // ----------- Table Columns -----------
   const columns = [
     {
       title: "Name/Email",
@@ -120,7 +119,7 @@ const AllUsers = () => {
     },
   ];
 
-  // ----------- Dropdown Filter Menu -----------
+
   const menu = (
     <Menu>
       <Menu.Item>Sort A - Z</Menu.Item>
@@ -132,7 +131,7 @@ const AllUsers = () => {
 
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
-      {/* ---------- Top Title ---------- */}
+
       <div className="flex justify-between items-center mb-6">
         <div>
           <h1 className="text-2xl font-semibold">User Management</h1>
@@ -145,7 +144,7 @@ const AllUsers = () => {
         </button>
       </div>
 
-      {/* ---------- Stats Cards ---------- */}
+   
       <div className="bg-white p-6 rounded-3xl my-10 border">
         <div>
           <h1 className="text-2xl font-semibold mb-12">
@@ -249,7 +248,7 @@ const AllUsers = () => {
         </div>
       </div>
 
-      {/* ---------- Profiles Table ---------- */}
+
       <ProfileTables />
 
       <PendingApproval />

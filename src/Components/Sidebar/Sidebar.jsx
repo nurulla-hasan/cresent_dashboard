@@ -45,7 +45,7 @@ const Sidebar = ({ closeDrawer }) => {
   const menuItems = [
     { icon: dashboard, label: "Dashboard", Link: "/" },
     { icon: users, label: "User Management", Link: "/user-management/all-users" },
-    { icon: subscription, label: "Subscription & Payment", Link: "/subscription-management" },
+    { icon: subscription, label: "Subscription & Payment", Link: "/subdcription-management" },
     { icon: analytics, label: "Analytics", Link: "/analytics" },
     {
       icon: organization,
@@ -70,7 +70,7 @@ const Sidebar = ({ closeDrawer }) => {
           {menuItems.map((item) => (
             <div key={item.label} className={item.className || ""}>
               <div
-                className={`text-lg flex justify-between items-center p-4 cursor-pointer rounded-2xl ${
+                className={`text-lg flex justify-between items-center p-4 cursor-pointer rounded-2xl hover:bg-primary ${
                   active === item.label ? "bg-primary" : "text-black"
                 }`}
                 onClick={() =>
@@ -98,7 +98,7 @@ const Sidebar = ({ closeDrawer }) => {
                   {item.subItems.map((subItem) => (
                     <Link to={subItem.Link} key={subItem.label}>
                       <div
-                        className={`py-2 px-5 cursor-pointer ${
+                        className={`py-2 px-5 cursor-pointer  ${
                           active === subItem.label
                             ? "bg-primary font-bold"
                             : "text-black hover:bg-primary"

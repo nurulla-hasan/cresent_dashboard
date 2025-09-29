@@ -7,8 +7,11 @@ import { RiRestartLine } from "react-icons/ri";
 import { VscEye } from "react-icons/vsc";
 import { DownOutlined } from "@ant-design/icons";
 import user from "../../../assets/image/user.png";
+import Chnage from "../../../assets/image/Change.png";
+import Gift from "../../../assets/image/Gift.png";
+import Calendar from "../../../assets/image/Calendar.png";
 const DonationQuickLink = () => {
-  const [activeTab, setActiveTab] = useState("All Donors");
+   const [active, setActive] = useState("Today");
   const { Search } = Input;
   const { Option } = Select;
   const onSearch = (value) => {
@@ -117,7 +120,7 @@ const DonationQuickLink = () => {
             className="h-10 w-10 rounded-full"
           />
           <div>
-            <p>{record.name}</p>
+            <p className="font-medium">{record.name}</p>
             <p className="text-gray-400">{record.email}</p>
           </div>
         </div>
@@ -141,7 +144,7 @@ const DonationQuickLink = () => {
       ),
       dataIndex: "amount",
       key: "amount",
-      render: (amount) => `$${amount.toFixed(2)}`,
+      render: (amount) =><p className="font-medium"> ${amount.toFixed(2)}</p>,
     },
     {
       title: (
@@ -158,8 +161,9 @@ const DonationQuickLink = () => {
           </Select>
         </div>
       ),
-      dataIndex: "dateTime", 
+      dataIndex: "dateTime",
       key: "dateTime",
+      render: (dateTime) =><p className="font-medium"> ${dateTime}</p>,
     },
     {
       title: (
@@ -179,11 +183,32 @@ const DonationQuickLink = () => {
       ),
       dataIndex: "donationType",
       key: "donationType",
+      render: (value) => (
+        <div className="px-4 py-2 rounded-3xl flex items-center gap-2">
+          {value === "Round Up" && (
+            <div className="flex items-center gap-1 bg-blue-100 text-blue-600 px-4 py-1 rounded-2xl">
+              <img src={Chnage} alt="" /> Round Up
+            </div>
+          )}
+          {value === "Recurring" && (
+            <div className="flex items-center gap-1 bg-green-100 text-green-600 px-4 py-1 rounded-2xl">
+              <img src={Calendar} alt="" />Recurring
+            </div>
+          )}
+          {value === "One Time" && (
+            <div className="flex items-center gap-1 bg-pink-100 text-pink-600 px-4 py-1 rounded-2xl">
+         <img src={Gift} alt="" /> One Time
+            </div>
+          )}
+        </div>
+      ),
     },
+
     {
       title: "Donation Message",
       dataIndex: "donationMessage",
       key: "donationMessage",
+      render: (donationMessage) =><p className="font-medium"> {donationMessage}</p>,
     },
     {
       title: "Action",
@@ -196,7 +221,10 @@ const DonationQuickLink = () => {
       ),
     },
   ];
-
+  const btnClass = (label) =>
+    `px-6 py-3 rounded-3xl border transition ${
+      active === label ? "bg-black text-white" : "bg-white text-black"
+    }`;
   return (
     <div>
       <div className="flex justify-between items-center gap-5">
@@ -206,7 +234,27 @@ const DonationQuickLink = () => {
             Filter, review, and manage receipts with ease.
           </p>
         </div>
-        <div className="flex justify-start items-center gap-5 mb-5">
+         <div className="w-full md:w-[30%] flex justify-start items-center gap-5">
+          <button
+            className={btnClass("Today")}
+            onClick={() => setActive("Today")}
+          >
+            Today
+          </button>
+          <button
+            className={btnClass("This Week")}
+            onClick={() => setActive("This Week")}
+          >
+            This Week
+          </button>
+          <button
+            className={btnClass("This Month")}
+            onClick={() => setActive("This Month")}
+          >
+            This Month
+          </button>
+        </div>
+        {/* <div className="flex justify-start items-center gap-5 mb-5">
           {["All Donors", "Export"].map((tab) => (
             <button
               key={tab}
@@ -218,7 +266,7 @@ const DonationQuickLink = () => {
               {tab}
             </button>
           ))}
-        </div>
+        </div> */}
       </div>
 
       <div>
@@ -277,11 +325,11 @@ const DonationQuickLink = () => {
                 </button>
               </div>
 
-              <div className="group relative mt-4 md:mt-0">
+              <div className="relative group mt-4 md:mt-0 inline-block">
                 <MoreOutlined className="text-xl cursor-pointer" />
-                <span className="absolute left-0 bottom-0 text-xs opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                <button className="absolute -left-5 bottom-10 text-xs opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-gray-500 text-white px-4 py-2 rounded">
                   Export
-                </span>
+                </button>
               </div>
             </div>
           </div>

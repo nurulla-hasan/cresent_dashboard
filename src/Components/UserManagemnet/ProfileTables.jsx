@@ -83,14 +83,12 @@ const ProfileTables = () => {
   const [selectedProfile, setSelectedProfile] = useState(null);
   const [form] = Form.useForm();
 
-  // 📸 Handle image upload
   const handleBeforeUpload = (file) => {
     setPreviewImage(URL.createObjectURL(file));
     form.setFieldsValue({ profileImage: file });
     return false;
   };
 
-  // ✏️ Open edit modal
   const handleEdit = (record) => {
     setSelectedProfile(record);
     form.setFieldsValue({
@@ -115,7 +113,6 @@ const ProfileTables = () => {
     setIsModalVisible(false);
   };
 
-  // 🔁 Sorting function
   const handleSort = (key, order) => {
     const sorted = [...data].sort((a, b) => {
       if (key === "amount") {
@@ -134,7 +131,6 @@ const ProfileTables = () => {
     setData(sorted);
   };
 
-  // 🔎 Role filter
   const handleRoleFilter = (role) => {
     if (role === "All") {
       setData(originalData);

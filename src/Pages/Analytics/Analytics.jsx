@@ -64,7 +64,7 @@ const Analytics = () => {
       <div className="flex justify-between items-start gap-5">
         <div className=" w-full md:w-[70%]">
           {/* {TODO: there will need to pass the data} */}
-          {/* <AnalyticsCard filter={active} data={data} /> */}
+          
           <AnanlyticsCharts filter={active} data={data} />
           <DonationChart/>
           <SubscriptionChart/>
