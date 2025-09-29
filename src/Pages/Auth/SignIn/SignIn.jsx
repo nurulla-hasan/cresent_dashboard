@@ -1,7 +1,7 @@
 import { Checkbox, ConfigProvider, Form, Input } from "antd";
-import img from "../../../assets/image/login.png"; // Adjust path as necessary
+import img from "../../../assets/image/login.png";
 import { Link } from "react-router-dom";
-import logo from "../../../assets/image/Logo.png"; // Adjust path as necessary
+import logo from "../../../assets/image/Logo.png";
 import { AiOutlineMail } from "react-icons/ai";
 import { MdLockOutline } from "react-icons/md";
 
@@ -10,9 +10,9 @@ const SignIn = () => {
 
   return (
     <div className="h-screen flex p-2">
-      <div className="bg-white p-10 flex flex-col justify-center items-center w-full md:w-1/2">
-        <img src={logo} alt="Logo" className="absolute top-5 left-10" />
-        <div className="w-full max-w-sm mt-20">
+      <div className="bg-white flex flex-col justify-center items-center w-full md:w-1/2">
+        <img src={logo} alt="Logo" className="absolute top-5 right-5 left-10" />
+        <div className=" w-[400px] ">
           <div>
             <ConfigProvider
               theme={{
@@ -31,7 +31,7 @@ const SignIn = () => {
                 initialValues={{ remember: false }}
                 onFinish={onFinish}
                 layout="vertical"
-                className="mt-20"
+                className=""
               >
                 <div className="mb-4 text-center">
                   <h2 className="text-xl md:text-2xl lg:text-3xl font-bold mb-6">
@@ -93,10 +93,7 @@ const SignIn = () => {
                     {" "}
                     <Checkbox>Remember Password</Checkbox>{" "}
                   </ConfigProvider>
-                  <Link
-                    to="/forgate-password"
-                    className="text-md underline"
-                  >
+                  <Link to="/forgate-password" className="text-md underline hover:text-black">
                     Forgot Password?
                   </Link>
                 </div>
@@ -116,7 +113,7 @@ const SignIn = () => {
         </div>
       </div>
 
-      <div className="w-full md:w-1/2">
+      <div className="w-full md:w-1/2 ">
         <img src={img} alt="sign-up" className="w-full h-full" />
       </div>
     </div>
