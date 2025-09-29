@@ -37,19 +37,19 @@ const SignIn = () => {
                   <h2 className="text-xl md:text-2xl lg:text-3xl font-bold mb-6">
                     Welcome Back!
                   </h2>
-                  <p className="text-neutral-600 lg:text-lg font-semibold">
+                  <p className="text-neutral-400 lg:text-lg">
                     Sign in to access the Super Admin Dashboard.
                   </p>
                 </div>
                 <Form.Item
                   name="email-address"
                   label={
-                    <p className="text-lg text-neutral-500">Email Address</p>
+                    <p className="text-lg ">Email Address</p>
                   }
                 >
                   <Input
                     required
-                    className="text-neutral-500"
+                    className=""
                     prefix={<AiOutlineMail className="mr-2 h-5 w-5" />}
                     placeholder="mailto:admin@crescentchange.org"
                     style={{
@@ -62,11 +62,11 @@ const SignIn = () => {
                 </Form.Item>
                 <Form.Item
                   name="password"
-                  label={<p className="text-lg text-neutral-500">Password</p>}
+                  label={<p className="text-lg ">Password</p>}
                 >
                   <Input.Password
                     required
-                    className="text-neutral-500"
+                    className=""
                     prefix={<MdLockOutline className="mr-2 h-5 w-5" />}
                     placeholder="Enter Your Password"
                     style={{
@@ -100,7 +100,7 @@ const SignIn = () => {
                 <Form.Item>
                   <Link to="/">
                     <button
-                      className="text-center p-2 font-bold bg-primary  w-full py-4 rounded-md "
+                      className="text-center text-lg p-2 font-bold bg-primary  w-full py-4 rounded-md hover:text-black"
                       type="submit"
                     >
                       Sign In
