@@ -9,11 +9,22 @@ import {
   Dropdown,
   Menu,
   Switch,
+  Drawer,
+  Table,
+  Tag,
+  Space,
 } from "antd";
 import {
   EditOutlined,
   DeleteOutlined,
   EllipsisOutlined,
+  MailOutlined,
+  PhoneOutlined,
+  QrcodeOutlined,
+  WifiOutlined,
+  AppstoreOutlined,
+  BellOutlined,
+  RedoOutlined,
 } from "@ant-design/icons";
 import muffin from "../../../assets/image/muffin.png";
 import free from "../../../assets/image/free.png";
@@ -68,11 +79,49 @@ const initialRewards = [
   },
 ];
 
+// Mock redemption data
+const redemptionData = [
+  {
+    key: "1",
+    name: "Josh Bill",
+    email: "joshb@gmail.com",
+    status: "Claimed",
+    date: "18 Aug 2025",
+    time: "03:00 PM",
+  },
+  {
+    key: "2",
+    name: "M Karim",
+    email: "mkarim@gmail.com",
+    status: "Redeemed",
+    date: "14 Aug 2025",
+    time: "03:00 PM",
+  },
+  {
+    key: "3",
+    name: "Fajar Surya",
+    email: "fsurya@gmail.com",
+    status: "Claimed",
+    date: "12 Aug 2025",
+    time: "03:00 PM",
+  },
+  {
+    key: "4",
+    name: "Linda Blair",
+    email: "lindablair@gmail.com",
+    status: "Redeemed",
+    date: "12 Aug 2025",
+    time: "03:00 PM",
+  },
+];
+
 const DonorRewards = () => {
   const [rewards, setRewards] = useState(initialRewards);
   const [isAddModalVisible, setIsAddModalVisible] = useState(false);
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
   const [editReward, setEditReward] = useState(null);
+  const [drawerVisible, setDrawerVisible] = useState(false);
+  const [selectedReward, setSelectedReward] = useState(null);
 
   const handleAddReward = (values) => {
     const newReward = {
@@ -104,21 +153,84 @@ const DonorRewards = () => {
     setIsEditModalVisible(true);
   };
 
-  const rewardMenu = (id) => (
+  const openDrawer = (reward) => {
+    setSelectedReward(reward);
+    setDrawerVisible(true);
+  };
+
+  const columns = [
+    {
+      title: "Name/Email",
+      dataIndex: "name",
+      key: "name",
+      render: (text, record) => (
+        <div>
+          <p className="font-medium">{record.name}</p>
+          <p className="text-gray-500 text-sm">{record.email}</p>
+        </div>
+      ),
+    },
+    {
+      title: "Status",
+      dataIndex: "status",
+      key: "status",
+      render: (status) =>
+        status === "Redeemed" ? (
+          <Tag color="green">{status}</Tag>
+        ) : (
+          <Tag color="orange">{status}</Tag>
+        ),
+    },
+    {
+      title: "Start Date",
+      dataIndex: "date",
+      key: "date",
+      render: (text, record) => (
+        <span>
+          {record.date} <br />
+          <span className="text-gray-500 text-sm">{record.time}</span>
+        </span>
+      ),
+    },
+    {
+      title: "Action",
+      key: "action",
+      render: (_, record) =>
+        record.status === "Claimed" ? (
+          <Button
+            type="link"
+            size="small"
+            icon={<BellOutlined />}
+            className="text-gray-600"
+          >
+            Send Reminder
+          </Button>
+        ) : (
+          <Button
+            type="link"
+            size="small"
+            icon={<RedoOutlined />}
+            className="text-gray-600"
+          >
+            Resend Reward
+          </Button>
+        ),
+    },
+  ];
+
+  const rewardMenu = (reward) => (
     <Menu>
-      <Menu.Item
-        onClick={() =>
-          openEditModal(rewards.find((reward) => reward.id === id))
-        }
-        icon={<EditOutlined />}
-      >
+      <Menu.Item onClick={() => openEditModal(reward)} icon={<EditOutlined />}>
         Edit
       </Menu.Item>
       <Menu.Item
-        onClick={() => handleDeleteReward(id)}
+        onClick={() => handleDeleteReward(reward.id)}
         icon={<DeleteOutlined />}
       >
         Delete
+      </Menu.Item>
+      <Menu.Item onClick={() => openDrawer(reward)} icon={<EllipsisOutlined />}>
+        View Detail
       </Menu.Item>
     </Menu>
   );
@@ -133,13 +245,12 @@ const DonorRewards = () => {
                 <img src={reward.icon} alt="" />
                 <h1>{reward.title}</h1>
               </div>
-              <Dropdown overlay={rewardMenu(reward.id)} trigger={["click"]}>
+              <Dropdown overlay={rewardMenu(reward)} trigger={["click"]}>
                 <Button type="link" icon={<EllipsisOutlined />} />
               </Dropdown>
             </div>
             <div className="flex justify-between items-center gap-2">
               <p className="text-gray-400">Expires: {reward.expires}</p>
-              {/* todo: will make it active inactive */}
               <div className="flex justify-between items-center gap-2">
                 <p>Active</p> <Switch />
               </div>
@@ -173,11 +284,75 @@ const DonorRewards = () => {
           <FaPlus
             onClick={() => setIsAddModalVisible(true)}
             className="h-8 w-8"
-          ></FaPlus>
+          />
           <p>Add New Reward</p>
         </div>
       </div>
       <RewardExport />
+
+      {/* Reward Detail Drawer */}
+      <Drawer
+        title={null}
+        placement="right"
+        onClose={() => setDrawerVisible(false)}
+        open={drawerVisible}
+        width={600}
+        className="px-2"
+        
+      >
+        {selectedReward && (
+          <>
+            {/* Header */}
+            <div className="flex items-center gap-3 mb-4">
+              <img src={selectedReward.icon} alt="" className="w-10 h-10" />
+              <div>
+                <h2 className="text-lg font-semibold">{selectedReward.title}</h2>
+                <p className="text-gray-500 text-sm">
+                  Enjoy a freshly brewed coffee, free of charge, at any{" "}
+                  {selectedReward.offeredBy} location. Valid once per donor until
+                  expiry.
+                </p>
+              </div>
+            </div>
+
+            {/* Offered By */}
+            <div className="mb-4">
+              <p className="text-gray-500 text-sm">Offered By</p>
+              <p className="font-medium">{selectedReward.offeredBy}</p>
+            </div>
+
+            {/* Contact Info */}
+            <div className="mb-4">
+              <p className="text-gray-500 text-sm">Contact Information</p>
+              <div className="flex items-center gap-2 mt-1">
+                <MailOutlined /> <span>hello@greenobites.com</span>
+              </div>
+              <div className="flex items-center gap-2 mt-1">
+                <PhoneOutlined /> <span>+61 234 567 890</span>
+              </div>
+            </div>
+
+            {/* Reward Code & Redeem Options */}
+            <div className="flex justify-between items-center border p-3 rounded-md mb-6">
+              <p className="font-medium">#RW-20345</p>
+              <Space size="large">
+                <QrcodeOutlined className="text-xl" />
+                <WifiOutlined className="text-xl" />
+                <AppstoreOutlined className="text-xl" />
+              </Space>
+            </div>
+
+            {/* Redemption Stats */}
+            <h3 className="font-semibold mb-2">Redemption Stats</h3>
+            <Table
+              columns={columns}
+              dataSource={redemptionData}
+              pagination={{ pageSize: 5 }}
+              size="middle"
+            />
+          </>
+        )}
+      </Drawer>
 
       {/* Add Modal */}
       <Modal
