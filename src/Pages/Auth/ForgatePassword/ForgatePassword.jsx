@@ -9,9 +9,9 @@ const ForgatePassword = () => {
 
   return (
     <div className="h-screen flex p-2">
-      <div className="bg-white p-10 flex flex-col justify-center items-center w-full md:w-1/2">
-        <img src={logo} alt="Logo" className="absolute top-5 left-10" />
-        <div className="w-full max-w-sm mt-20">
+      <div className="bg-white flex flex-col justify-center items-center w-full md:w-1/2">
+        <img src={logo} alt="Logo" className="absolute top-5 right-5 left-10" />
+        <div className=" w-[400px] ">
           <div>
             <ConfigProvider
               theme={{
@@ -30,25 +30,25 @@ const ForgatePassword = () => {
                 initialValues={{ remember: false }}
                 onFinish={onFinish}
                 layout="vertical"
-                className="mt-20"
+           
               >
                 <div className="mb-4 text-center">
                   <h2 className="text-xl md:text-2xl lg:text-3xl font-bold mb-6">
                     Reset your password
                   </h2>
-                  <p className="text-neutral-600 lg:text-lg font-semibold">
+                  <p className="text-neutral-400 lg:text-lg ">
                     We’ll send you a code on your registered email.
                   </p>
                 </div>
                 <Form.Item
                   name="email-address"
                   label={
-                    <p className="text-lg text-neutral-500">Email Address</p>
+                    <p className="text-lg ">Email Address</p>
                   }
                 >
                   <Input
                     required
-                    className="text-neutral-500"
+                    className=""
                     prefix={<AiOutlineMail className="mr-2 h-5 w-5" />}
                     placeholder="mailto:admin@crescentchange.org"
                     style={{
@@ -63,7 +63,7 @@ const ForgatePassword = () => {
                 <Form.Item>
                   <Link to="/varification">
                     <button
-                      className="text-center p-2 font-bold bg-primary  w-full py-4 rounded-md "
+                      className="text-center text-lg p-2 font-bold bg-primary  w-full py-4 rounded-md hover:text-black"
                       type="submit"
                     >
                       Send Code
@@ -72,7 +72,7 @@ const ForgatePassword = () => {
                 </Form.Item>
                 <p className="text-xl font-medium text-center">
                   Back to{" "}
-                  <Link to="/sign-in" className="font-bold underline">
+                  <Link to="/sign-in" className="font-bold underline hover:text-black">
                     {" "}
                     Sign In
                   </Link>
