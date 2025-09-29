@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Pagination, Select } from "antd";
+import { Pagination, Select, Tag } from "antd";
 import { Table } from "antd";
 import { Input } from "antd";
 import { MoreOutlined } from "@ant-design/icons";
@@ -8,6 +8,13 @@ import { VscEye } from "react-icons/vsc";
 import { DownOutlined } from "@ant-design/icons";
 import user from "../../../assets/image/user.png";
 import { FaArrowDownLong } from "react-icons/fa6";
+import { SlArrowLeft } from "react-icons/sl";
+import house from "../../../assets/image/house.png";
+import org from "../../../assets/image/org.png";
+import person from "../../../assets/image/person.png";
+import { TfiDownload } from "react-icons/tfi";
+import { RxCrossCircled } from "react-icons/rx";
+import DonorsSubscription from "../../ManageSubscription/DonorsSubscription";
 const SubscriptionQuickLinks = () => {
   const { Search } = Input;
   const { Option } = Select;
@@ -28,45 +35,53 @@ const SubscriptionQuickLinks = () => {
       name: "Josh Bill",
       email: "johnnb@gmail.com",
       dateTime: "12 Dec 2023 03:00 PM",
-      donationType: "Round Up",
+      donationType: "Business",
       donationMessage: "-",
       amount: 34.5,
+      status: "Active",
     },
     {
       key: "2",
       name: "M Karim",
       email: "kkkarim@gmail.com",
       dateTime: "12 Dec 2023 03:00 PM",
-      donationType: "Recurring",
+      donationType: "Organization",
       donationMessage: "“Sending love & hope to everyone you’re helping”",
       amount: 62.75,
+      plan: "Focus Plan",
+      status: "Inactive",
     },
     {
       key: "3",
       name: "Josh Adam",
       email: "jadddam@gmail.com",
       dateTime: "12 Dec 2023 03:00 PM",
-      donationType: "One Time",
+      donationType: "Donor",
       donationMessage: "-",
       amount: 15.2,
+      plan: "Freedom Plan",
+      status: "Active",
     },
     {
       key: "4",
       name: "Fajar Surya",
       email: "fjsurya@gmail.com",
       dateTime: "12 Dec 2023 03:00 PM",
-      donationType: "One Time",
+      donationType: "Donor",
       donationMessage: "“Sending love & hope to everyone you’re helping”",
       amount: 47.3,
+      plan: "Foundation Plan",
+      status: "Inactive",
     },
     {
       key: "5",
       name: "Linda Blair",
       email: "lindablair98@gmail.com",
       dateTime: "12 Dec 2023 03:00 PM",
-      donationType: "Recurring",
+      donationType: "Donor",
       donationMessage: "“Sending love & hope to everyone you’re helping”",
       amount: 23.9,
+      status: "Inactive",
     },
   ];
 
@@ -110,47 +125,77 @@ const SubscriptionQuickLinks = () => {
       key: "email",
       render: (text, record) => (
         <div className="flex gap-1">
-          {/* Assuming 'user' is the image URL */}
           <img
             src={user}
             alt={record.name}
             className="h-10 w-10 rounded-full"
           />
           <div>
-            <p>{record.name}</p>
+            <p className="font-medium">{record.name}</p>
             <p className="text-gray-400">{record.email}</p>
           </div>
         </div>
       ),
     },
     {
-      title: "Type",
-      dataIndex: "donationMessage",
-      render: () => (
-        <div className="flex justify-center items-center gap-2">
-          <img src="" alt="" />
-          <p>Business</p>
+      title: (
+        <div className="flex items-center gap-2">
+          Type
+          <Select
+            defaultValue="Business"
+            style={{ width: 120 }}
+            onChange={(value) => handleSort("donationType", value)}
+            suffixIcon={<DownOutlined />}
+          >
+            <Option value="Business">Business</Option>
+            <Option value="Organization">Organization</Option>
+            <Option value="Donor">Donor</Option>
+          </Select>
+        </div>
+      ),
+      dataIndex: "donationType",
+      key: "donationType",
+      render: (value) => (
+        <div className="px-4 py-2 rounded-3xl flex items-center gap-2">
+          {value === "Business" && (
+            <div className="flex items-center gap-1 bg-blue-100 text-blue-600 px-4 py-1 rounded-2xl">
+              <img src={house} alt="" /> Business
+            </div>
+          )}
+          {value === "Organization" && (
+            <div className="flex items-center gap-1 bg-green-100 text-green-600 px-4 py-1 rounded-2xl">
+              <img src={org} alt="" />
+              Organization
+            </div>
+          )}
+          {value === "Donor" && (
+            <div className="flex items-center gap-1 bg-pink-100 text-pink-600 px-4 py-1 rounded-2xl">
+              <img src={person} alt="" /> Donor
+            </div>
+          )}
         </div>
       ),
     },
+
     {
       title: (
         <div className="flex items-center gap-2">
-          Amount
+          Plan
           <Select
-            defaultValue="descend"
+            defaultValue="Focus Plan"
             style={{ width: 80 }}
             onChange={(value) => handleSort("amount", value)}
             suffixIcon={<DownOutlined />}
           >
-            <Option value="ascend">Lowest</Option>
-            <Option value="descend">Highest</Option>
+            <Option value="Focus Plan">Focus Plan</Option>
+            <Option value="Foundation Plan">Foundation Plan</Option>
+            <Option value="Freedom Plan">Freedom Plan</Option>
           </Select>
         </div>
       ),
-      dataIndex: "amount",
-      key: "amount",
-      render: (amount) => `$${amount.toFixed(2)}`,
+      dataIndex: "plan",
+      key: "plan",
+      render: (plan) => <p className="font-medium">{plan}</p>,
     },
     {
       title: (
@@ -169,46 +214,53 @@ const SubscriptionQuickLinks = () => {
       ),
       dataIndex: "dateTime",
       key: "dateTime",
+      render: (dateTime) => <p className="font-medium">{dateTime}</p>,
     },
     {
-      title: (
-        <div className="flex items-center gap-2">
-          Donation Type
-          <Select
-            defaultValue="One Time"
-            style={{ width: 120 }}
-            onChange={(value) => handleSort("donationType", value)}
-            suffixIcon={<DownOutlined />}
-          >
-            <Option value="One Time">One Time</Option>
-            <Option value="Recurring">Recurring</Option>
-            <Option value="Round Up">Round Up</Option>
-          </Select>
-        </div>
+      title: "Status",
+      dataIndex: "status",
+      key: "status",
+      render: (status) => (
+        <p
+          className={
+            status === "Active"
+              ? "bg-green-100 text-green-600 px-2 py-1 rounded-3xl text-center"
+              : "bg-gray-100 text-gray-600 px-2 py-1 rounded-3xl text-center"
+          }
+        >
+          {status}
+        </p>
       ),
-      dataIndex: "donationType",
-      key: "donationType",
-    },
-    {
-      title: "Donation Message",
-      dataIndex: "donationMessage",
-      key: "donationMessage",
     },
     {
       title: "Action",
       key: "action",
       render: () => (
-        <div className="flex justify-center items-center gap-2">
-          <VscEye className="h-5 w-5" />
-          <FaArrowDownLong className="h-5 w-5" />
-          <RiRestartLine className="h-5 w-5" />
+        <div className="flex justify-center items-center gap-2 bg-">
+          <div className="bg-neutral-100 h-12 w-12 p-3 flex items-center justify-center rounded-full">
+            <VscEye className="h-5 w-5" />
+          </div>
+          <div className="bg-neutral-100 h-12 w-12 p-3 flex items-center justify-center rounded-full">
+            <TfiDownload className="h-5 w-5" />
+          </div>
+          <div className="bg-neutral-100 h-12 w-12 p-3 flex items-center justify-center rounded-full">
+            <RxCrossCircled className="h-5 w-5" />
+          </div>
         </div>
       ),
     },
   ];
-
+  const handleBack = () => {
+    window.history.back();
+  };
   return (
     <div>
+      <button
+        onClick={handleBack}
+        className="bg-white px-4 py-3 rounded-3xl flex justify-center items-center gap-2 mb-4"
+      >
+        <SlArrowLeft /> Back
+      </button>
       <div className="flex justify-between items-center gap-5">
         <div>
           <h1 className="text-3xl font-bold mb-4">Subscriptions Overview</h1>
@@ -216,7 +268,6 @@ const SubscriptionQuickLinks = () => {
             Track activity, view invoices, and keep renewals healthy.
           </p>
         </div>
-   
       </div>
 
       <div>
@@ -296,6 +347,7 @@ const SubscriptionQuickLinks = () => {
           </div>
         </div>
       </div>
+      <DonorsSubscription />
     </div>
   );
 };

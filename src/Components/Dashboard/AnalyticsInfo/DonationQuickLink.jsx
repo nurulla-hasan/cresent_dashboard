@@ -10,8 +10,9 @@ import user from "../../../assets/image/user.png";
 import Chnage from "../../../assets/image/Change.png";
 import Gift from "../../../assets/image/Gift.png";
 import Calendar from "../../../assets/image/Calendar.png";
+import { SlArrowLeft } from "react-icons/sl";
 const DonationQuickLink = () => {
-   const [active, setActive] = useState("Today");
+  const [active, setActive] = useState("Today");
   const { Search } = Input;
   const { Option } = Select;
   const onSearch = (value) => {
@@ -144,7 +145,7 @@ const DonationQuickLink = () => {
       ),
       dataIndex: "amount",
       key: "amount",
-      render: (amount) =><p className="font-medium"> ${amount.toFixed(2)}</p>,
+      render: (amount) => <p className="font-medium"> ${amount.toFixed(2)}</p>,
     },
     {
       title: (
@@ -163,7 +164,7 @@ const DonationQuickLink = () => {
       ),
       dataIndex: "dateTime",
       key: "dateTime",
-      render: (dateTime) =><p className="font-medium"> ${dateTime}</p>,
+      render: (dateTime) => <p className="font-medium"> ${dateTime}</p>,
     },
     {
       title: (
@@ -192,12 +193,13 @@ const DonationQuickLink = () => {
           )}
           {value === "Recurring" && (
             <div className="flex items-center gap-1 bg-green-100 text-green-600 px-4 py-1 rounded-2xl">
-              <img src={Calendar} alt="" />Recurring
+              <img src={Calendar} alt="" />
+              Recurring
             </div>
           )}
           {value === "One Time" && (
             <div className="flex items-center gap-1 bg-pink-100 text-pink-600 px-4 py-1 rounded-2xl">
-         <img src={Gift} alt="" /> One Time
+              <img src={Gift} alt="" /> One Time
             </div>
           )}
         </div>
@@ -208,7 +210,9 @@ const DonationQuickLink = () => {
       title: "Donation Message",
       dataIndex: "donationMessage",
       key: "donationMessage",
-      render: (donationMessage) =><p className="font-medium"> {donationMessage}</p>,
+      render: (donationMessage) => (
+        <p className="font-medium"> {donationMessage}</p>
+      ),
     },
     {
       title: "Action",
@@ -225,8 +229,13 @@ const DonationQuickLink = () => {
     `px-6 py-3 rounded-3xl border transition ${
       active === label ? "bg-black text-white" : "bg-white text-black"
     }`;
+    const handleBack=()=>{
+       window.history.back();
+    }
   return (
     <div>
+      <button onClick={handleBack} className="bg-white px-4 py-3 rounded-3xl flex justify-center items-center gap-2 mb-4"> 
+        <SlArrowLeft /> Back</button>
       <div className="flex justify-between items-center gap-5">
         <div>
           <h1 className="text-3xl font-bold mb-4">Donations Overview</h1>
@@ -234,7 +243,7 @@ const DonationQuickLink = () => {
             Filter, review, and manage receipts with ease.
           </p>
         </div>
-         <div className="w-full md:w-[30%] flex justify-start items-center gap-5">
+        <div className="w-full md:w-[30%] flex justify-start items-center gap-5">
           <button
             className={btnClass("Today")}
             onClick={() => setActive("Today")}

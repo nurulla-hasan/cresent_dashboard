@@ -52,7 +52,7 @@ const QuickLinks = () => {
           <div
             key={item.id}
             className={`bg-white p-3 rounded-3xl flex flex-col items-center gap-2 cursor-pointer ${
-              active === item.key ? "border-2 border-blue-500" : ""
+              active === item.key ? "" : ""
             }`}
             onClick={() => handleClick(item.key)}
           >
