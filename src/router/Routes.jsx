@@ -6,18 +6,18 @@ import ForgatePassword from "../Pages/Auth/ForgatePassword/ForgatePassword";
 import Newpass from "../Pages/Auth/NewPass/Newpass";
 import VerifyPass from "../Pages/Auth/VerifyPass/VerifyPass";
 import ContinuePage from "../Pages/Auth/ContinuePage/ContinuePage";
-import Payment from "../Pages/Payment/Payment";
+// import Payment from "../Pages/Payment/Payment";
 
 import Subscription from "../Pages/Subscription/Subscription";
-import ContactUS from "../Pages/Settings/ContactUS/ContactUS";
+// import ContactUS from "../Pages/Settings/ContactUS/ContactUS";
 
 import Banner from "../Pages/Settings/Banner/Banner";
 import AdminProfile from "../Pages/AdminProfile/AdminProfile";
 import Notifications from "../Pages/Notification/Notification";
 import AllUsers from "../Components/UserManagemnet/AllUsers/AllUsers";
-import Subscribers from "../Components/UserManagemnet/Subscribers/Subscribers";
+// import Subscribers from "../Components/UserManagemnet/Subscribers/Subscribers";
 import AllOrganization from "../Pages/OrganizationManagement/AllOrganization/AllOrganization";
-import SubscribersOrganization from "../Pages/OrganizationManagement/SubscribersOrganization/SubscribersOrganization";
+// import SubscribersOrganization from "../Pages/OrganizationManagement/SubscribersOrganization/SubscribersOrganization";
 import DonationQuickLink from "../Components/Dashboard/AnalyticsInfo/DonationQuickLink";
 import SubscriptionQuickLinks from "../Components/Dashboard/AnalyticsInfo/SubscriptionQuickLinks";
 import RewardsQuickLinks from "../Components/Dashboard/AnalyticsInfo/RewardsQuickLinks";
@@ -57,29 +57,29 @@ export const router = createBrowserRouter([
         element: <Analytics />,
       },
       {
-        path: "/user-management/all-users",
+        path: "user-management",
         element: <AllUsers />,
       },
+      // {
+      //   path: "/user-management/subscribers",
+      //   element: <Subscribers />,
+      // },
       {
-        path: "/user-management/subscribers",
-        element: <Subscribers />,
-      },
-      {
-        path: "/organization-management/all-organizations",
+        path: "/organization-management",
         element: <AllOrganization />,
       },
-      {
-        path: "/organization-management/subscribers-organizations",
-        element: <SubscribersOrganization />,
-      },
+      // {
+      //   path: "/organization-management/subscribers-organizations",
+      //   element: <SubscribersOrganization />,
+      // },
       {
         path: "/subdcription-management",
         element: <Subscription />,
       },
-      {
-        path: "/payment-management",
-        element: <Payment></Payment>,
-      },
+      // {
+      //   path: "/payment-management",
+      //   element: <Payment></Payment>,
+      // },
       {
         path: "/analytics",
         element: <AnalyticsRoute />,
@@ -100,10 +100,10 @@ export const router = createBrowserRouter([
 
       // setting:
 
-      {
-        path: "/settings/contact-us",
-        element: <ContactUS />,
-      },
+      // {
+      //   path: "/settings/contact-us",
+      //   element: <ContactUS />,
+      // },
 
       {
         path: "/settings/banner",

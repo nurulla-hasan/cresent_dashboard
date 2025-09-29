@@ -44,13 +44,13 @@ const Sidebar = ({ closeDrawer }) => {
 
   const menuItems = [
     { icon: dashboard, label: "Dashboard", Link: "/" },
-    { icon: users, label: "User Management", Link: "/user-management/all-users" },
+    { icon: users, label: "User Management", Link: "/user-management" },
     { icon: subscription, label: "Subscription & Payment", Link: "/subdcription-management" },
     { icon: analytics, label: "Analytics", Link: "/analytics" },
     {
       icon: organization,
       label: "Organizations",
-      Link: "/organization-management/all-organizations",
+      Link: "/organization-management",
     },
     { icon: donor, label: "Donor App", Link: "/donor-app" },
     { icon: business, label: "Business Admin", Link: "/business-admin" },

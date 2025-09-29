@@ -1,13 +1,12 @@
 /* eslint-disable no-unused-vars */
-import { Table, Tag, Button, Input, Dropdown, Menu, DatePicker } from "antd";
-import { DownOutlined, SearchOutlined } from "@ant-design/icons";
+import { Tag, Button, Menu,} from "antd";
 import { useState } from "react";
 import { FaArrowDown } from "react-icons/fa";
 import { BsArrowUpRight } from "react-icons/bs";
 import { Link } from "react-router-dom";
 import ProfileTables from "../ProfileTables";
 import PendingApproval from "../PendingApproval";
-
+import { useRef } from "react";
 const AllUsers = () => {
   const [searchText, setSearchText] = useState("");
 
@@ -128,6 +127,15 @@ const AllUsers = () => {
       <Menu.Item>Oldest First</Menu.Item>
     </Menu>
   );
+  const pendingApprovalRef = useRef<HTMLDivElement | null>(null);
+ const handlePendingApproval = () => {
+    if (pendingApprovalRef.current) {
+      pendingApprovalRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }
+  };
 
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
@@ -191,9 +199,11 @@ const AllUsers = () => {
                   <span className="text-green-500">+5.2%</span> vs last month
                 </p>
               </div>
+               <Link to="/organization-management">
               <div className="bg-white rounded-full h-10 w-10 p-1 flex justify-center items-center">
                 <BsArrowUpRight />
               </div>
+              </Link>
             </div>
 
             <h2 className="text-2xl font-semibold">
@@ -212,9 +222,11 @@ const AllUsers = () => {
                   <span className="text-red-500">-5.2%</span> vs last month
                 </p>
               </div>
+               <Link to="/business-admin">
               <div className="bg-white rounded-full h-10 w-10 p-1 flex justify-center items-center">
                 <BsArrowUpRight />
               </div>
+              </Link>
             </div>
 
             <h2 className="text-2xl font-semibold">
@@ -228,12 +240,9 @@ const AllUsers = () => {
             <div className="flex justify-between items-center gap-2 mb-8">
               <div>
                 <p className="tetx-xl font-semibold">Pending Approvals</p>
-                {/* <p className="text-neutral-400 ">
-                  {" "}
-                  <span className="text-red-500">-5.2%</span> vs last month
-                </p> */}
+          
               </div>
-              <div className="bg-white rounded-full h-10 w-10 p-1 flex justify-center items-center">
+              <div onClick={handlePendingApproval} className="bg-white rounded-full h-10 w-10 p-1 flex justify-center items-center cursor-pointer">
                 <BsArrowUpRight />
               </div>
             </div>
@@ -249,7 +258,8 @@ const AllUsers = () => {
       </div>
 
 
-      <ProfileTables />
+ 
+    <ProfileTables />
 
       <PendingApproval />
     </div>

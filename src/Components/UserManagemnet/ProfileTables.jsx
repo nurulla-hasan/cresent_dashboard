@@ -16,7 +16,7 @@ import { DownOutlined, SearchOutlined } from "@ant-design/icons";
 import { VscEye } from "react-icons/vsc";
 import user from "../../assets/image/user.png";
 import { MdOtherHouses } from "react-icons/md";
-import { FaImage, FaPencilAlt, FaUsers, } from "react-icons/fa";
+import { FaImage, FaPencilAlt, FaUsers } from "react-icons/fa";
 import { GoOrganization } from "react-icons/go";
 import { RxCrossCircled } from "react-icons/rx";
 
@@ -165,7 +165,11 @@ const ProfileTables = () => {
       key: "email",
       render: (text, record) => (
         <div className="flex gap-2 items-center">
-          <img src={user} alt={record.name} className="h-10 w-10 rounded-full" />
+          <img
+            src={user}
+            alt={record.name}
+            className="h-10 w-10 rounded-full"
+          />
           <div>
             <p className="font-medium">{record.name}</p>
             <p className="text-gray-400 text-sm">{record.email}</p>
@@ -306,7 +310,6 @@ const ProfileTables = () => {
         rowKey="key"
       />
 
-      {/* ✨ Edit Profile Modal */}
       <Modal
         title="Edit Profile"
         open={isModalVisible}
@@ -315,6 +318,9 @@ const ProfileTables = () => {
         centered
       >
         <Form layout="vertical" form={form} onFinish={handleSave}>
+          <p className="text-gray-400 mb-3">
+            Update profile information of the user.{" "}
+          </p>
           <div className="flex justify-center mb-4">
             <Upload
               showUploadList={false}
@@ -337,21 +343,27 @@ const ProfileTables = () => {
               </div>
             </Upload>
           </div>
+          <div className="flex justify-between items-center gap-2">
+            <div className="w-[50%]">
+              <Form.Item
+                name="firstName"
+                label="First Name"
+                rules={[{ required: true }]}
+              >
+                <Input placeholder="Enter first name" />
+              </Form.Item>
+            </div>
+            <div className="w-[50%]">
+              <Form.Item
+                name="lastName"
+                label="Last Name"
+                rules={[{ required: true }]}
+              >
+                <Input placeholder="Enter last name" />
+              </Form.Item>
+            </div>
+          </div>
 
-          <Form.Item
-            name="firstName"
-            label="First Name"
-            rules={[{ required: true }]}
-          >
-            <Input placeholder="Enter first name" />
-          </Form.Item>
-          <Form.Item
-            name="lastName"
-            label="Last Name"
-            rules={[{ required: true }]}
-          >
-            <Input placeholder="Enter last name" />
-          </Form.Item>
           <Form.Item
             name="email"
             label="Email"
@@ -359,11 +371,7 @@ const ProfileTables = () => {
           >
             <Input placeholder="Enter email" />
           </Form.Item>
-          <Form.Item
-            name="mobile"
-            label="Mobile"
-            rules={[{ required: true }]}
-          >
+          <Form.Item name="mobile" label="Mobile" rules={[{ required: true }]}>
             <Input placeholder="Enter phone number" />
           </Form.Item>
           <Form.Item name="password" label="Update Password">
@@ -371,10 +379,18 @@ const ProfileTables = () => {
           </Form.Item>
 
           <div className="flex justify-end gap-3 mt-4">
-            <Button onClick={handleCancel}>Discard Changes</Button>
-            <Button type="primary" htmlType="submit">
+            <button
+              onClick={handleCancel}
+              className="bg-white px-4 py-2 rounded-3xl border"
+            >
+              Discard Changes
+            </button>
+            <button
+              type="submit"
+              className="bg-black text-white px-4 py-2 rounded-3xl border"
+            >
               Apply Changes
-            </Button>
+            </button>
           </div>
         </Form>
       </Modal>
