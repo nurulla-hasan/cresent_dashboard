@@ -6,10 +6,9 @@ const DonorsSubscription = () => {
   return (
     <div className="p-6 bg-white rounded-3xl border">
       <div className="mb-6">
-        <h1 className="text-2xl font-semibold">Subscription & Payments</h1>
+        <h1 className="text-2xl font-semibold">Export Subscription Data</h1>
         <p className="text-neutral-400">
-          Track all subscriptions, manage invoices, and export payment data.
-        </p>
+          Track all subscriptions, manage invoices, and export payment data.Download a full report of all active and inactive subscriptions.   </p>
       </div>
 
       <div className="flex justify-between items-center mb-6">
