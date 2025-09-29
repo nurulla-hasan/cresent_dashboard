@@ -1,15 +1,14 @@
 import { DatePicker, Select } from "antd";
-import React from "react";
 import { FaArrowDown } from "react-icons/fa";
-import { DownOutlined, SearchOutlined } from "@ant-design/icons";
-const DonorsSubscription = () => {
+import { DownOutlined } from "@ant-design/icons";
+const RewardExport = () => {
   const { Option } = Select;
   return (
     <div className="p-6 bg-white rounded-3xl border">
       <div className="mb-6">
-        <h1 className="text-2xl font-semibold">Subscription & Payments</h1>
+        <h1 className="text-2xl font-semibold">Export Rewards Data</h1>
         <p className="text-neutral-400">
-          Track all subscriptions, manage invoices, and export payment data.
+        Download detailed reports of all rewards, including redemptions and performance. Use filters to refine your export:
         </p>
       </div>
 
@@ -43,4 +42,4 @@ const DonorsSubscription = () => {
   );
 };
 
-export default DonorsSubscription;
+export default RewardExport;

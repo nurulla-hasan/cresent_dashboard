@@ -1,10 +1,9 @@
-import { Pagination, Select } from "antd";
+import { ConfigProvider, Pagination, Select } from "antd";
 
 import { Input } from "antd";
 import { MoreOutlined } from "@ant-design/icons";
 import DonorRewards from "./DonorRewards";
-
-
+import { SlArrowLeft } from "react-icons/sl";
 
 const RewardsQuickLinks = () => {
   const { Search } = Input;
@@ -12,9 +11,17 @@ const RewardsQuickLinks = () => {
   const onSearch = (value) => {
     console.log("Search input: ", value);
   };
-
+  const handleBack = () => {
+    window.history.back();
+  };
   return (
     <div>
+      <button
+        onClick={handleBack}
+        className="bg-white px-4 py-3 rounded-3xl flex justify-center items-center gap-2 mb-4"
+      >
+        <SlArrowLeft /> Back
+      </button>
       <div className="flex justify-between items-center gap-5">
         <div>
           <h1 className="text-3xl font-bold mb-4">Rewards Management</h1>
@@ -62,15 +69,25 @@ const RewardsQuickLinks = () => {
         </div>
         <div className="bg-white p-6 rounded-3xl border my-6">
           <div className="flex justify-between items-center gap-5">
-            <h1 className="text-xl font-medium">Donation History</h1>
+            <h1 className="text-xl font-medium">
+              Create and manage donor rewards
+            </h1>
 
             <div className="flex items-center gap-3">
               <div className="mt-4 md:mt-0">
-                <Search
-                  placeholder="input search text"
-                  onSearch={onSearch}
-                  enterButton
-                />
+                <ConfigProvider
+                  theme={{
+                    components: {
+            
+                    },
+                  }}
+                >
+                  <Search
+                    placeholder="input search text"
+                    onSearch={onSearch}
+                    enterButton
+                  />
+                </ConfigProvider>
               </div>
 
               <div className="mt-4 md:mt-0">
@@ -85,12 +102,12 @@ const RewardsQuickLinks = () => {
                   Monthly
                 </button>
               </div>
-              {/* export korte hobe */}
-              <div className="group relative mt-4 md:mt-0">
+
+              <div className="relative group mt-4 md:mt-0 inline-block">
                 <MoreOutlined className="text-xl cursor-pointer" />
-                <span className="absolute left-0 bottom-0 text-xs opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                <button className="absolute -left-5 bottom-10 text-xs opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-gray-500 text-white px-4 py-2 rounded">
                   Export
-                </span>
+                </button>
               </div>
             </div>
           </div>

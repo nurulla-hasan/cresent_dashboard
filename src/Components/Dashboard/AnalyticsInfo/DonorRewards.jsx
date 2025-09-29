@@ -8,36 +8,53 @@ import {
   notification,
   Dropdown,
   Menu,
+  Switch,
 } from "antd";
 import {
-  PlusOutlined,
   EditOutlined,
   DeleteOutlined,
   EllipsisOutlined,
 } from "@ant-design/icons";
-import muffin from "../../../assets/image/muffin.png"; 
+import muffin from "../../../assets/image/muffin.png";
+import free from "../../../assets/image/free.png";
+import entire from "../../../assets/image/entire.png";
+import qr from "../../../assets/image/qr.png";
+import nfc from "../../../assets/image/nfc.png";
+import manual from "../../../assets/image/manual.png";
+import { FaPlus } from "react-icons/fa6";
+import RewardExport from "./RewardExport";
+
 // Data for the rewards (mock data as per your design)
 const initialRewards = [
   {
     id: 1,
     title: "Free Coffee",
-    description: "Offered by: GreenO Bites",
+    description: " GreenO Bites",
     redemptions: 120,
     expires: "June 30, 2025",
+    icon: free,
+    offeredBy: "GreenO Bites",
+    redeem: [manual, qr, nfc],
   },
   {
     id: 2,
     title: "Free Muffin",
-    description: "Offered by: Coffee Beans & Tea Leaf",
+    description: " Coffee Beans & Tea Leaf",
     redemptions: 86,
     expires: "June 30, 2025",
+    icon: muffin,
+    offeredBy: "GreenO Bites",
+    redeem: [qr],
   },
   {
     id: 3,
     title: "Free Cookie",
-    description: "Offered by: Crumble",
+    description: " Crumble",
     redemptions: 86,
     expires: "June 30, 2025",
+    icon: muffin,
+    offeredBy: "GreenO Bites",
+    redeem: [qr],
   },
   {
     id: 4,
@@ -45,6 +62,9 @@ const initialRewards = [
     description: "Offered by: Burning Brownie",
     redemptions: 86,
     expires: "June 30, 2025",
+    icon: entire,
+    offeredBy: "GreenO Bites",
+    redeem: [qr],
   },
 ];
 
@@ -105,37 +125,59 @@ const DonorRewards = () => {
 
   return (
     <div className="container mx-auto p-6">
-      <div className="flex justify-between mb-6">
-        <h1 className="text-2xl font-semibold">
-          Create and Manage Donor Rewards
-        </h1>
-        <Button
-          type="primary"
-          icon={<PlusOutlined />}
-          onClick={() => setIsAddModalVisible(true)}
-        >
-          Add New Reward
-        </Button>
-      </div>
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-3">
         {rewards.map((reward) => (
-          <div key={reward.id} className="shadow-lg p-6">
+          <div key={reward.id} className="shadow-lg p-6 space-y-6">
             <div className="flex justify-between items-center gap-2">
               <div className="flex justify-center items-center gap-2 text-2xl font-semibold mb-6">
-                <img src={muffin} alt="" />
+                <img src={reward.icon} alt="" />
                 <h1>{reward.title}</h1>
               </div>
               <Dropdown overlay={rewardMenu(reward.id)} trigger={["click"]}>
                 <Button type="link" icon={<EllipsisOutlined />} />
               </Dropdown>
             </div>
-            <p>{reward.description}</p>
-            <p>Redemptions: {reward.redemptions}</p>
-            <p>Expires: {reward.expires}</p>
+            <div className="flex justify-between items-center gap-2">
+              <p className="text-gray-400">Expires: {reward.expires}</p>
+              {/* todo: will make it active inactive */}
+              <div className="flex justify-between items-center gap-2">
+                <p>Active</p> <Switch />
+              </div>
+            </div>
+            <div>
+              <p className="text-gray-400">Offered by:</p>
+              <p>{reward.description}</p>
+            </div>
+            <div className="flex justify-between items-center gap-2">
+              <div>
+                <p className="text-2xl font-semibold">{reward.redemptions}</p>
+                <p className="text-gray-400">Redemptions</p>
+              </div>
+              <div>
+                <p className="">Redeem Via</p>
+                <div className="flex justify-emd items-end gap-2 mt-2">
+                  {reward.redeem.map((method, index) => (
+                    <img
+                      key={index}
+                      src={method}
+                      alt="redeem option"
+                      className="w-6 h-6"
+                    />
+                  ))}
+                </div>
+              </div>
+            </div>
           </div>
         ))}
+        <div className=" bg-white border rounded-md mt-5 flex flex-col justify-center items-center text-gray-400 cursor-pointer">
+          <FaPlus
+            onClick={() => setIsAddModalVisible(true)}
+            className="h-8 w-8"
+          ></FaPlus>
+          <p>Add New Reward</p>
+        </div>
       </div>
+      <RewardExport />
 
       {/* Add Modal */}
       <Modal

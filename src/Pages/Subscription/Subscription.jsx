@@ -7,7 +7,7 @@ import AddSubscription from "../../Components/SubscriptionManagement/AddSubscrip
 import MessageCost from "./MessageCost/MessageCost";
 import EditSubscription from "../../Components/SubscriptionManagement/EditSubscription/EditSubscription";
 import OrganizationSubscription from "../../Components/ManageSubscription/OrganizationSubscription";
-import DonorsSubscription from "../../Components/ManageSubscription/DonorsSubscription";
+import DonorsSubscription from "../../Components/ManageSubscription/SubscriptionAndPaymentExport";
 import { BsArrowUpRight } from "react-icons/bs";
 import { Link } from "react-router-dom";
 
