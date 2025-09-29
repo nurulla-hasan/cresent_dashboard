@@ -8,7 +8,7 @@ import { FaX } from "react-icons/fa6";
 import { IoIosNotificationsOutline } from "react-icons/io";
 import { Link } from "react-router-dom";
 import brandlogo from "../../assets/image/Logo.png";
-import user from "../../assets/image/user.png";
+import user from "../../assets/image/p.png";
 import Search from "antd/es/transfer/search";
 
 const MainLayout = () => {
@@ -34,7 +34,7 @@ const MainLayout = () => {
   return (
     <div className="min-h-screen flex flex-col">
       {/* header */}
-      <div className="h-20 bg-[#f9f7f9] flex justify-between items-center px-2 md:px-20 gap-2 border-b">
+      <div className="h-20 bg-[#f9f7f9] flex justify-between items-center px-2 md:px-8 gap-2 border-b">
         {isMobile && (
           <GiHamburgerMenu
             onClick={toggleDrawer}
@@ -48,19 +48,31 @@ const MainLayout = () => {
             <img
               src={brandlogo}
               alt="brandlogo"
-              className="md:h-full md:w-full object-cover"
+              className="md:h-full md:w-full object-contain"
             />
           </Link>
         </div>
 
         {/* search */}
-        <div className="">
-          <Search
-            allowClear
-            placeholder="input search text"
-            onSearch={onSearch}
-            enterButton
-          />
+        <div className="w-[320px] ">
+          <ConfigProvider
+            theme={{
+              components: {
+                Input: { controlHeight: 48 },
+              },
+            }}
+          >
+            <div className="w-[320px] flex items-center gap-2 p-3 rounded-[60px]  backdrop-blur-sm">
+              <Search
+                allowClear
+                placeholder="Input search text"
+                onSearch={onSearch}
+                enterButton
+                bordered={false}
+                style={{ flex: 1, padding: 0 }}
+              />
+            </div>
+          </ConfigProvider>
         </div>
 
         {/* user + notifications */}
@@ -82,7 +94,7 @@ const MainLayout = () => {
                     alt=""
                     className="w-10 h-10 rounded-full border border-primary"
                   />
-                  <p className="md:text-xl font-semibold">Mr Raiyan</p>
+                  <p className="md:text-xl font-semibold">Super Admin</p>
                 </div>
               </Link>
             </div>
