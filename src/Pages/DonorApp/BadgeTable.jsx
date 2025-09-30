@@ -1,11 +1,22 @@
 /* eslint-disable no-unused-vars */
 import { useState } from "react";
-import { Button, Form, Input, Modal, Table, Upload } from "antd";
-import { VscEye } from "react-icons/vsc";
+import {
+  Button,
+  DatePicker,
+  Dropdown,
+  Form,
+  Input,
+  Menu,
+  Modal,
+  Table,
+  Upload,
+} from "antd";
 import { FaImage, FaPencilAlt } from "react-icons/fa";
 import { RxCrossCircled } from "react-icons/rx";
 import icon from "../../assets/image/b1.png";
 import icon1 from "../../assets/image/b2.png";
+import { DownOutlined, SearchOutlined } from "@ant-design/icons";
+import { FaPlus } from "react-icons/fa6";
 
 const BadgeTable = () => {
   const originalData = [
@@ -29,6 +40,7 @@ const BadgeTable = () => {
     },
   ];
 
+  const [searchText, setSearchText] = useState("");
   const [data, setData] = useState(originalData);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [previewImage, setPreviewImage] = useState(null);
@@ -39,6 +51,13 @@ const BadgeTable = () => {
     setPreviewImage(URL.createObjectURL(file));
     form.setFieldsValue({ badgeIcon: file });
     return false;
+  };
+
+  const handleAdd = () => {
+    setSelectedBadge(null); // new badge
+    form.resetFields();
+    setPreviewImage(null);
+    setIsModalVisible(true);
   };
 
   const handleEdit = (record) => {
@@ -55,16 +74,32 @@ const BadgeTable = () => {
     setIsModalVisible(false);
     form.resetFields();
     setPreviewImage(null);
+    setSelectedBadge(null);
   };
 
   const handleSave = (values) => {
-    const updatedData = data.map((item) =>
-      item.key === selectedBadge.key
-        ? { ...item, ...values, icon: previewImage || item.icon }
-        : item
-    );
-    setData(updatedData);
+    if (selectedBadge) {
+      // 🛠 Update existing badge
+      const updatedData = data.map((item) =>
+        item.key === selectedBadge.key
+          ? { ...item, ...values, icon: previewImage || item.icon }
+          : item
+      );
+      setData(updatedData);
+    } else {
+      // ➕ Add new badge
+      const newBadge = {
+        key: (data.length + 1).toString(),
+        name: values.name,
+        Criteria: values.Criteria,
+        icon: previewImage || icon, // fallback icon
+      };
+      setData([...data, newBadge]);
+    }
     setIsModalVisible(false);
+    form.resetFields();
+    setPreviewImage(null);
+    setSelectedBadge(null);
   };
 
   const handleDelete = (key) => {
@@ -96,7 +131,6 @@ const BadgeTable = () => {
       key: "action",
       render: (_, record) => (
         <div className="flex gap-3 text-lg">
-        
           <div
             onClick={() => handleEdit(record)}
             className="bg-neutral-100 h-8 w-8 rounded-full p-1 flex justify-center items-center cursor-pointer"
@@ -114,11 +148,40 @@ const BadgeTable = () => {
     },
   ];
 
+  const menu = (
+    <Menu>
+      <Menu.Item>Sort A - Z</Menu.Item>
+      <Menu.Item>Sort Z - A</Menu.Item>
+      <Menu.Item>Recent First</Menu.Item>
+      <Menu.Item>Oldest First</Menu.Item>
+    </Menu>
+  );
+
   return (
     <div className="bg-white p-6 rounded-xl shadow-sm mb-10">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-lg font-semibold">🎖️ Badges Management</h2>
-        <Button type="primary">Add New Badge</Button>
+        <div className="flex items-center gap-2">
+          <Input
+            prefix={<SearchOutlined />}
+            placeholder="Search..."
+            onChange={(e) => setSearchText(e.target.value)}
+            className="w-60"
+          />
+          <Dropdown overlay={menu} trigger={["click"]}>
+            <Button>
+              Filter <DownOutlined />
+            </Button>
+          </Dropdown>
+
+          {/* ✅ Add Button Now Works */}
+          <button
+            onClick={handleAdd}
+            className="flex justify-center items-center gap-2 bg-white px-4 py-2 rounded-3xl border hover:bg-gray-50"
+          >
+            <FaPlus /> Add
+          </button>
+        </div>
       </div>
 
       <Table
@@ -128,9 +191,9 @@ const BadgeTable = () => {
         rowKey="key"
       />
 
-      {/* ✨ Edit Badge Modal */}
+      {/* ✅ Unified Add/Edit Modal */}
       <Modal
-        title="Edit Badge"
+        title={selectedBadge ? "Edit Badge" : "Add New Badge"}
         open={isModalVisible}
         onCancel={handleCancel}
         footer={null}
@@ -163,7 +226,7 @@ const BadgeTable = () => {
           <Form.Item
             name="name"
             label="Badge Name"
-            rules={[{ required: true }]}
+            rules={[{ required: true, message: "Please enter badge name" }]}
           >
             <Input placeholder="Enter badge name" />
           </Form.Item>
@@ -171,7 +234,7 @@ const BadgeTable = () => {
           <Form.Item
             name="Criteria"
             label="Criteria"
-            rules={[{ required: true }]}
+            rules={[{ required: true, message: "Please enter criteria" }]}
           >
             <Input placeholder="Enter badge criteria" />
           </Form.Item>
@@ -179,7 +242,7 @@ const BadgeTable = () => {
           <div className="flex justify-end gap-3 mt-4">
             <Button onClick={handleCancel}>Cancel</Button>
             <Button type="primary" htmlType="submit">
-              Save Changes
+              {selectedBadge ? "Save Changes" : "Add Badge"}
             </Button>
           </div>
         </Form>

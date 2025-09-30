@@ -1,12 +1,12 @@
 /* eslint-disable no-unused-vars */
 import { useState } from "react";
-import { Button, Form, Input, Modal, Table, Upload } from "antd";
+import { Button, DatePicker, Dropdown, Form, Input, Menu, Modal, Table, Upload } from "antd";
 import { FaImage, FaPencilAlt } from "react-icons/fa";
 import { RxCrossCircled } from "react-icons/rx";
 import icon from "../../assets/image/leaf.png";
 import icon1 from "../../assets/image/edu.png";
 import icon2 from "../../assets/image/health.png";
-
+import { DownOutlined, SearchOutlined } from "@ant-design/icons";
 const BusinessReview = () => {
   const originalData = [
     {
@@ -34,7 +34,7 @@ const BusinessReview = () => {
       offer: "Health Checkup Kit",
     },
   ];
-
+  const [searchText, setSearchText] = useState("");
   const [data, setData] = useState(originalData);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [previewImage, setPreviewImage] = useState(null);
@@ -132,12 +132,32 @@ const BusinessReview = () => {
     //   ),
     // },
   ];
-
+  const menu = (
+    <Menu>
+      <Menu.Item>Sort A - Z</Menu.Item>
+      <Menu.Item>Sort Z - A</Menu.Item>
+      <Menu.Item>Recent First</Menu.Item>
+      <Menu.Item>Oldest First</Menu.Item>
+    </Menu>
+  );
   return (
     <div className="bg-white p-6 rounded-xl shadow-sm mb-10">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-lg font-semibold">🏢 Business Rewards</h2>
-        <Button type="primary">Add New</Button>
+           <div className="flex items-center gap-2">
+          <Input
+            prefix={<SearchOutlined />}
+            placeholder="Search..."
+            onChange={(e) => setSearchText(e.target.value)}
+            className="w-60"
+          />
+          <Dropdown overlay={menu} trigger={["click"]}>
+            <Button>
+              Filter <DownOutlined />
+            </Button>
+          </Dropdown>
+          <DatePicker placeholder="Select interval" />
+        </div>
       </div>
 
       <Table

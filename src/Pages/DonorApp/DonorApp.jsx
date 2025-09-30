@@ -1,4 +1,4 @@
-import { FaArrowDown, FaPen, FaPlus } from "react-icons/fa";
+import { FaArrowDown, } from "react-icons/fa";
 import DonorDataTable from "./DonorDataTable";
 import BadgeTable from "./BadgeTable";
 import BusinessReview from "./BusinessReview";
@@ -15,13 +15,13 @@ const DonorApp = () => {
             Manage donor details, badges, goals, and rewards for the donor app.
           </p>
         </div>
-        <div className="w-full md:w-[30%] flex justify-start items-center gap-5">
-          <button className="bg-white px-6 py-3 rounded-3xl flex justify-center items-center gap-2 border">
+        <div className="w-full md:w-[30%] flex justify-end items-center gap-5">
+          {/* <button className="bg-white px-6 py-3 rounded-3xl flex justify-center items-center gap-2 border">
             <FaPen></FaPen> Edit Rewards
-          </button>
-          <button className="bg-white px-6 py-3 rounded-3xl flex justify-center items-center gap-2 border">
+          </button> */}
+          {/* <button className="bg-white px-6 py-3 rounded-3xl flex justify-center items-center gap-2 border">
             <FaPlus></FaPlus> Add
-          </button>
+          </button> */}
           <button className="bg-white px-6 py-3 rounded-3xl flex justify-center items-center gap-2 border">
             <FaArrowDown /> Export
           </button>
