@@ -24,6 +24,7 @@ import RewardsQuickLinks from "../Components/Dashboard/AnalyticsInfo/RewardsQuic
 import AnalyticsRoute from "../Pages/AnalyticsRoute/AnalyticsRoute";
 import BusinessAdmin from "../Pages/BusinessAdmin/BusinessAdmin";
 import DonorApp from "../Pages/DonorApp/DonorApp";
+import ContactUs from "../Pages/Settings/ContactUS/ContactUS";
 
 export const router = createBrowserRouter([
   {
@@ -100,15 +101,15 @@ export const router = createBrowserRouter([
 
       // setting:
 
-      // {
-      //   path: "/settings/contact-us",
-      //   element: <ContactUS />,
-      // },
-
       {
-        path: "/settings/banner",
-        element: <Banner />,
+        path: "/settings/contact-us",
+        element: <ContactUs />,
       },
+
+      // {
+      //   path: "/settings/banner",
+      //   element: <Banner />,
+      // },
 
       // Admin profile:
       {
