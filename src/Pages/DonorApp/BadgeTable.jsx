@@ -17,7 +17,6 @@ import icon from "../../assets/image/b1.png";
 import icon1 from "../../assets/image/b2.png";
 import { DownOutlined, SearchOutlined } from "@ant-design/icons";
 import { FaPlus } from "react-icons/fa6";
-
 const BadgeTable = () => {
   const originalData = [
     {
@@ -39,7 +38,6 @@ const BadgeTable = () => {
       Criteria: "Donate over $500",
     },
   ];
-
   const [searchText, setSearchText] = useState("");
   const [data, setData] = useState(originalData);
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -51,13 +49,6 @@ const BadgeTable = () => {
     setPreviewImage(URL.createObjectURL(file));
     form.setFieldsValue({ badgeIcon: file });
     return false;
-  };
-
-  const handleAdd = () => {
-    setSelectedBadge(null); // new badge
-    form.resetFields();
-    setPreviewImage(null);
-    setIsModalVisible(true);
   };
 
   const handleEdit = (record) => {
@@ -74,32 +65,16 @@ const BadgeTable = () => {
     setIsModalVisible(false);
     form.resetFields();
     setPreviewImage(null);
-    setSelectedBadge(null);
   };
 
   const handleSave = (values) => {
-    if (selectedBadge) {
-      // 🛠 Update existing badge
-      const updatedData = data.map((item) =>
-        item.key === selectedBadge.key
-          ? { ...item, ...values, icon: previewImage || item.icon }
-          : item
-      );
-      setData(updatedData);
-    } else {
-      // ➕ Add new badge
-      const newBadge = {
-        key: (data.length + 1).toString(),
-        name: values.name,
-        Criteria: values.Criteria,
-        icon: previewImage || icon, // fallback icon
-      };
-      setData([...data, newBadge]);
-    }
+    const updatedData = data.map((item) =>
+      item.key === selectedBadge.key
+        ? { ...item, ...values, icon: previewImage || item.icon }
+        : item
+    );
+    setData(updatedData);
     setIsModalVisible(false);
-    form.resetFields();
-    setPreviewImage(null);
-    setSelectedBadge(null);
   };
 
   const handleDelete = (key) => {
@@ -147,7 +122,6 @@ const BadgeTable = () => {
       ),
     },
   ];
-
   const menu = (
     <Menu>
       <Menu.Item>Sort A - Z</Menu.Item>
@@ -173,13 +147,8 @@ const BadgeTable = () => {
               Filter <DownOutlined />
             </Button>
           </Dropdown>
-
-          {/* ✅ Add Button Now Works */}
-          <button
-            onClick={handleAdd}
-            className="flex justify-center items-center gap-2 bg-white px-4 py-2 rounded-3xl border hover:bg-gray-50"
-          >
-            <FaPlus /> Add
+          <button className="flex justify-center items-center gap-2 bg-white px-4 py-2 rounded-3xl border">
+            <FaPlus></FaPlus> Add
           </button>
         </div>
       </div>
@@ -191,9 +160,9 @@ const BadgeTable = () => {
         rowKey="key"
       />
 
-      {/* ✅ Unified Add/Edit Modal */}
+      {/* ✨ Add Badge Modal */}
       <Modal
-        title={selectedBadge ? "Edit Badge" : "Add New Badge"}
+        title="Edit Badge"
         open={isModalVisible}
         onCancel={handleCancel}
         footer={null}
@@ -226,7 +195,7 @@ const BadgeTable = () => {
           <Form.Item
             name="name"
             label="Badge Name"
-            rules={[{ required: true, message: "Please enter badge name" }]}
+            rules={[{ required: true }]}
           >
             <Input placeholder="Enter badge name" />
           </Form.Item>
@@ -234,7 +203,7 @@ const BadgeTable = () => {
           <Form.Item
             name="Criteria"
             label="Criteria"
-            rules={[{ required: true, message: "Please enter criteria" }]}
+            rules={[{ required: true }]}
           >
             <Input placeholder="Enter badge criteria" />
           </Form.Item>
@@ -242,7 +211,63 @@ const BadgeTable = () => {
           <div className="flex justify-end gap-3 mt-4">
             <Button onClick={handleCancel}>Cancel</Button>
             <Button type="primary" htmlType="submit">
-              {selectedBadge ? "Save Changes" : "Add Badge"}
+              Save Changes
+            </Button>
+          </div>
+        </Form>
+      </Modal>
+      {/* edit */}
+      <Modal
+        title="Edit Badge"
+        open={isModalVisible}
+        onCancel={handleCancel}
+        footer={null}
+        centered
+      >
+        <Form layout="vertical" form={form} onFinish={handleSave}>
+          <div className="flex justify-center mb-4">
+            <Upload
+              showUploadList={false}
+              beforeUpload={handleBeforeUpload}
+              accept="image/*"
+            >
+              <div className="border border-dashed border-gray-300 p-4 rounded-full cursor-pointer flex flex-col items-center">
+                {previewImage ? (
+                  <img
+                    src={previewImage}
+                    alt="Preview"
+                    className="h-24 w-24 rounded-full object-cover"
+                  />
+                ) : (
+                  <>
+                    <FaImage className="text-gray-400 h-8 w-8" />
+                    <p className="text-gray-400 text-sm mt-2">Upload Icon</p>
+                  </>
+                )}
+              </div>
+            </Upload>
+          </div>
+
+          <Form.Item
+            name="name"
+            label="Badge Name"
+            rules={[{ required: true }]}
+          >
+            <Input placeholder="Enter badge name" />
+          </Form.Item>
+
+          <Form.Item
+            name="Criteria"
+            label="Criteria"
+            rules={[{ required: true }]}
+          >
+            <Input placeholder="Enter badge criteria" />
+          </Form.Item>
+
+          <div className="flex justify-end gap-3 mt-4">
+            <Button onClick={handleCancel}>Cancel</Button>
+            <Button type="primary" htmlType="submit">
+              Save Changes
             </Button>
           </div>
         </Form>
