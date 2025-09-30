@@ -51,7 +51,7 @@ const AdminProfile = () => {
         <div className="mx-2">
             {/* Profile Header */}
             <div className="flex flex-col justify-center items-center py-5">
-                <div className="flex flex-col items-center text-center mb-10 py-6 bg-primary w-full">
+                <div className="flex flex-col items-center text-center mb-10 py-6 bg-gray-200 w-full">
                     <div className="relative">
                         <Avatar
                             size={140}
@@ -66,7 +66,7 @@ const AdminProfile = () => {
                                 }
                                 className="absolute bottom-2 right-2 bg-white px-2 py-1 rounded-full cursor-pointer"
                             >
-                                <FaCamera className="text-primary h-5 w-5" />
+                                <FaCamera className="text-secondary h-5 w-5" />
                             </Upload>
                         )}
                     </div>
@@ -79,8 +79,8 @@ const AdminProfile = () => {
                 <p
                     onClick={() => setActiveTab("Edit Profile")}
                     className={`cursor-pointer ${activeTab === "Edit Profile"
-                        ? "text-primary border-b-2 border-primary pb-1"
-                        : "text-gray-500"
+                        ? " border-b-2 border-gray-200 pb-1"
+                        : ""
                         }`}
                 >
                     Edit Profile
@@ -88,8 +88,8 @@ const AdminProfile = () => {
                 <p
                     onClick={() => setActiveTab("Change Password")}
                     className={`cursor-pointer ${activeTab === "Change Password"
-                        ? "text-primary border-b-2 border-primary pb-1"
-                        : "text-gray-500"
+                        ? " border-b-2 border-neutral-200 pb-1"
+                        : ""
                         }`}
                 >
                     Change Password
@@ -105,7 +105,7 @@ const AdminProfile = () => {
                         </p>
                         <button
                             onClick={toggleEditMode}
-                            className="bg-primary text-white px-4 py-2 rounded-md shadow-md hover:bg-primary-dark ml-3"
+                            className="bg-gray-400 text-white px-4 py-2 rounded-md shadow-md hover:bg-primary-dark ml-3"
                         >
                             {isEditing ? (
                                 <MdOutlineCancel className="h-6" />
@@ -154,7 +154,7 @@ const AdminProfile = () => {
                                 <Form.Item className="text-center">
                                     <button
                                         type="submit"
-                                        className="w-full bg-primary text-white px-10 py-2 rounded-md shadow-lg"
+                                        className="w-full bg-black text-white px-10 py-2 rounded-md shadow-lg"
                                     >
                                         Save Changes
                                     </button>
@@ -237,7 +237,7 @@ const AdminProfile = () => {
                             <Form.Item className="text-center">
                                 <button
                                     type="submit"
-                                    className="w-full bg-primary text-white px-10 py-2 rounded-md shadow-lg hover:bg-primary-dark"
+                                    className="w-full bg-black text-white px-10 py-2 rounded-md shadow-lg hover:bg-primary-dark"
                                 >
                                     Save Changes
                                 </button>
