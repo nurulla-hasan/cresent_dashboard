@@ -1,38 +1,61 @@
 import js from '@eslint/js'
 import globals from 'globals'
-import react from 'eslint-plugin-react'
-import reactHooks from 'eslint-plugin-react-hooks'
-import reactRefresh from 'eslint-plugin-react-refresh'
 
 export default [
-  { ignores: ['dist'] },
+  { ignores: ['dist', 'node_modules', 'build', '*.config.js'] },
   {
     files: ['**/*.{js,jsx}'],
     languageOptions: {
-      ecmaVersion: 2020,
-      globals: globals.browser,
+      ecmaVersion: 2022,
+      globals: {
+        ...globals.browser,
+        ...globals.es2021,
+        ...globals.node
+      },
       parserOptions: {
         ecmaVersion: 'latest',
-        ecmaFeatures: { jsx: true },
         sourceType: 'module',
       },
     },
-    settings: { react: { version: '18.3' } },
-    plugins: {
-      react,
-      'react-hooks': reactHooks,
-      'react-refresh': reactRefresh,
-    },
     rules: {
-      ...js.configs.recommended.rules,
-      ...react.configs.recommended.rules,
-      ...react.configs['jsx-runtime'].rules,
-      ...reactHooks.configs.recommended.rules,
-      'react/jsx-no-target-blank': 'off',
-      'react-refresh/only-export-components': [
-        'warn',
-        { allowConstantExport: true },
-      ],
+      // Console and debugger warnings
+      'no-console': ['warn', { allow: ['warn', 'error'] }],
+      'no-debugger': 'warn',
+      'no-alert': 'warn',
+
+      // Import/Export rules
+      'import/no-unresolved': ['error', { commonjs: true, caseSensitive: true }],
+      'import/named': 'error',
+      'no-undef': 'error',
+      'import/no-unresolved': 'error',
+      'import/named': 'error',
+      'import/namespace': 'error',
+      'import/default': 'error',
+      'import/export': 'error',
+      'import/no-absolute-path': 'error',
+      'import/no-webpack-loader-syntax': 'error',
+      'import/no-self-import': 'error',
+      'import/no-cycle': 'error',
+      'import/no-useless-path-segments': 'warn',
+      'import/order': ['warn', {
+        'groups': [
+          'builtin',
+          'external',
+          'internal',
+          'parent',
+          'sibling',
+          'index'
+        ],
+        'newlines-between': 'always',
+        'alphabetize': {
+          order: 'asc',
+          caseInsensitive: true
+        }
+      }],
+      'import/newline-after-import': 'warn',
+      'import/no-duplicates': 'warn',
+      'import/first': 'warn',
+      'import/no-mutable-exports': 'warn',
     },
   },
 ]

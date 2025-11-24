@@ -1,3 +1,4 @@
+ 
 import {
   LineChart,
   Line,
@@ -8,22 +9,29 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { BsArrowUpRight } from "react-icons/bs";
+import PropTypes from "prop-types";
 
-const SubscriptionChart = () => {
-  const data = [
-    { name: "Jan", value: 30 },
-    { name: "Feb", value: 50 },
-    { name: "Mar", value: 40 },
-    { name: "Apr", value: 70 },
-    { name: "May", value: 90 },
-    { name: "Jun", value: 60 },
-    { name: "Jul", value: 80 },
-    { name: "Aug", value: 100 },
-    { name: "Sep", value: 75 },
-    { name: "Oct", value: 85 },
-    { name: "Nov", value: 95 },
-    { name: "Dec", value: 100 },
+const SubscriptionChart = ({ monthlyData }) => {
+  const monthNames = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
   ];
+  const data = Array.isArray(monthlyData)
+    ? monthlyData.map((m) => ({
+        name: monthNames[m.month] ?? String(m.month),
+        value: m.count ?? 0,
+      }))
+    : [];
 
   return (
     <div
@@ -33,7 +41,6 @@ const SubscriptionChart = () => {
       <div className="flex justify-between items-center mb-4">
         <div className="mb-6">
           <h3 className="font-bold text-xl">Subscriptions</h3>
-          <p className="text-gray-400">+8.2% from last month</p>
         </div>
         <BsArrowUpRight className="h-5 w-5 cursor-pointer" />
       </div>
@@ -69,3 +76,13 @@ const SubscriptionChart = () => {
 };
 
 export default SubscriptionChart;
+SubscriptionChart.propTypes = {
+  monthlyData: PropTypes.arrayOf(
+    PropTypes.shape({
+      year: PropTypes.number,
+      month: PropTypes.number,
+      count: PropTypes.number,
+      growth: PropTypes.number,
+    })
+  ),
+};

@@ -5,8 +5,7 @@ import {
 import { SetAccessToken } from "./auth/authSlice";
 
 const rawBaseQuery = fetchBaseQuery({
-  // baseUrl: 'https://paulina-e-learning-platform.vercel.app/api/v1',
-  baseUrl: "http://56.228.50.160:6080/api/v1",
+  baseUrl: "http://10.10.20.42:5000/api/v1",
 
   prepareHeaders: (headers, { getState }) => {
     const state = getState();
@@ -31,7 +30,7 @@ const baseQuery = async (
   if (status === 401 || status === 403) {
     api.dispatch(SetAccessToken(null));
     localStorage.removeItem("accessToken");
-    window.location.href = "/login";
+    window.location.href = "/sign-in";
   }
 
   return result;

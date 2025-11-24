@@ -5,24 +5,13 @@ import QuickLinks from "../../Components/Dashboard/AnalyticsInfo/QuickLinks";
 import TopDonors from "../../Components/Dashboard/AnalyticsInfo/TopDonors";
 import DonationChart from "../../Components/Dashboard/AnalyticsInfo/DonationChart";
 import SubscriptionChart from "../../Components/Dashboard/AnalyticsInfo/SubscriptionChart";
+import { useGetDashboardDataQuery } from "../../redux/feature/dashboard/dashboardApis";
 
 const Analytics = () => {
   const [active, setActive] = useState("Today");
 
-  const getFilteredData = () => {
-    switch (active) {
-      case "Today":
-        return { message: "Showing today's data" };
-      case "This Week":
-        return { message: "Showing this week's data" };
-      case "This Month":
-        return { message: "Showing this month's data" };
-      default:
-        return { message: "No data" };
-    }
-  };
-
-  const data = getFilteredData();
+  const { data: apiRes, isLoading, isError } = useGetDashboardDataQuery();
+  const stats = apiRes?.data || {};
 
   const btnClass = (label) =>
     `px-6 py-3 rounded-3xl border transition ${
@@ -63,16 +52,34 @@ const Analytics = () => {
 
       <div className="flex justify-between items-start gap-5">
         <div className=" w-full md:w-[70%]">
-          {/* {TODO: there will need to pass the data} */}
-          
-          <AnanlyticsCharts filter={active} data={data} />
-          <DonationChart/>
-          <SubscriptionChart/>
-          <BarChartComponents filter={active} data={data} />
+          {isLoading ? (
+            <div className="p-6 bg-white border rounded-2xl">Loading...</div>
+          ) : isError ? (
+            <div className="p-6 bg-white border rounded-2xl text-red-500">Failed to load dashboard data.</div>
+          ) : (
+            <>
+              <AnanlyticsCharts
+                totalDonation={stats.totalDonation}
+                donationAmountChangeText={stats.donationAmountChangeText}
+                totalActiveOrganizations={stats.totalActiveOrganizations}
+                organizationChangeText={stats.organizationChangeText}
+              />
+              <DonationChart monthlyData={stats.donationGrowthMonthly} />
+              <SubscriptionChart monthlyData={stats.subscriptionDonationGrowthMonthly} />
+              {/* <BarChartComponents data={[]} /> */}
+            </>
+          )}
         </div>
         <div className="hidden md:block w-[30%]">
           <QuickLinks />
-          <TopDonors filter={active} data={data} />
+          {!isLoading && !isError && (
+            <TopDonors
+              topDonors={stats.topDonors}
+              recentDonorDocs={stats.recentDonorDocs}
+              donationsByCause={stats.donationsByCause}
+              totalDonation={stats.totalDonation}
+            />
+          )}
         </div>
       </div>
     </div>
