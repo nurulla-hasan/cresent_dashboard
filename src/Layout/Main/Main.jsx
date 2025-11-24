@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import { Outlet } from "react-router-dom";
 import Sidebar from "../../Components/Sidebar/Sidebar";
 import { useEffect, useState } from "react";
