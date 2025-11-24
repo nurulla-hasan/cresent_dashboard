@@ -11,7 +11,7 @@ import ContinuePage from "../Pages/Auth/ContinuePage/ContinuePage";
 import Subscription from "../Pages/Subscription/Subscription";
 // import ContactUS from "../Pages/Settings/ContactUS/ContactUS";
 
-import Banner from "../Pages/Settings/Banner/Banner";
+// import Banner from "../Pages/Settings/Banner/Banner";
 import AdminProfile from "../Pages/AdminProfile/AdminProfile";
 import Notifications from "../Pages/Notification/Notification";
 import AllUsers from "../Components/UserManagemnet/AllUsers/AllUsers";
