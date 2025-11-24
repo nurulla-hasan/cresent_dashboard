@@ -5,7 +5,7 @@ import { ErrorToast, SuccessToast } from "../../../lib/utils";
 
 const authApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-    
+
     // Login Endpoint (Mutation)
     login: builder.mutation({
       query: (credentials) => ({
@@ -33,7 +33,6 @@ const authApi = baseApi.injectEndpoints({
           SuccessToast("Login successful.");
           window.location.href = "/";
         } catch (error) {
-          // console.log(error);
           ErrorToast(error?.error?.data?.message || "Login failed.");
         }
       },

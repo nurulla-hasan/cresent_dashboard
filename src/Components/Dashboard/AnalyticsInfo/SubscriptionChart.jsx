@@ -9,7 +9,6 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { BsArrowUpRight } from "react-icons/bs";
-import PropTypes from "prop-types";
 
 const SubscriptionChart = ({ monthlyData }) => {
   const monthNames = [
@@ -76,13 +75,3 @@ const SubscriptionChart = ({ monthlyData }) => {
 };
 
 export default SubscriptionChart;
-SubscriptionChart.propTypes = {
-  monthlyData: PropTypes.arrayOf(
-    PropTypes.shape({
-      year: PropTypes.number,
-      month: PropTypes.number,
-      count: PropTypes.number,
-      growth: PropTypes.number,
-    })
-  ),
-};

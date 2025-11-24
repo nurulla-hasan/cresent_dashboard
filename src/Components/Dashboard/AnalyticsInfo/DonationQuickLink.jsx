@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Pagination, Select } from "antd";
+import { Select } from "antd";
 import { Table } from "antd";
 import { Input } from "antd";
 import { MoreOutlined } from "@ant-design/icons";
@@ -12,7 +12,6 @@ import Gift from "../../../assets/image/Gift.png";
 import Calendar from "../../../assets/image/Calendar.png";
 import { SlArrowLeft } from "react-icons/sl";
 const DonationQuickLink = () => {
-  const [active, setActive] = useState("Today");
   const { Search } = Input;
   const { Option } = Select;
   const onSearch = (value) => {
@@ -225,16 +224,10 @@ const DonationQuickLink = () => {
       ),
     },
   ];
-  const btnClass = (label) =>
-    `px-6 py-3 rounded-3xl border transition ${
-      active === label ? "bg-black text-white" : "bg-white text-black"
-    }`;
-    const handleBack=()=>{
-       window.history.back();
-    }
+
   return (
     <div>
-      <button onClick={handleBack} className="bg-white px-4 py-3 rounded-3xl flex justify-center items-center gap-2 mb-4"> 
+      <button onClick={()=>(window.history.back())} className="bg-white px-4 py-3 rounded-3xl flex justify-center items-center gap-2 mb-4">
         <SlArrowLeft /> Back</button>
       <div className="flex justify-between items-center gap-5">
         <div>
@@ -243,7 +236,8 @@ const DonationQuickLink = () => {
             Filter, review, and manage receipts with ease.
           </p>
         </div>
-        <div className="w-full md:w-[30%] flex justify-start items-center gap-5">
+
+        {/* <div className="w-full md:w-[30%] flex justify-start items-center gap-5">
           <button
             className={btnClass("Today")}
             onClick={() => setActive("Today")}
@@ -262,7 +256,7 @@ const DonationQuickLink = () => {
           >
             This Month
           </button>
-        </div>
+        </div> */}
         {/* <div className="flex justify-start items-center gap-5 mb-5">
           {["All Donors", "Export"].map((tab) => (
             <button
@@ -276,6 +270,7 @@ const DonationQuickLink = () => {
             </button>
           ))}
         </div> */}
+
       </div>
 
       <div>
@@ -348,10 +343,6 @@ const DonationQuickLink = () => {
             pagination={{ pageSize: 5 }}
             style={{ marginTop: 20 }}
           />
-
-          <div className="flex justify-end items-center my-10">
-            <Pagination />
-          </div>
         </div>
       </div>
     </div>

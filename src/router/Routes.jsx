@@ -1,49 +1,60 @@
+import { lazy, Suspense } from 'react';
 import { createBrowserRouter } from "react-router-dom";
 import MainLayout from "../Layout/Main/Main";
-import Analytics from "../Pages/Analytics/Analytics";
-import SignIn from "../Pages/Auth/SignIn/SignIn";
-import ForgatePassword from "../Pages/Auth/ForgatePassword/ForgatePassword";
-import Newpass from "../Pages/Auth/NewPass/Newpass";
-import VerifyPass from "../Pages/Auth/VerifyPass/VerifyPass";
-import ContinuePage from "../Pages/Auth/ContinuePage/ContinuePage";
-// import Payment from "../Pages/Payment/Payment";
 
-import Subscription from "../Pages/Subscription/Subscription";
-// import ContactUS from "../Pages/Settings/ContactUS/ContactUS";
+// Loading component
+const Loading = () => (
+  <div className="flex items-center justify-center h-screen">
+    <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+  </div>
+);
 
-// import Banner from "../Pages/Settings/Banner/Banner";
-import AdminProfile from "../Pages/AdminProfile/AdminProfile";
-import Notifications from "../Pages/Notification/Notification";
-import AllUsers from "../Components/UserManagemnet/AllUsers/AllUsers";
-// import Subscribers from "../Components/UserManagemnet/Subscribers/Subscribers";
-import AllOrganization from "../Pages/OrganizationManagement/AllOrganization/AllOrganization";
-// import SubscribersOrganization from "../Pages/OrganizationManagement/SubscribersOrganization/SubscribersOrganization";
-import DonationQuickLink from "../Components/Dashboard/AnalyticsInfo/DonationQuickLink";
-import SubscriptionQuickLinks from "../Components/Dashboard/AnalyticsInfo/SubscriptionQuickLinks";
-import RewardsQuickLinks from "../Components/Dashboard/AnalyticsInfo/RewardsQuickLinks";
-import AnalyticsRoute from "../Pages/AnalyticsRoute/AnalyticsRoute";
-import BusinessAdmin from "../Pages/BusinessAdmin/BusinessAdmin";
-import DonorApp from "../Pages/DonorApp/DonorApp";
-import ContactUs from "../Pages/Settings/ContactUS/ContactUS";
+// Lazy load components with Suspense wrapper
+const lazyLoad = (importFunc) => {
+  const LazyComponent = lazy(importFunc);
+  return (props) => (
+    <Suspense fallback={<Loading />}>
+      <LazyComponent {...props} />
+    </Suspense>
+  );
+};
+
+// Lazy loaded components
+const SignIn = lazyLoad(() => import('../Pages/Auth/SignIn/SignIn'));
+const ForgatePassword = lazyLoad(() => import('../Pages/Auth/ForgatePassword/ForgatePassword'));
+const Newpass = lazyLoad(() => import('../Pages/Auth/NewPass/Newpass'));
+const VerifyPass = lazyLoad(() => import('../Pages/Auth/VerifyPass/VerifyPass'));
+const ContinuePage = lazyLoad(() => import('../Pages/Auth/ContinuePage/ContinuePage'));
+const Subscription = lazyLoad(() => import('../Pages/Subscription/Subscription'));
+const AdminProfile = lazyLoad(() => import('../Pages/AdminProfile/AdminProfile'));
+const Notifications = lazyLoad(() => import('../Pages/Notification/Notification'));
+const AllUsers = lazyLoad(() => import('../Components/UserManagemnet/AllUsers/AllUsers'));
+const AllOrganization = lazyLoad(() => import('../Pages/OrganizationManagement/AllOrganization/AllOrganization'));
+const Analytics = lazyLoad(() => import('../Pages/Analytics/Analytics'));
+const DonationQuickLink = lazyLoad(() => import('../Components/Dashboard/AnalyticsInfo/DonationQuickLink'));
+const SubscriptionQuickLinks = lazyLoad(() => import('../Components/Dashboard/AnalyticsInfo/SubscriptionQuickLinks'));
+const RewardsQuickLinks = lazyLoad(() => import('../Components/Dashboard/AnalyticsInfo/RewardsQuickLinks'));
+const AnalyticsRoute = lazyLoad(() => import('../Pages/AnalyticsRoute/AnalyticsRoute'));
+const BusinessAdmin = lazyLoad(() => import('../Pages/BusinessAdmin/BusinessAdmin'));
+const DonorApp = lazyLoad(() => import('../Pages/DonorApp/DonorApp'));
+const ContactUs = lazyLoad(() => import('../Pages/Settings/ContactUS/ContactUS'));
 
 export const router = createBrowserRouter([
   {
     path: "/sign-in",
-    element: <SignIn></SignIn>,
+    element: <SignIn />,
   },
-
   {
-    path: "/forgate-password",
-    element: <ForgatePassword></ForgatePassword>,
+    path: "/forgot-password",
+    element: <ForgatePassword />,
   },
   {
     path: "/varification",
-    element: <VerifyPass></VerifyPass>,
+    element: <VerifyPass />,
   },
-
   {
     path: "/new-password",
-    element: <Newpass></Newpass>,
+    element: <Newpass />,
   },
   {
     path: "/continue-page",
@@ -61,26 +72,14 @@ export const router = createBrowserRouter([
         path: "user-management",
         element: <AllUsers />,
       },
-      // {
-      //   path: "/user-management/subscribers",
-      //   element: <Subscribers />,
-      // },
       {
         path: "/organization-management",
         element: <AllOrganization />,
       },
-      // {
-      //   path: "/organization-management/subscribers-organizations",
-      //   element: <SubscribersOrganization />,
-      // },
       {
         path: "/subdcription-management",
         element: <Subscription />,
       },
-      // {
-      //   path: "/payment-management",
-      //   element: <Payment></Payment>,
-      // },
       {
         path: "/analytics",
         element: <AnalyticsRoute />,
@@ -89,29 +88,14 @@ export const router = createBrowserRouter([
         path: "/donor-app",
         element: <DonorApp />,
       },
-      // {
-      //     path: '/add-reward',
-      //     element: <Rewards></Rewards>
-      // },
-
       {
-          path: '/business-admin',
-          element: <BusinessAdmin/>
+        path: "/business-admin",
+        element: <BusinessAdmin />
       },
-
-      // setting:
-
       {
         path: "/settings/contact-us",
         element: <ContactUs />,
       },
-
-      // {
-      //   path: "/settings/banner",
-      //   element: <Banner />,
-      // },
-
-      // Admin profile:
       {
         path: "/admin-profile",
         element: <AdminProfile />,
@@ -120,7 +104,6 @@ export const router = createBrowserRouter([
         path: "/notification",
         element: <Notifications />,
       },
-      //Quick limks:
       {
         path: "donationQuickLink",
         element: <DonationQuickLink />,

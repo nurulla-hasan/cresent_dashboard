@@ -1,4 +1,3 @@
-/* eslint-disable react/prop-types */
 import { Link } from "react-router-dom";
 import user from "../../../assets/image/user.png";
 
@@ -42,7 +41,7 @@ const TopDonors= ({ topDonors = [], recentDonorDocs = [], donationsByCause = [],
 
         {recentDonorDocs.map((item, idx) => (
           <div
-            key={`${item?.donor?.email || item?.createdAt || idx}`}
+            key={`${item?.donor?.email || 'unknown'}-${item?.createdAt || 'no-date'}-${idx}`}
             className="flex justify-between items-center gap-2 mb-4"
           >
             <div className="flex justify-start items-center gap-2">

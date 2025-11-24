@@ -1,32 +1,31 @@
 import { Checkbox, ConfigProvider, Form, Input } from "antd";
-import img from "../../../assets/image/login.png";
-import { Link } from "react-router-dom";
 import { AiOutlineMail } from "react-icons/ai";
 import { MdLockOutline } from "react-icons/md";
+import { Link } from "react-router-dom";
+
+import img from "../../../assets/image/login.png";
 import { useLoginMutation } from "../../../redux/feature/auth/authApi";
-import { logout } from "../../../redux/feature/auth/authSlice";
+import logo from "../../../assets/image/Logo.png";
 
 const SignIn = () => {
   const [login, { isLoading }] = useLoginMutation();
 
   const onFinish = async (values) => {
     try {
-      // The API expects email/password in the request body
       await login({
         email: values["email-address"],
         password: values.password
       }).unwrap();
       // On success, the authApi will handle token storage and redirection
-    } catch (error) {
+    } catch  {
       // Error is already handled by authApi's onQueryStarted
-      console.error('Login error:', error);
     }
   };
 
   return (
     <div className="h-screen flex p-2">
       <div className="bg-white flex flex-col justify-center items-center w-full md:w-1/2">
-        <img src={logout} alt="Logo" className="absolute top-5 right-5 left-10" />
+        <img src={logo} alt="Logo" className="absolute top-5 right-5 left-10" />
         <div className="w-[400px]">
           <div>
             <ConfigProvider

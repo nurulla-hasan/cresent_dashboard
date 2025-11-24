@@ -9,7 +9,6 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { BsArrowUpRight } from "react-icons/bs";
-import PropTypes from "prop-types";
 
 const DonationChart = ({ monthlyData }) => {
   const monthNames = [
@@ -72,13 +71,3 @@ const DonationChart = ({ monthlyData }) => {
 };
 
 export default DonationChart;
-DonationChart.propTypes = {
-  monthlyData: PropTypes.arrayOf(
-    PropTypes.shape({
-      year: PropTypes.number,
-      month: PropTypes.number,
-      count: PropTypes.number,
-      growth: PropTypes.number,
-    })
-  ),
-};

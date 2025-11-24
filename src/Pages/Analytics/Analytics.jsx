@@ -1,6 +1,6 @@
 import { useState } from "react";
 import AnanlyticsCharts from "../../Components/Dashboard/AnalyticsInfo/AnanlyticsCharts";
-import BarChartComponents from "../../Components/Dashboard/AnalyticsInfo/BarChartComponents";
+// import BarChartComponents from "../../Components/Dashboard/AnalyticsInfo/BarChartComponents";
 import QuickLinks from "../../Components/Dashboard/AnalyticsInfo/QuickLinks";
 import TopDonors from "../../Components/Dashboard/AnalyticsInfo/TopDonors";
 import DonationChart from "../../Components/Dashboard/AnalyticsInfo/DonationChart";

@@ -1,10 +1,5 @@
- 
-// import oneTime from "../../assets/images/one-time.png";
-// import recurring from "../../assets/images/recurring.png";
-// import rounup from "../../assets/images/roundup.png";
 
 import { BsArrowUpRight } from "react-icons/bs";
-import PropTypes from "prop-types";
 
 const AnanlyticsCharts = ({
   totalDonation,
@@ -59,9 +54,3 @@ const AnanlyticsCharts = ({
 };
 
 export default AnanlyticsCharts;
-AnanlyticsCharts.propTypes = {
-  totalDonation: PropTypes.number,
-  donationAmountChangeText: PropTypes.string,
-  totalActiveOrganizations: PropTypes.number,
-  organizationChangeText: PropTypes.string,
-};
