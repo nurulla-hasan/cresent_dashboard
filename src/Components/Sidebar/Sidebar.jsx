@@ -1,4 +1,3 @@
-/* eslint-disable react/prop-types */
 import { useState } from "react";
 import { BiChevronDown } from "react-icons/bi";
 import { Link, useNavigate } from "react-router-dom";
@@ -69,6 +68,7 @@ const Sidebar = ({ closeDrawer }) => {
         <div className="flex flex-col gap-2 md:my-5 mb-10 px-4 py-8">
           {menuItems.map((item) => (
             <div key={item.label} className={item.className || ""}>
+              <Link to={item.Link}>
               <div
                 className={`text-lg flex justify-between items-center p-4 cursor-pointer rounded-2xl hover:bg-primary ${
                   active === item.label ? "bg-primary" : "text-black"
@@ -79,7 +79,6 @@ const Sidebar = ({ closeDrawer }) => {
                     : handleActiveRoute(item.label)
                 }
               >
-                <Link to={item.Link}>
                   <div className="flex items-center gap-3">
                     <img src={item.icon} alt={item.label} />
                     <p>{item.label}</p>
@@ -91,8 +90,8 @@ const Sidebar = ({ closeDrawer }) => {
                       />
                     )}
                   </div>
-                </Link>
               </div>
+                </Link>
               {item.isDropdown && openDropdown === item.label && (
                 <div className="flex flex-col">
                   {item.subItems.map((subItem) => (
