@@ -22,8 +22,6 @@ const dashboardApis = baseApi.injectEndpoints({
             },
             providesTags: ["DONATION"],
         }),
-
-
     }),
 });
 
