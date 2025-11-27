@@ -10,7 +10,16 @@ import { useGetDashboardDataQuery } from "../../redux/feature/dashboard/dashboar
 const Analytics = () => {
   const [active, setActive] = useState("Today");
 
-  const { data: apiRes, isLoading, isError } = useGetDashboardDataQuery();
+  const getTimeFilterValue = (label) => {
+    if (label === "Today") return "today";
+    if (label === "This Week") return "week";
+    if (label === "This Month") return "month";
+    return "today";
+  };
+
+  const timeFilter = getTimeFilterValue(active);
+
+  const { data: apiRes, isLoading, isError, isFetching } = useGetDashboardDataQuery({ timeFilter });
   const stats = apiRes?.data || {};
 
   const btnClass = (label) =>
@@ -52,8 +61,10 @@ const Analytics = () => {
 
       <div className="flex justify-between items-start gap-5">
         <div className=" w-full md:w-[70%]">
-          {isLoading ? (
-            <div className="p-6 bg-white border rounded-2xl">Loading...</div>
+          {isLoading || isFetching ? (
+            <div className="p-10 bg-white border rounded-2xl flex justify-center items-center">
+              <div className="h-10 w-10 border-4 border-gray-200 border-t-black rounded-full animate-spin" />
+            </div>
           ) : isError ? (
             <div className="p-6 bg-white border rounded-2xl text-red-500">Failed to load dashboard data.</div>
           ) : (

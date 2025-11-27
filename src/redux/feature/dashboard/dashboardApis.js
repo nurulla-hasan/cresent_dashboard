@@ -5,10 +5,19 @@ const dashboardApis = baseApi.injectEndpoints({
 
         // GET DASHBOARD DATA
         getDashboardData: builder.query({
-            query: () => ({
-                url: "/admin/states",
-                method: "GET",
-            }),
+            query: (args) => {
+                const params = new URLSearchParams();
+
+                if (args?.timeFilter) {
+                    params.append("timeFilter", String(args.timeFilter)); // today/week/month
+                }
+
+                return {
+                    url: "/admin/states",
+                    method: "GET",
+                    params,
+                };
+            },
             providesTags: ["DASHBOARD"],
         }),
 
