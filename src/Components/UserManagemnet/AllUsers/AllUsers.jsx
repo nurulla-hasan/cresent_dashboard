@@ -1,134 +1,18 @@
-/* eslint-disable no-unused-vars */
-import { Tag, Button, Menu,} from "antd";
-import { useState } from "react";
-import { FaArrowDown } from "react-icons/fa";
+
 import { BsArrowUpRight } from "react-icons/bs";
 import { Link } from "react-router-dom";
-import ProfileTables from "../ProfileTables";
 import PendingApproval from "../PendingApproval";
 import { useRef } from "react";
+import { useGetUserStateQuery } from "../../../redux/feature/user/userApis.js";
+import ProfileTables from "../ProfileTables";
+import { FaArrowDown } from "react-icons/fa";
+
 const AllUsers = () => {
-  const [searchText, setSearchText] = useState("");
+  const { data: userStateData } = useGetUserStateQuery();
+  const stats = userStateData?.data || {};
 
-
-  const data = [
-    {
-      key: "1",
-      name: "Josh Bill",
-      email: "josh@gmail.com",
-      lastActive: "12 Dec 2023 09:30 PM",
-      role: "Business",
-      status: "Pending",
-    },
-    {
-      key: "2",
-      name: "HFL Foundation",
-      email: "contact@hflfoundation.org",
-      lastActive: "12 Dec 2023 09:30 PM",
-      role: "Organization",
-      status: "Active",
-    },
-    {
-      key: "3",
-      name: "Josh Adam",
-      email: "joshadam@gmail.com",
-      lastActive: "12 Dec 2023 09:30 PM",
-      role: "Donor",
-      status: "Suspended",
-    },
-    {
-      key: "4",
-      name: "Fajar Surya",
-      email: "fajar@gmail.com",
-      lastActive: "12 Dec 2023 09:30 PM",
-      role: "Donor",
-      status: "Active",
-    },
-    {
-      key: "5",
-      name: "Linda Blair",
-      email: "lindablair@gmail.com",
-      lastActive: "12 Dec 2023 09:30 PM",
-      role: "Donor",
-      status: "Active",
-    },
-  ];
-
-  const columns = [
-    {
-      title: "Name/Email",
-      dataIndex: "name",
-      key: "name",
-      render: (text, record) => (
-        <div>
-          <p className="font-medium">{record.name}</p>
-          <p className="text-gray-500 text-sm">{record.email}</p>
-        </div>
-      ),
-    },
-    {
-      title: "Last Active",
-      dataIndex: "lastActive",
-      key: "lastActive",
-    },
-    {
-      title: "Role",
-      dataIndex: "role",
-      key: "role",
-      render: (role) => (
-        <Tag
-          color={
-            role === "Donor" ? "purple" : role === "Business" ? "blue" : "green"
-          }
-        >
-          {role}
-        </Tag>
-      ),
-    },
-    {
-      title: "Status",
-      dataIndex: "status",
-      key: "status",
-      render: (status) => (
-        <Tag
-          color={
-            status === "Active"
-              ? "green"
-              : status === "Pending"
-              ? "gold"
-              : status === "Suspended"
-              ? "red"
-              : "default"
-          }
-        >
-          {status}
-        </Tag>
-      ),
-    },
-    {
-      title: "Action",
-      key: "action",
-      render: () => (
-        <div className="flex gap-2">
-          <Button type="text">👁</Button>
-          <Button type="text">✏️</Button>
-          <Button type="text">🗑</Button>
-        </div>
-      ),
-    },
-  ];
-
-
-  const menu = (
-    <Menu>
-      <Menu.Item>Sort A - Z</Menu.Item>
-      <Menu.Item>Sort Z - A</Menu.Item>
-      <Menu.Item>Recent First</Menu.Item>
-      <Menu.Item>Oldest First</Menu.Item>
-    </Menu>
-  );
   const pendingApprovalRef = useRef<HTMLDivElement | null>(null);
- const handlePendingApproval = () => {
+  const handlePendingApproval = () => {
     if (pendingApprovalRef.current) {
       pendingApprovalRef.current.scrollIntoView({
         behavior: "smooth",
@@ -159,11 +43,8 @@ const AllUsers = () => {
             Total Registered Profiles
           </h1>
           <h1 className="text-4xl font-bold mb-6">
-            145,230{" "}
-            <span className="text-green-500 text-sm font-normal">+8.2% </span>{" "}
-            <span className="text-gray-400 text-sm font-normal">
-              vs last month
-            </span>{" "}
+            {stats.totalActiveUsers ?? 0}{" "}
+            <span className="text-green-500 text-sm font-normal">{stats.activeUsersChangeText || ""}</span>{" "}
           </h1>
         </div>
         <div className="grid grid-cols-4 gap-4 mb-8 ">
@@ -185,7 +66,7 @@ const AllUsers = () => {
             </div>
 
             <h2 className="text-2xl font-semibold">
-              120,340{" "}
+              {stats.totalActiveUsers ?? 0}{" "}
               <span className="text-sm text-gray-400 ml-2">
                 active profiles
               </span>
@@ -210,7 +91,7 @@ const AllUsers = () => {
             </div>
 
             <h2 className="text-2xl font-semibold">
-              120,340{" "}
+              {stats.totalActiveUsers ?? 0}{" "}
               <span className="text-sm text-gray-400 ml-2">
                 active profiles
               </span>
@@ -233,7 +114,7 @@ const AllUsers = () => {
             </div>
 
             <h2 className="text-2xl font-semibold">
-              120
+              {stats.totalActiveUsers ?? 0}
               <span className="text-sm text-gray-400 ml-2">
                 active profiles
               </span>
@@ -251,7 +132,7 @@ const AllUsers = () => {
             </div>
 
             <h2 className="text-2xl font-semibold">
-              1
+              {stats.totalNewUsers ?? 0}
               <span className="text-sm text-gray-400 ml-2">
                 pending profiles
               </span>
@@ -260,9 +141,7 @@ const AllUsers = () => {
         </div>
       </div>
 
-
- 
-    <ProfileTables />
+      <ProfileTables/>
 
       <PendingApproval />
     </div>

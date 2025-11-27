@@ -1,86 +1,37 @@
-/* eslint-disable no-unused-vars */
 import { useState } from "react";
 import {
-  Button,
   DatePicker,
-  Dropdown,
   Form,
   Input,
-  Menu,
   Modal,
-  Select,
   Table,
   Upload,
 } from "antd";
-import { DownOutlined, SearchOutlined } from "@ant-design/icons";
+import { SearchOutlined } from "@ant-design/icons";
 import { VscEye } from "react-icons/vsc";
 import user from "../../assets/image/user.png";
-import { MdOtherHouses } from "react-icons/md";
-import { FaImage, FaPencilAlt, FaUsers } from "react-icons/fa";
-import { GoOrganization } from "react-icons/go";
-import { RxCrossCircled } from "react-icons/rx";
+import { FaImage } from "react-icons/fa";
+import useSmartFetchHook from "../hooks/useSmartFetchHook.ts";
+import { useGetUserReportQuery } from "../../redux/feature/user/userApis.js";
 
 const ProfileTables = () => {
-  const { Option } = Select;
+  const { RangePicker } = DatePicker;
+  const [dateRange, setDateRange] = useState(null);
 
-  const originalData = [
-    {
-      key: "1",
-      name: "Josh Bill",
-      email: "johnnb@gmail.com",
-      dateTime: "12 Dec 2023 03:00 PM",
-      donationType: "Business",
-      donationMessage: "-",
-      amount: 34.5,
-      status: "Pending",
-    },
-    {
-      key: "2",
-      name: "M Karim",
-      email: "kkkarim@gmail.com",
-      dateTime: "10 Dec 2023 02:00 PM",
-      donationType: "Donor",
-      donationMessage: "Sending love & hope to everyone you’re helping",
-      amount: 62.75,
-      status: "Active",
-    },
-    {
-      key: "3",
-      name: "Josh Adam",
-      email: "jadddam@gmail.com",
-      dateTime: "08 Dec 2023 05:30 PM",
-      donationType: "Organization",
-      donationMessage: "-",
-      amount: 15.2,
-      status: "Suspended",
-    },
-    {
-      key: "4",
-      name: "Fajar Surya",
-      email: "fjsurya@gmail.com",
-      dateTime: "15 Dec 2023 09:00 AM",
-      donationType: "Donor",
-      donationMessage: "Sending love & hope to everyone you’re helping",
-      amount: 47.3,
-      status: "Active",
-    },
-    {
-      key: "5",
-      name: "Linda Blair",
-      email: "lindablair98@gmail.com",
-      dateTime: "18 Dec 2023 01:00 PM",
-      donationType: "Business",
-      donationMessage: "Sending love & hope to everyone you’re helping",
-      amount: 23.9,
-      status: "Pending",
-    },
-  ];
+  const {
+    searchTerm,
+    setSearchTerm,
+    setCurrentPage,
+    data: apiResponse,
+    pagination,
+    isLoading,
+    setFilterParams,
+  } = useSmartFetchHook(useGetUserReportQuery, { limit: 5 });
 
-  const [data, setData] = useState(originalData);
-  const [searchText, setSearchText] = useState("");
+  // Extract users array from API response
+  const data = apiResponse?.users || [];
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [previewImage, setPreviewImage] = useState(null);
-  const [selectedProfile, setSelectedProfile] = useState(null);
   const [form] = Form.useForm();
 
   const handleBeforeUpload = (file) => {
@@ -89,148 +40,46 @@ const ProfileTables = () => {
     return false;
   };
 
-  const handleEdit = (record) => {
-    setSelectedProfile(record);
-    form.setFieldsValue({
-      firstName: record.name.split(" ")[0],
-      lastName: record.name.split(" ")[1],
-      email: record.email,
-      mobile: "+61 470 292 023",
-      password: "********",
-    });
-    setPreviewImage(user);
-    setIsModalVisible(true);
-  };
-
   const handleCancel = () => {
     setIsModalVisible(false);
     form.resetFields();
     setPreviewImage(null);
   };
 
-  const handleSave = (values) => {
-    console.log("Updated values:", values);
+  const handleSave = (_values) => {
     setIsModalVisible(false);
   };
 
-  const handleSort = (key, order) => {
-    const sorted = [...data].sort((a, b) => {
-      if (key === "amount") {
-        return order === "ascend" ? a.amount - b.amount : b.amount - a.amount;
-      } else if (key === "name") {
-        return order === "ascend"
-          ? a.name.localeCompare(b.name)
-          : b.name.localeCompare(a.name);
-      } else if (key === "dateTime") {
-        return order === "ascend"
-          ? new Date(a.dateTime) - new Date(b.dateTime)
-          : new Date(b.dateTime) - new Date(a.dateTime);
-      }
-      return 0;
-    });
-    setData(sorted);
-  };
+  const handleDateRangeChange = (dates, dateStrings) => {
+    setDateRange(dates);
 
-  const handleRoleFilter = (role) => {
-    if (role === "All") {
-      setData(originalData);
-    } else {
-      setData(originalData.filter((item) => item.donationType === role));
+    // Update filter params with date range
+    const newFilterParams = {};
+
+    if (dates && dates[0] && dates[1]) {
+      newFilterParams.startDate = dateStrings[0];
+      newFilterParams.endDate = dateStrings[1];
     }
-  };
 
-  const filteredData = data.filter(
-    (item) =>
-      item.name.toLowerCase().includes(searchText.toLowerCase()) ||
-      item.email.toLowerCase().includes(searchText.toLowerCase())
-  );
+    setFilterParams(newFilterParams);
+  };
 
   const columns = [
     {
-      title: (
-        <div className="flex items-center gap-2">
-          Name/Email
-          <Select
-            defaultValue="ascend"
-            style={{ width: 90 }}
-            onChange={(value) => handleSort("name", value)}
-            suffixIcon={<DownOutlined />}
-          >
-            <Option value="ascend">Ascend</Option>
-            <Option value="descend">Descend</Option>
-          </Select>
-        </div>
-      ),
+      title: "Email",
       dataIndex: "email",
       key: "email",
-      render: (text, record) => (
+      render: (email) => (
         <div className="flex gap-2 items-center">
           <img
             src={user}
-            alt={record.name}
+            alt={email}
             className="h-10 w-10 rounded-full"
           />
           <div>
-            <p className="font-medium">{record.name}</p>
-            <p className="text-gray-400 text-sm">{record.email}</p>
+            <p className="font-medium">{email}</p>
+            <p className="text-gray-400 text-sm">{email}</p>
           </div>
-        </div>
-      ),
-    },
-    {
-      title: (
-        <div className="flex items-center gap-2">
-          Last Active
-          <Select
-            defaultValue="descend"
-            style={{ width: 100 }}
-            onChange={(value) => handleSort("dateTime", value)}
-            suffixIcon={<DownOutlined />}
-          >
-            <Option value="ascend">Oldest</Option>
-            <Option value="descend">Recent</Option>
-          </Select>
-        </div>
-      ),
-      dataIndex: "dateTime",
-      key: "dateTime",
-    },
-    {
-      title: (
-        <div className="flex items-center gap-2">
-          Role
-          <Select
-            defaultValue="All"
-            style={{ width: 130 }}
-            onChange={handleRoleFilter}
-            suffixIcon={<DownOutlined />}
-          >
-            <Option value="All">All</Option>
-            <Option value="Business">Business</Option>
-            <Option value="Organization">Organization</Option>
-            <Option value="Donor">Donor</Option>
-          </Select>
-        </div>
-      ),
-      dataIndex: "donationType",
-      key: "donationType",
-      render: (value) => (
-        <div className="px-4 py-2 rounded-3xl flex items-center gap-2">
-          {value === "Business" && (
-            <div className="flex items-center gap-1 bg-blue-100 text-blue-600 px-4 py-1 rounded-2xl">
-              <MdOtherHouses className="h-5 w-5" /> Business
-            </div>
-          )}
-          {value === "Organization" && (
-            <div className="flex items-center gap-1 bg-green-100 text-green-600 px-4 py-1 rounded-2xl">
-              <GoOrganization className="h-5 w-5" /> Organization
-            </div>
-          )}
-          {value === "Donor" && (
-            <div className="flex items-center gap-1 bg-pink-100 text-pink-600 px-4 py-1 rounded-2xl">
-              <FaUsers className="h-5 w-5" /> Donor
-            </div>
-          )}
         </div>
       ),
     },
@@ -238,50 +87,88 @@ const ProfileTables = () => {
       title: "Status",
       dataIndex: "status",
       key: "status",
+      filters: [
+        { text: "Verified", value: "verified" },
+        { text: "Pending", value: "pending" },
+        { text: "Suspended", value: "suspended" },
+      ],
+      onFilter: (value, record) => record.status === value,
       render: (status) => (
         <span
-          className={`px-4 py-1 rounded-2xl text-sm font-medium ${
-            status === "Active"
+          className={`px-4 py-1 rounded-2xl text-sm font-medium ${status === "verified"
               ? "bg-green-100 text-green-600"
-              : status === "Pending"
-              ? "bg-yellow-100 text-yellow-600"
-              : "bg-gray-200 text-gray-600"
-          }`}
+              : status === "pending"
+                ? "bg-yellow-100 text-yellow-600"
+                : "bg-gray-200 text-gray-600"
+            }`}
         >
           {status}
         </span>
       ),
     },
     {
+      title: "Verified by OTP",
+      dataIndex: "isVerifiedByOTP",
+      key: "isVerifiedByOTP",
+      filters: [
+        { text: "Yes", value: true },
+        { text: "No", value: false },
+      ],
+      onFilter: (value, record) => record.isVerifiedByOTP === value,
+      render: (isVerified) => (
+        <span
+          className={`px-4 py-1 rounded-2xl text-sm font-medium ${isVerified
+              ? "bg-green-100 text-green-600"
+              : "bg-red-100 text-red-600"
+            }`}
+        >
+          {isVerified ? "Yes" : "No"}
+        </span>
+      ),
+    },
+    {
+      title: "Active",
+      dataIndex: "isActive",
+      key: "isActive",
+      filters: [
+        { text: "Active", value: true },
+        { text: "Inactive", value: false },
+      ],
+      onFilter: (value, record) => record.isActive === value,
+      render: (isActive) => (
+        <span
+          className={`px-4 py-1 rounded-2xl text-sm font-medium ${isActive
+              ? "bg-green-100 text-green-600"
+              : "bg-red-100 text-red-600"
+            }`}
+        >
+          {isActive ? "Active" : "Inactive"}
+        </span>
+      ),
+    },
+    {
+      title: "Created At",
+      dataIndex: "createdAt",
+      key: "createdAt",
+      render: (createdAt) => (
+        <p className="font-medium">
+          {createdAt ? new Date(createdAt).toLocaleString() : "-"}
+        </p>
+      ),
+    },
+    {
       title: "Action",
       key: "action",
-      render: (_, record) => (
+      align: "center",
+      render: (_, _record) => (
         <div className="flex justify-center items-center gap-3 text-lg">
           <div className="bg-neutral-100 h-8 w-8 rounded-full p-1 flex justify-center items-center cursor-pointer">
             <VscEye />
-          </div>
-          <div
-            onClick={() => handleEdit(record)}
-            className="bg-neutral-100 h-8 w-8 rounded-full p-1 flex justify-center items-center cursor-pointer"
-          >
-            <FaPencilAlt />
-          </div>
-          <div className="bg-neutral-100 h-8 w-8 rounded-full p-1 flex justify-center items-center cursor-pointer">
-            <RxCrossCircled />
           </div>
         </div>
       ),
     },
   ];
-
-  const menu = (
-    <Menu>
-      <Menu.Item>Sort A - Z</Menu.Item>
-      <Menu.Item>Sort Z - A</Menu.Item>
-      <Menu.Item>Recent First</Menu.Item>
-      <Menu.Item>Oldest First</Menu.Item>
-    </Menu>
-  );
 
   return (
     <div className="bg-white p-6 rounded-xl shadow-sm mb-10">
@@ -291,23 +178,49 @@ const ProfileTables = () => {
           <Input
             prefix={<SearchOutlined />}
             placeholder="Search..."
-            onChange={(e) => setSearchText(e.target.value)}
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
             className="w-60"
           />
-          <Dropdown overlay={menu} trigger={["click"]}>
-            <Button>
-              Filter <DownOutlined />
-            </Button>
-          </Dropdown>
-          <DatePicker placeholder="Select interval" />
+          <RangePicker
+            placeholder={["Start date", "End date"]}
+            onChange={handleDateRangeChange}
+            value={dateRange}
+          />
         </div>
       </div>
 
       <Table
         columns={columns}
-        dataSource={filteredData}
-        pagination={{ pageSize: 5 }}
-        rowKey="key"
+        dataSource={data}
+        loading={isLoading}
+        onChange={(pagination, filters, sorter) => {
+          setCurrentPage(pagination.current);
+
+          const newFilterParams = {};
+
+          if (sorter?.field) {
+            newFilterParams.sortBy = sorter.field;
+            newFilterParams.sortOrder = sorter.order === "ascend" ? "asc" : "desc";
+          }
+
+          Object.keys(filters).forEach((key) => {
+            if (filters[key]) {
+              newFilterParams[key] = filters[key][0];
+            }
+          });
+
+          setFilterParams(newFilterParams);
+        }}
+        pagination={{
+          current: pagination.page || 1,
+          pageSize: pagination.limit || 5,
+          total: pagination.total || 0,
+          showTotal: (total) => `Total ${total} items`,
+          showSizeChanger: false,
+          position: ['bottomRight'],
+        }}
+        rowKey="_id"
       />
 
       <Modal

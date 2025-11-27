@@ -72,12 +72,7 @@ const useSmartFetchHook = <T, P extends QueryParams>(
   // Extract data from API response
   const list = data?.data ?? [];
   
-  const meta = data?.pagination ?? {
-    total: 0,
-    page: currentPage,
-    limit: 10,
-    totalPages: 0,
-  };
+  const meta = (data as any)?.data?.pagination ?? {};
 
   return {
     searchTerm,
