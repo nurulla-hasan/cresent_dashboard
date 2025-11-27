@@ -1,128 +1,52 @@
-import { useState } from "react";
-import { Pagination, Select, } from "antd";
-import { Table } from "antd";
-import { Input } from "antd";
-import { MoreOutlined } from "@ant-design/icons";
 
+import { Table, DatePicker } from "antd";
+import { MoreOutlined } from "@ant-design/icons";
+import useSmartFetchHook from "../../hooks/useSmartFetchHook.ts";
 import { VscEye } from "react-icons/vsc";
-import { DownOutlined } from "@ant-design/icons";
 import user from "../../../assets/image/user.png";
 
 import { SlArrowLeft } from "react-icons/sl";
-import house from "../../../assets/image/house.png";
-import org from "../../../assets/image/org.png";
-import person from "../../../assets/image/person.png";
 import { TfiDownload } from "react-icons/tfi";
 import { RxCrossCircled } from "react-icons/rx";
 import DonorsSubscription from "../../ManageSubscription/SubscriptionAndPaymentExport";
+import { useGetSubscriptionDataQuery } from "../../../redux/feature/subscription/subscriptionApis.js";
+import Search from "antd/es/input/Search";
 const SubscriptionQuickLinks = () => {
-  const { Search } = Input;
-  const { Option } = Select;
-  const onSearch = (value) => {
-    console.log("Search input: ", value);
-  };
+  const { RangePicker } = DatePicker;
 
-  const [sortOrder, setSortOrder] = useState({
-    name: "ascend",
-    dateTime: "descend",
-    amount: "descend",
-    donationType: "ascend",
-  });
+  const {
+    searchTerm,
+    setSearchTerm,
+    setCurrentPage,
+    data: donationRes,
+    pagination,
+    isLoading,
+    // isError,
+    setFilterParams,
+  } = useSmartFetchHook(useGetSubscriptionDataQuery);
 
-  const data = [
-    {
-      key: "1",
-      name: "Josh Bill",
-      email: "johnnb@gmail.com",
-      dateTime: "12 Dec 2023 03:00 PM",
-      donationType: "Business",
-      donationMessage: "-",
-      amount: 34.5,
-      status: "Active",
-    },
-    {
-      key: "2",
-      name: "M Karim",
-      email: "kkkarim@gmail.com",
-      dateTime: "12 Dec 2023 03:00 PM",
-      donationType: "Organization",
-      donationMessage: "“Sending love & hope to everyone you’re helping”",
-      amount: 62.75,
-      plan: "Focus Plan",
-      status: "Inactive",
-    },
-    {
-      key: "3",
-      name: "Josh Adam",
-      email: "jadddam@gmail.com",
-      dateTime: "12 Dec 2023 03:00 PM",
-      donationType: "Donor",
-      donationMessage: "-",
-      amount: 15.2,
-      plan: "Freedom Plan",
-      status: "Active",
-    },
-    {
-      key: "4",
-      name: "Fajar Surya",
-      email: "fjsurya@gmail.com",
-      dateTime: "12 Dec 2023 03:00 PM",
-      donationType: "Donor",
-      donationMessage: "“Sending love & hope to everyone you’re helping”",
-      amount: 47.3,
-      plan: "Foundation Plan",
-      status: "Inactive",
-    },
-    {
-      key: "5",
-      name: "Linda Blair",
-      email: "lindablair98@gmail.com",
-      dateTime: "12 Dec 2023 03:00 PM",
-      donationType: "Donor",
-      donationMessage: "“Sending love & hope to everyone you’re helping”",
-      amount: 23.9,
-      status: "Inactive",
-    },
-  ];
+  const apiData = donationRes?.subscriptionDonationHistory || [];
 
-  const handleSort = (key, order) => {
-    setSortOrder({ ...sortOrder, [key]: order });
-    // Update sorting logic here based on the selected filters
-    data.sort((a, b) => {
-      if (key === "amount") {
-        return order === "ascend" ? a.amount - b.amount : b.amount - a.amount;
-      } else if (key === "name") {
-        return order === "ascend"
-          ? a.name.localeCompare(b.name)
-          : b.name.localeCompare(a.name);
-      } else if (key === "dateTime") {
-        return order === "ascend"
-          ? new Date(a.dateTime) - new Date(b.dateTime)
-          : new Date(b.dateTime) - new Date(a.dateTime);
-      } else {
-        return 0;
-      }
-    });
-  };
+  const tableData =
+    apiData.map((item, idx) => ({
+      key: item?.createdAt || String(idx),
+      name: item?.donor?.name || "-",
+      email: item?.organization?.name || "-",
+      cause: item?.cause || "-",
+      dateTime: item?.createdAt,
+      amount: Number(item?.amount) || 0,
+      status: item?.status || "-",
+      donationType: item?.donationType || "-",
+      specialMessage: item?.specialMessage || "-",
+    })) || [];
+
 
   const columns = [
     {
-      title: (
-        <div className="flex items-center gap-2">
-          Name/Email
-          <Select
-            defaultValue="ascend"
-            style={{ width: 80 }}
-            onChange={(value) => handleSort("name", value)}
-            suffixIcon={<DownOutlined />}
-          >
-            <Option value="ascend">Ascend</Option>
-            <Option value="descend">Descend</Option>
-          </Select>
-        </div>
-      ),
+      title: "Name/Email",
       dataIndex: "email",
       key: "email",
+      sorter: true,
       render: (text, record) => (
         <div className="flex gap-1">
           <img
@@ -138,83 +62,41 @@ const SubscriptionQuickLinks = () => {
       ),
     },
     {
-      title: (
-        <div className="flex items-center gap-2">
-          Type
-          <Select
-            defaultValue="Business"
-            style={{ width: 120 }}
-            onChange={(value) => handleSort("donationType", value)}
-            suffixIcon={<DownOutlined />}
-          >
-            <Option value="Business">Business</Option>
-            <Option value="Organization">Organization</Option>
-            <Option value="Donor">Donor</Option>
-          </Select>
-        </div>
-      ),
+      title: "Type",
       dataIndex: "donationType",
       key: "donationType",
       render: (value) => (
-        <div className="px-4 py-2 rounded-3xl flex items-center gap-2">
-          {value === "Business" && (
-            <div className="flex items-center gap-1 bg-blue-100 text-blue-600 px-4 py-1 rounded-2xl">
-              <img src={house} alt="" /> Business
-            </div>
-          )}
-          {value === "Organization" && (
-            <div className="flex items-center gap-1 bg-green-100 text-green-600 px-4 py-1 rounded-2xl">
-              <img src={org} alt="" />
-              Organization
-            </div>
-          )}
-          {value === "Donor" && (
-            <div className="flex items-center gap-1 bg-pink-100 text-pink-600 px-4 py-1 rounded-2xl">
-              <img src={person} alt="" /> Donor
-            </div>
-          )}
-        </div>
+        <span className="px-3 py-1 rounded-2xl bg-blue-50 text-blue-600 text-sm capitalize">
+          {value || "-"}
+        </span>
       ),
     },
 
     {
-      title: (
-        <div className="flex items-center gap-2">
-          Plan
-          <Select
-            defaultValue="Focus Plan"
-            style={{ width: 80 }}
-            onChange={(value) => handleSort("amount", value)}
-            suffixIcon={<DownOutlined />}
-          >
-            <Option value="Focus Plan">Focus Plan</Option>
-            <Option value="Foundation Plan">Foundation Plan</Option>
-            <Option value="Freedom Plan">Freedom Plan</Option>
-          </Select>
-        </div>
+      title: "Amount",
+      dataIndex: "amount",
+      key: "amount",
+      sorter: true,
+      render: (amount) => (
+        <p className="font-medium">${Number(amount || 0).toFixed(2)}</p>
       ),
-      dataIndex: "plan",
-      key: "plan",
-      render: (plan) => <p className="font-medium">{plan}</p>,
     },
     {
-      title: (
-        <div className="flex items-center gap-2">
-          Date & Time
-          <Select
-            defaultValue="descend"
-            style={{ width: 80 }}
-            onChange={(value) => handleSort("dateTime", value)}
-            suffixIcon={<DownOutlined />}
-          >
-            <Option value="ascend">Oldest</Option>
-            <Option value="descend">Recent</Option>
-          </Select>
-        </div>
-      ),
+      title: "Date & Time",
       dataIndex: "dateTime",
       key: "dateTime",
-      render: (dateTime) => <p className="font-medium">{dateTime}</p>,
+      sorter: true,
+      render: (dateTime) => (
+        <p className="font-medium">
+          {dateTime ? new Date(dateTime).toLocaleString() : "-"}
+        </p>
+      ),
+    },
+    {
+      title: "Message",
+      dataIndex: "specialMessage",
+      key: "specialMessage",
+      render: (msg) => <p className="font-medium">{msg}</p>,
     },
     {
       title: "Status",
@@ -250,13 +132,11 @@ const SubscriptionQuickLinks = () => {
       ),
     },
   ];
-  const handleBack = () => {
-    window.history.back();
-  };
+
   return (
     <div>
       <button
-        onClick={handleBack}
+        onClick={() => window.history.back()}
         className="bg-white px-4 py-3 rounded-3xl flex justify-center items-center gap-2 mb-4"
       >
         <SlArrowLeft /> Back
@@ -275,28 +155,23 @@ const SubscriptionQuickLinks = () => {
           <div className="bg-white p-6 rounded-3xl border">
             <p className="text-lg font-medium">Active Subscriptions</p>
             <h1 className="text-2xl font-medium mt-10">
-              {" "}
-              <span className="text-gray-400">$</span> 4000{" "}
-              <span className="text-sm text-green-400">+8.2% </span>{" "}
-              <span className="text-gray-400 text-sm">vs last month</span>{" "}
+              {donationRes?.totalActiveSubscriptions ?? 0}
+              {/* API does not provide change text vs last month */}
             </h1>
           </div>
 
           <div className="bg-white p-6 rounded-3xl border">
             <p className="text-lg font-medium">Canceled Subscriptions</p>
             <h1 className="text-2xl font-medium mt-10">
-              {" "}
-              <span className="text-gray-400">$</span> 400{" "}
-              <span className="text-gray-400 text-sm">vs last month</span>{" "}
+              {donationRes?.totalCancelledSubscriptions ?? 0}
+              {/* <span className="text-gray-400 text-sm">vs last month</span> */}
             </h1>
           </div>
           <div className="bg-white p-6 rounded-3xl border">
             <p className="text-lg font-medium">Renewal Rate</p>
             <h1 className="text-2xl font-medium mt-10">
-              {" "}
-              <span className="text-gray-400">$</span> 4000{" "}
-              <span className="text-sm text-green-500">5.4%</span>{" "}
-              <span className="text-gray-400 text-sm">vs last month</span>{" "}
+              {donationRes?.monthlyRenewalRate ?? 0}%
+              {/* <span className="text-gray-400 text-sm">vs last month</span> */}
             </h1>
           </div>
         </div>
@@ -309,25 +184,35 @@ const SubscriptionQuickLinks = () => {
               <div className="mt-4 md:mt-0">
                 <Search
                   placeholder="input search text"
-                  onSearch={onSearch}
-                  enterButton
+                  allowClear
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
                 />
               </div>
 
               <div className="mt-4 md:mt-0">
-                <Select defaultValue="selected" style={{ width: 120 }}>
-                  <Option value="selected">Selected</Option>
-                  <Option value="all">All</Option>
-                </Select>
+                <RangePicker
+                  placeholder={["Start date", "End date"]}
+                  onChange={(dates, dateStrings) => {
+                    if (dates && dates.length === 2) {
+                      setFilterParams(prev => ({
+                        ...prev,
+                        startDate: dateStrings[0],
+                        endDate: dateStrings[1]
+                      }));
+                    } else {
+                      // Clear date range
+                      setFilterParams(prev => {
+                        const newParams = { ...prev };
+                        delete newParams.startDate;
+                        delete newParams.endDate;
+                        return newParams;
+                      });
+                    }
+                  }}
+                />
               </div>
 
-              <div className="mt-4 md:mt-0">
-                <button className="px-3 py-2 border rounded-md text-sm text-gray-700">
-                  Monthly
-                </button>
-              </div>
-
-             
               <div className="relative group mt-4 md:mt-0 inline-block">
                 <MoreOutlined className="text-xl cursor-pointer" />
                 <button className="absolute -left-5 bottom-10 text-xs opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-gray-500 text-white px-4 py-2 rounded">
@@ -338,14 +223,34 @@ const SubscriptionQuickLinks = () => {
           </div>
           <Table
             columns={columns}
-            dataSource={data}
-            pagination={{ pageSize: 5 }}
+            dataSource={tableData}
+            loading={isLoading}
+            onChange={(pagination, filters, sorter) => {
+              // Update page
+              setCurrentPage(pagination.current);
+              const newFilterParams = {};
+              // Handle sorting
+              if (sorter?.field) {
+                newFilterParams.sortBy = sorter.field;
+                newFilterParams.sortOrder = sorter.order === "ascend" ? "asc" : "desc";
+              }
+              // Handle filters
+              Object.keys(filters).forEach((key) => {
+                if (filters[key]) {
+                  newFilterParams[key] = filters[key][0];
+                }
+              });
+
+              setFilterParams(newFilterParams);
+            }}
+            pagination={{
+              current: pagination.page,
+              pageSize: pagination.limit,
+              total: pagination.total,
+              showTotal: (total) => `Total ${total} items`,
+            }}
             style={{ marginTop: 20 }}
           />
-
-          <div className="flex justify-end items-center my-10">
-            <Pagination />
-          </div>
         </div>
       </div>
       <DonorsSubscription />

@@ -180,9 +180,6 @@ const DonationQuickLink = () => {
                   allowClear
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  style={{
-                    width: 300,
-                  }}
                 />
               </div>
 
