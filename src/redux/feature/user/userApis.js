@@ -52,11 +52,41 @@ const dashboardApis = baseApi.injectEndpoints({
             providesTags: ["USER"],
         }),
 
+        // GET USER ENGAGEMENT
+        getUserEngagement: builder.query({
+            query: () => ({
+                url: "/admin/user-engagement",
+                method: "GET",
+            }),
+            providesTags: ["USER"],
+        }),
+
+        // GET DONATION CHART
+        getDonationChart: builder.query({
+            query: () => ({
+                url: "/admin/donation-engagement",
+                method: "GET",
+            }),
+            providesTags: ["USER"],
+        }),
+        
+        // GET DONATION CHART
+        getCausesChart: builder.query({
+            query: () => ({
+                url: "/admin/causes",
+                method: "GET",
+            }),
+            providesTags: ["USER"],
+        }),
+
     }),
 });
 
 export const {
     useGetUserStateQuery,
     useGetUserReportQuery,
-    useGetUserPendingReportQuery
+    useGetUserPendingReportQuery,
+    useGetUserEngagementQuery,
+    useGetDonationChartQuery,
+    useGetCausesChartQuery
 } = dashboardApis

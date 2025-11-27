@@ -1,10 +1,10 @@
 import { baseApi } from "../baseApi";
 
-const dashboardApis = baseApi.injectEndpoints({
+const organizationApis = baseApi.injectEndpoints({
     endpoints: (builder) => ({
 
-        // GET SUBSCRIPTION HISTORY
-        getSubscriptionData: builder.query({
+        // GET BUSINESS REPORT
+        getBusinessesReport: builder.query({
             query: (args) => {
                 const params = new URLSearchParams();
                 if (args) {
@@ -15,18 +15,19 @@ const dashboardApis = baseApi.injectEndpoints({
                     });
                 }
                 return {
-                    url: "/admin/subscriptions",
+                    url: "/admin/businesses",
                     method: "GET",
                     params,
                 };
             },
-            providesTags: ["SUBSCRIPTION"],
+            providesTags: ["BUSINESS"],
         }),
+
 
 
     }),
 });
 
 export const {
-    useGetSubscriptionDataQuery,
-} = dashboardApis
+    useGetBusinessesReportQuery,
+} = organizationApis
