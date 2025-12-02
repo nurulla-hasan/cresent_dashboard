@@ -64,11 +64,16 @@ const VerifyPass = () => {
               value={otp}
               onChange={setOtp}
               numInputs={6}
-              renderSeparator={<span className="lg:w-10"> </span>}
+              renderSeparator={<span className="lg:w-4"> </span>}
               renderInput={(props) => (
                 <input
                   {...props}
-                  className="md:w-8 h-12 border border-gray-300 text-black text-xl focus:outline-none focus:border-blue-400 mx-1 rounded-md"
+                  className="border-2 border-gray-300 text-black text-2xl focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 mx-1 rounded-lg transition-all duration-200 hover:border-gray-400"
+                  style={{
+                    width: '40px',
+                    height: '40px',
+                    textAlign: 'center'
+                  }}
                 />
               )}
             />
