@@ -13,7 +13,7 @@ const VerifyPass = () => {
 
   const handleVerifyOtp = async () => {
     const resetToken = localStorage.getItem("resetToken");
-    
+
     if (!resetToken) {
       console.error("No reset token found");
       return;
@@ -32,14 +32,14 @@ const VerifyPass = () => {
 
   const handleResendOtp = async () => {
     const resetToken = localStorage.getItem("resetToken");
-    
+
     if (!resetToken) {
       console.error("No reset token found");
       return;
     }
 
     try {
-      await resendOTP(resetToken).unwrap();
+      await resendOTP({ token: resetToken }).unwrap();
     } catch (error) {
       console.error("Resend OTP failed:", error);
     }
@@ -82,11 +82,10 @@ const VerifyPass = () => {
           <button
             onClick={handleVerifyOtp}
             disabled={otp.length !== 6 || isLoading}
-            className={`text-center w-full p-3 font-bold text-xl rounded-md ${
-              otp.length !== 6 || isLoading
+            className={`text-center w-full p-3 font-bold text-xl rounded-md ${otp.length !== 6 || isLoading
                 ? 'bg-gray-300 cursor-not-allowed'
                 : 'bg-primary text-black'
-            }`}
+              }`}
           >
             {isLoading ? 'Verifying...' : 'Verify'}
           </button>
@@ -95,9 +94,8 @@ const VerifyPass = () => {
             Didn't receive the code?
             <span
               onClick={handleResendOtp}
-              className={`pl-2 underline cursor-pointer ${
-                isResending ? 'text-gray-400 cursor-not-allowed' : ''
-              }`}
+              className={`pl-2 underline cursor-pointer ${isResending ? 'text-gray-400 cursor-not-allowed' : ''
+                }`}
             >
               {isResending ? 'Sending...' : 'Resend'}
             </span>
