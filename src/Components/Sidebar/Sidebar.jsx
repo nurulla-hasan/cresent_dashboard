@@ -33,11 +33,7 @@ const Sidebar = ({ closeDrawer }) => {
   };
 
   const handleLogout = () => {
-    // clear user session/token
-    localStorage.removeItem("authToken");
-    sessionStorage.clear();
-
-    // redirect to login page
+    localStorage.clear();
     navigate("/sign-in");
   };
 
@@ -53,7 +49,6 @@ const Sidebar = ({ closeDrawer }) => {
     },
     { icon: donor, label: "Donor App", Link: "/donor-app" },
     { icon: business, label: "Business Admin", Link: "/business-admin" },
-    // Settings section with mt-20
     {
       icon: setting,
       label: "Settings",

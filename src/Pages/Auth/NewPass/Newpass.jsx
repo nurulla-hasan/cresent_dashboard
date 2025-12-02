@@ -1,14 +1,32 @@
 import { ConfigProvider, Form, Input } from "antd";
-import img from "../../../assets/image/reset.png"; // Path to the image
-import logo from "../../../assets/image/Logo.png"; // Path to the logo
-import { useNavigate } from "react-router-dom";
+import img from "../../../assets/image/reset.png";
+import logo from "../../../assets/image/Logo.png";
 import { MdLockOutline } from "react-icons/md";
+import { useResetPasswordMutation } from "../../../redux/feature/auth/authApi";
+import { useNavigate } from "react-router-dom";
 
 const Newpass = () => {
-  const neviaget = useNavigate();
-  const onFinish = () => {};
-  const handleResetPassword = () => {
-    neviaget("/");
+  const [form] = Form.useForm();
+  const [resetPassword, { isLoading }] = useResetPasswordMutation();
+  const navigate = useNavigate()
+
+  const onFinish = async (values) => {
+    const resetPasswordToken = localStorage.getItem("resetPasswordToken");
+
+    if (!resetPasswordToken) {
+      console.error("No reset password token found");
+      return;
+    }
+
+    try {
+      await resetPassword({
+        resetPasswordToken: resetPasswordToken,
+        newPassword: values["new-password"]
+      }).unwrap();
+      navigate("/sign-in")
+    } catch (error) {
+      console.error("Password reset failed:", error);
+    }
   };
   return (
     <div className="h-screen flex p-2">
@@ -29,6 +47,7 @@ const Newpass = () => {
           >
             <Form
               name="login"
+              form={form}
               initialValues={{ remember: false }}
               onFinish={onFinish}
               layout="vertical"
@@ -81,11 +100,14 @@ const Newpass = () => {
 
               <Form.Item>
                 <button
-                  onClick={handleResetPassword}
-                  className=" w-full py-4 font-bold bg-primary rounded-md text-xl"
+                  className={`w-full py-4 font-bold rounded-md text-xl ${isLoading
+                      ? 'bg-gray-300 cursor-not-allowed'
+                      : 'bg-primary'
+                    }`}
                   type="submit"
+                  disabled={isLoading}
                 >
-                  Update Password
+                  {isLoading ? 'Updating...' : 'Update Password'}
                 </button>
               </Form.Item>
             </Form>

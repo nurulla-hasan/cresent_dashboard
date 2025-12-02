@@ -38,79 +38,21 @@ const authApi = baseApi.injectEndpoints({
       },
     }),
 
-    // Register Endpoint (Mutation)
-    register: builder.mutation({
-      query: (credentials) => ({
-        url: "/users/register",
-        method: "POST",
-        body: credentials,
-      }),
-      async onQueryStarted({ email }, { queryFulfilled }) {
-        try {
-          const { data } = await queryFulfilled;
-          const otpToken = data?.data || data;
-          if (otpToken) {
-            window.location.href = `/verify-otp?type=signup&email=${encodeURIComponent(
-              email
-            )}&otpToken=${encodeURIComponent(otpToken)}`;
-          }
-        } catch (error) {
-          ErrorToast(error?.error?.data?.message || "Registration failed.");
-        }
-      },
-    }),
-
-    // RESEND SIGNUP OTP
-    resendSignupOTP: builder.mutation({
-      query: (email) => ({
-        url: "/users/resend-verification-email",
-        method: "POST",
-        body: email,
-      }),
-      async onQueryStarted(arg, { queryFulfilled }) {
-        try {
-          const { data } = await queryFulfilled;
-          SuccessToast(data?.message);
-        } catch (error) {
-          ErrorToast(error?.error?.data?.message || "Failed to send new OTP.");
-        }
-      },
-    }),
-
-    // OTP VERIFY FOR SIGNUP
-    verifyOTPForSignup: builder.mutation({
-      query: (data) => ({
-        url: "/users/verify-otp",
-        method: "PUT",
-        body: data,
-      }),
-      async onQueryStarted(arg, { queryFulfilled }) {
-        try {
-          const { data } = await queryFulfilled;
-          SuccessToast(data?.message);
-        } catch (error) {
-          ErrorToast(error?.error?.data?.message || "OTP verification failed.");
-        }
-      },
-    }),
-
     // FORGET PASSWORD
     forgetPassword: builder.mutation({
       query: (email) => {
         return {
-          url: "/users/forgot-password",
+          url: "/auth/forgot-password",
           method: "POST",
           body: email,
         };
       },
-      async onQueryStarted({ email }, { queryFulfilled }) {
+      async onQueryStarted(arg, { queryFulfilled }) {
         try {
           const { data } = await queryFulfilled;
-          const otpToken = data?.data?.otpToken;
-          if (otpToken) {
-            window.location.href = `/verify-otp?type=forget-password&email=${encodeURIComponent(
-              email
-            )}&otpToken=${encodeURIComponent(otpToken)}`;
+          const resetToken = data?.data?.token;
+          if (resetToken) {
+            localStorage.setItem("resetToken", resetToken);
           }
           SuccessToast("OTP sent successfully!");
         } catch (error) {
@@ -122,13 +64,18 @@ const authApi = baseApi.injectEndpoints({
     // OTP VERIFY FOR RESET PASSWORD
     verifyOTPForResetPassword: builder.mutation({
       query: (data) => ({
-        url: "/users/verify-otp-forgot-password",
-        method: "PUT",
+        url: "/auth/verify-forgot-password-otp",
+        method: "POST",
         body: data,
       }),
       async onQueryStarted(arg, { queryFulfilled }) {
         try {
           const { data } = await queryFulfilled;
+          const resetPasswordToken = data?.data?.resetPasswordToken;
+          if (resetPasswordToken) {
+            localStorage.setItem("resetPasswordToken", resetPasswordToken);
+            localStorage.removeItem("resetToken");
+          }
           SuccessToast(data?.message);
         } catch (error) {
           ErrorToast(error?.error?.data?.message || "OTP verification failed.");
@@ -139,7 +86,7 @@ const authApi = baseApi.injectEndpoints({
     // RESEND RESET OTP
     resendResetOTP: builder.mutation({
       query: (email) => ({
-        url: "/users/resend-otp",
+        url: "/auth/send-forgot-password-otp-again",
         method: "POST",
         body: email,
       }),
@@ -157,16 +104,17 @@ const authApi = baseApi.injectEndpoints({
     resetPassword: builder.mutation({
       query: (data) => {
         return {
-          url: `/users/update-password`,
-          method: "PUT",
+          url: `/auth/reset-password`,
+          method: "POST",
           body: data,
         };
       },
       async onQueryStarted(arg, { queryFulfilled }) {
         try {
           const { data } = await queryFulfilled;
+          localStorage.removeItem("resetPasswordToken");
           SuccessToast(data?.message);
-          window.location.href = "/login";
+          // window.location.href = "/";
         } catch (error) {
           ErrorToast(error?.error?.data?.message || "Failed to reset password.");
         }

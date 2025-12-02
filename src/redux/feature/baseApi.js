@@ -5,7 +5,7 @@ import {
 import { SetAccessToken } from "./auth/authSlice";
 
 const rawBaseQuery = fetchBaseQuery({
-  baseUrl: "http://10.10.20.26:5001/api/v1",
+  baseUrl: "http://10.10.20.42:5000/api/v1",
 
   prepareHeaders: (headers, { getState }) => {
     const state = getState();
