@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { BiChevronDown } from "react-icons/bi";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 
 import dashboard from "../../assets/image/dashboard.png";
 import users from "../../assets/image/users.png";
@@ -13,29 +13,9 @@ import setting from "../../assets/image/settings.png";
 import logout from "../../assets/image/logout.png";
 
 const Sidebar = ({ closeDrawer }) => {
-  const [active, setActive] = useState("Dashboard");
   const [openDropdown, setOpenDropdown] = useState("");
   const navigate = useNavigate();
-
-  const handleActiveRoute = (item) => {
-    setActive(item);
-    setOpenDropdown("");
-    if (closeDrawer) closeDrawer();
-  };
-
-  const handleSubItemClick = (subItem) => {
-    setActive(subItem);
-    if (closeDrawer) closeDrawer();
-  };
-
-  const toggleDropdown = (label) => {
-    setOpenDropdown(openDropdown === label ? "" : label);
-  };
-
-  const handleLogout = () => {
-    localStorage.clear();
-    navigate("/sign-in");
-  };
+  const location = useLocation();
 
   const menuItems = [
     { icon: dashboard, label: "Dashboard", Link: "/" },
@@ -56,6 +36,33 @@ const Sidebar = ({ closeDrawer }) => {
       className: "mt-32",
     },
   ];
+
+  // Find active menu item based on current path
+  const getActiveMenuItem = () => {
+    const currentPath = location.pathname;
+    const activeItem = menuItems.find(item => item.Link === currentPath);
+    return activeItem ? activeItem.label : "Dashboard";
+  };
+
+  const active = getActiveMenuItem();
+
+  const handleActiveRoute = (_item) => {
+    setOpenDropdown("");
+    if (closeDrawer) closeDrawer();
+  };
+
+  const handleSubItemClick = (_subItem) => {
+    if (closeDrawer) closeDrawer();
+  };
+
+  const toggleDropdown = (label) => {
+    setOpenDropdown(openDropdown === label ? "" : label);
+  };
+
+  const handleLogout = () => {
+    localStorage.clear();
+    navigate("/sign-in");
+  };
 
   return (
     <div className="bg-[#f9f7f9] h-full border-r">

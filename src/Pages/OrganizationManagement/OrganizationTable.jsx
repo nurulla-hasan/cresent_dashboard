@@ -3,105 +3,53 @@ import { useState } from "react";
 import {
   Button,
   DatePicker,
-  Dropdown,
   Form,
   Input,
-  Menu,
   Modal,
-  Select,
   Table,
   Upload,
 } from "antd";
-import { DownOutlined, SearchOutlined } from "@ant-design/icons";
+import { SearchOutlined } from "@ant-design/icons";
 import { VscEye } from "react-icons/vsc";
 import user from "../../assets/image/user.png";
 import { MdOtherHouses } from "react-icons/md";
 import { FaImage, FaPencilAlt, FaUsers } from "react-icons/fa";
 import { GoOrganization } from "react-icons/go";
-import { RxCrossCircled } from "react-icons/rx";
+import useSmartFetchHook from "../../Components/hooks/useSmartFetchHook.ts";
+import { useGetOrganizationReportQuery } from "../../redux/feature/organization/organizationApis.js";
 
 const OrganizationTable = () => {
-  const { Option } = Select;
+  const { RangePicker } = DatePicker;
+  const [dateRange, setDateRange] = useState(null);
 
-  const originalData = [
-    {
-      key: "1",
-      name: "Josh Bill",
-      email: "johnnb@gmail.com",
-      dateTime: "12 Dec 2023 03:00 PM",
-      donationType: "Business",
-      donationMessage: "-",
-      amount: 34.5,
-      status: "Pending",
-    },
-    {
-      key: "2",
-      name: "M Karim",
-      email: "kkkarim@gmail.com",
-      dateTime: "10 Dec 2023 02:00 PM",
-      donationType: "Donor",
-      donationMessage: "Sending love & hope to everyone you’re helping",
-      amount: 62.75,
-      status: "Active",
-    },
-    {
-      key: "3",
-      name: "Josh Adam",
-      email: "jadddam@gmail.com",
-      dateTime: "08 Dec 2023 05:30 PM",
-      donationType: "Organization",
-      donationMessage: "-",
-      amount: 15.2,
-      status: "Suspended",
-    },
-    {
-      key: "4",
-      name: "Fajar Surya",
-      email: "fjsurya@gmail.com",
-      dateTime: "15 Dec 2023 09:00 AM",
-      donationType: "Donor",
-      donationMessage: "Sending love & hope to everyone you’re helping",
-      amount: 47.3,
-      status: "Active",
-    },
-    {
-      key: "5",
-      name: "Linda Blair",
-      email: "lindablair98@gmail.com",
-      dateTime: "18 Dec 2023 01:00 PM",
-      donationType: "Business",
-      donationMessage: "Sending love & hope to everyone you’re helping",
-      amount: 23.9,
-      status: "Pending",
-    },
-  ];
+  const {
+    searchTerm,
+    setSearchTerm,
+    setCurrentPage,
+    data: apiResponse,
+    pagination,
+    isLoading,
+    setFilterParams,
+  } = useSmartFetchHook(useGetOrganizationReportQuery);
 
-  const [data, setData] = useState(originalData);
-  const [searchText, setSearchText] = useState("");
+  const data = (apiResponse || []).map((org) => ({
+    ...org,
+    email: org?.auth?.email,
+  }));
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [previewImage, setPreviewImage] = useState(null);
-  const [selectedProfile, setSelectedProfile] = useState(null);
   const [form] = Form.useForm();
 
-  // 📸 Handle image upload
+  //  Handle image upload
   const handleBeforeUpload = (file) => {
     setPreviewImage(URL.createObjectURL(file));
     form.setFieldsValue({ profileImage: file });
     return false;
   };
 
-  // ✏️ Open edit modal
-  const handleEdit = (record) => {
-    setSelectedProfile(record);
-    form.setFieldsValue({
-      firstName: record.name.split(" ")[0],
-      lastName: record.name.split(" ")[1],
-      email: record.email,
-      mobile: "+61 470 292 023",
-      password: "********",
-    });
-    setPreviewImage(user);
-    setIsModalVisible(true);
+  //  Open edit modal
+  const handleEdit = () => {
+   
   };
 
   const handleCancel = () => {
@@ -111,60 +59,22 @@ const OrganizationTable = () => {
   };
 
   const handleSave = (values) => {
-    console.log("Updated values:", values);
     setIsModalVisible(false);
   };
 
-  // 🔁 Sorting function
-  const handleSort = (key, order) => {
-    const sorted = [...data].sort((a, b) => {
-      if (key === "amount") {
-        return order === "ascend" ? a.amount - b.amount : b.amount - a.amount;
-      } else if (key === "name") {
-        return order === "ascend"
-          ? a.name.localeCompare(b.name)
-          : b.name.localeCompare(a.name);
-      } else if (key === "dateTime") {
-        return order === "ascend"
-          ? new Date(a.dateTime) - new Date(b.dateTime)
-          : new Date(b.dateTime) - new Date(a.dateTime);
-      }
-      return 0;
-    });
-    setData(sorted);
-  };
-
-  // 🔎 Role filter
-  const handleRoleFilter = (role) => {
-    if (role === "All") {
-      setData(originalData);
-    } else {
-      setData(originalData.filter((item) => item.donationType === role));
+  const handleDateRangeChange = (dates, dateStrings) => {
+    setDateRange(dates);
+    const newFilterParams = {};
+    if (dates && dates[0] && dates[1]) {
+      newFilterParams.startDate = dateStrings[0];
+      newFilterParams.endDate = dateStrings[1];
     }
+    setFilterParams(newFilterParams);
   };
-
-  const filteredData = data.filter(
-    (item) =>
-      item.name.toLowerCase().includes(searchText.toLowerCase()) ||
-      item.email.toLowerCase().includes(searchText.toLowerCase())
-  );
 
   const columns = [
     {
-      title: (
-        <div className="flex items-center gap-2">
-          Name/Email
-          <Select
-            defaultValue="ascend"
-            style={{ width: 90 }}
-            onChange={(value) => handleSort("name", value)}
-            suffixIcon={<DownOutlined />}
-          >
-            <Option value="ascend">Ascend</Option>
-            <Option value="descend">Descend</Option>
-          </Select>
-        </div>
-      ),
+      title: "Name/Email",
       dataIndex: "email",
       key: "email",
       render: (text, record) => (
@@ -182,55 +92,30 @@ const OrganizationTable = () => {
       ),
     },
     {
-      title: (
-        <div className="flex items-center gap-2">
-          Last Active
-          <Select
-            defaultValue="descend"
-            style={{ width: 100 }}
-            onChange={(value) => handleSort("dateTime", value)}
-            suffixIcon={<DownOutlined />}
-          >
-            <Option value="ascend">Oldest</Option>
-            <Option value="descend">Recent</Option>
-          </Select>
-        </div>
+      title: "Created At",
+      dataIndex: "createdAt",
+      key: "createdAt",
+      render: (createdAt) => (
+        <span className="font-medium">{createdAt ? new Date(createdAt).toLocaleString() : "-"}</span>
       ),
-      dataIndex: "dateTime",
-      key: "dateTime",
     },
     {
-      title: (
-        <div className="flex items-center gap-2">
-          Role
-          <Select
-            defaultValue="All"
-            style={{ width: 130 }}
-            onChange={handleRoleFilter}
-            suffixIcon={<DownOutlined />}
-          >
-            <Option value="All">All</Option>
-            <Option value="Business">Business</Option>
-            <Option value="Organization">Organization</Option>
-            <Option value="Donor">Donor</Option>
-          </Select>
-        </div>
-      ),
-      dataIndex: "donationType",
-      key: "donationType",
+      title: "Service Type",
+      dataIndex: "serviceType",
+      key: "serviceType",
       render: (value) => (
         <div className="px-4 py-2 rounded-3xl flex items-center gap-2">
-          {value === "Business" && (
+          {value === "business" && (
             <div className="flex items-center gap-1 bg-blue-100 text-blue-600 px-4 py-1 rounded-2xl">
               <MdOtherHouses className="h-5 w-5" /> Business
             </div>
           )}
-          {value === "Organization" && (
+          {value === "non-profit" && (
             <div className="flex items-center gap-1 bg-green-100 text-green-600 px-4 py-1 rounded-2xl">
               <GoOrganization className="h-5 w-5" /> Organization
             </div>
           )}
-          {value === "Donor" && (
+          {value === "donor" && (
             <div className="flex items-center gap-1 bg-pink-100 text-pink-600 px-4 py-1 rounded-2xl">
               <FaUsers className="h-5 w-5" /> Donor
             </div>
@@ -240,24 +125,23 @@ const OrganizationTable = () => {
     },
     {
       title: "Status",
-      dataIndex: "status",
+      dataIndex: ["auth", "status"],
       key: "status",
       render: (status) => (
         <span
-          className={`px-4 py-1 rounded-2xl text-sm font-medium ${
-            status === "Active"
-              ? "bg-green-100 text-green-600"
-              : status === "Pending"
+          className={`px-4 py-1 rounded-2xl text-sm font-medium ${status === "Active"
+            ? "bg-green-100 text-green-600"
+            : status === "verified"
               ? "bg-yellow-100 text-yellow-600"
               : "bg-gray-200 text-gray-600"
-          }`}
+            }`}
         >
           {status}
         </span>
       ),
     },
     {
-      title: "Action",
+      title: () => <div className="text-center">Action</div>,
       key: "action",
       render: (_, record) => (
         <div className="flex justify-center items-center gap-3 text-lg">
@@ -270,22 +154,13 @@ const OrganizationTable = () => {
           >
             <FaPencilAlt />
           </div>
-          <div className="bg-neutral-100 h-8 w-8 rounded-full p-1 flex justify-center items-center cursor-pointer">
+          {/* <div className="bg-neutral-100 h-8 w-8 rounded-full p-1 flex justify-center items-center cursor-pointer">
             <RxCrossCircled />
-          </div>
+          </div> */}
         </div>
       ),
     },
   ];
-
-  const menu = (
-    <Menu>
-      <Menu.Item>Sort A - Z</Menu.Item>
-      <Menu.Item>Sort Z - A</Menu.Item>
-      <Menu.Item>Recent First</Menu.Item>
-      <Menu.Item>Oldest First</Menu.Item>
-    </Menu>
-  );
 
   return (
     <div className="bg-white p-6 rounded-xl shadow-sm mb-10">
@@ -295,26 +170,48 @@ const OrganizationTable = () => {
           <Input
             prefix={<SearchOutlined />}
             placeholder="Search..."
-            onChange={(e) => setSearchText(e.target.value)}
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
             className="w-60"
           />
-          <Dropdown overlay={menu} trigger={["click"]}>
-            <Button>
-              Filter <DownOutlined />
-            </Button>
-          </Dropdown>
-          <DatePicker placeholder="Select interval" />
+          <RangePicker
+            placeholder={["Start date", "End date"]}
+            onChange={handleDateRangeChange}
+            value={dateRange}
+          />
         </div>
       </div>
 
       <Table
         columns={columns}
-        dataSource={filteredData}
-        pagination={{ pageSize: 5 }}
-        rowKey="key"
+        dataSource={data}
+        loading={isLoading}
+        onChange={(paginationConfig, filters, sorter) => {
+          setCurrentPage(paginationConfig.current);
+          const newFilterParams = {};
+          if (sorter?.field) {
+            newFilterParams.sortBy = sorter.field;
+            newFilterParams.sortOrder = sorter.order === "ascend" ? "asc" : "desc";
+          }
+          Object.keys(filters || {}).forEach((key) => {
+            if (filters[key]) {
+              newFilterParams[key] = filters[key][0];
+            }
+          });
+          setFilterParams(newFilterParams);
+        }}
+        pagination={{
+          current: pagination.page || 1,
+          pageSize: pagination.limit || 5,
+          total: pagination.total || 0,
+          showTotal: (total) => `Total ${total} items`,
+          showSizeChanger: false,
+          position: ["bottomRight"],
+        }}
+        rowKey={(row) => row._id}
       />
 
-      {/* ✨ Edit Profile Modal */}
+      {/* Edit Profile Modal */}
       <Modal
         title="Edit Profile"
         open={isModalVisible}
