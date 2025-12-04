@@ -18,9 +18,35 @@ import {
 } from "recharts";
 import { Button, Checkbox, Divider, Modal, Select, Space } from "antd";
 import { FaArrowDown, FaFilter } from "react-icons/fa";
+import { useGetUserEngagementQuery, useGetDonationChartQuery } from "../../redux/feature/user/userApis";
 const { Option } = Select;
 const AnalyticsRoute = () => {
   const [active, setActive] = useState("Today");
+
+  const { data: userEngagementData, isLoading: userEngagementLoading } = useGetUserEngagementQuery();
+
+  const [donationType, setDonationType] = useState("all");
+  const [year, setYear] = useState(new Date().getFullYear());
+
+  const { data: donationChart, isLoading: donationLoading } = useGetDonationChartQuery({ 
+    donationType: donationType === "all" ? undefined : donationType, 
+    year 
+  });
+
+  const monthNames = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  const dataChart = useMemo(() => {
+    const list = donationChart?.data?.monthlyDonations || [];
+    const byMonth = new Map(list.map((m) => [m.month, m]));
+    return Array.from({ length: 12 }, (_, i) => {
+      const month = i + 1;
+      const item = byMonth.get(month);
+      return {
+        name: monthNames[i],
+        totalAmount: item?.totalAmount || 0,
+        count: item?.count || 0,
+      };
+    });
+  }, [donationChart]);
 
   const getFilteredData = () => {
     switch (active) {
@@ -40,9 +66,9 @@ const AnalyticsRoute = () => {
       active === label ? "bg-black text-white" : "bg-white text-black"
     }`;
   const PALETTE = {
-    org: "#6ee7b7", // green-300
-    biz: "#93c5fd", // blue-300
-    donor: "#fbcfe8", // pink-200
+    org: "#6ee7b7", 
+    biz: "#93c5fd", 
+    donor: "#fbcfe8",
     pie: ["#c7d2fe", "#bae6fd", "#fde68a", "#fecaca", "#e9d5ff", "#d1fae5"],
   };
   const causes = [
@@ -82,20 +108,7 @@ const AnalyticsRoute = () => {
       color: PALETTE.pie[5],
     },
   ];
-  const dataChart = [
-    { name: "Jan", Organization: 10, Business: 10, Donor: 10 },
-    { name: "Feb", Organization: 20, Business: 15, Donor: 15 },
-    { name: "Mar", Organization: 15, Business: 10, Donor: 15 },
-    { name: "Apr", Organization: 25, Business: 20, Donor: 25 },
-    { name: "May", Organization: 30, Business: 30, Donor: 30 },
-    { name: "Jun", Organization: 20, Business: 20, Donor: 20 },
-    { name: "Jul", Organization: 25, Business: 25, Donor: 30 },
-    { name: "Aug", Organization: 40, Business: 30, Donor: 30 },
-    { name: "Sep", Organization: 25, Business: 25, Donor: 25 },
-    { name: "Oct", Organization: 30, Business: 25, Donor: 30 },
-    { name: "Nov", Organization: 35, Business: 30, Donor: 30 },
-    { name: "Dec", Organization: 40, Business: 30, Donor: 30 },
-  ];
+  const dataChartStaticRemoved = null;
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [userTypes, setUserTypes] = useState(["Organizations"]);
   const [causeCategory, setCauseCategory] = useState("Emergency Relief");
@@ -130,7 +143,7 @@ const AnalyticsRoute = () => {
             Filter
           </button>
           <button
-            className={btnClass("Today")}
+            className={btnClass("Today")} 
             onClick={() => setActive("Today")}
           >
             Today
@@ -165,14 +178,19 @@ const AnalyticsRoute = () => {
               <div>
                 <p className="tetx-xl font-semibold">Active Users</p>
                 <p className="text-neutral-400 ">
-                  {" "}
-                  <span className="text-green-500">+5.2%</span> vs last month
+                  {userEngagementData?.data?.activeUsersChangeText ? (
+                    <span className={userEngagementData.data.activeUsersChangeText.includes('+') ? "text-green-500" : "text-red-500"}>
+                      {userEngagementData.data.activeUsersChangeText} vs last month
+                    </span>
+                  ) : (
+                    <span className="text-gray-500">No change data</span>
+                  )}
                 </p>
               </div>
             </div>
 
             <h2 className="text-2xl font-semibold">
-              120,340{" "}
+              {userEngagementLoading ? "Loading..." : userEngagementData?.data?.totalActiveUsers || 0}{" "}
               <span className="text-sm text-gray-400 ml-2">active Users</span>
             </h2>
           </div>
@@ -181,14 +199,19 @@ const AnalyticsRoute = () => {
               <div>
                 <p className="tetx-xl font-semibold">New Sign-ups</p>
                 <p className="text-neutral-400 ">
-                  {" "}
-                  <span className="text-green-500">+5.2%</span> vs last month
+                  {userEngagementData?.data?.newUsersChangeText ? (
+                    <span className={userEngagementData.data.newUsersChangeText.includes('+') ? "text-green-500" : "text-red-500"}>
+                      {userEngagementData.data.newUsersChangeText} vs last month
+                    </span>
+                  ) : (
+                    <span className="text-gray-500">No change data</span>
+                  )}
                 </p>
               </div>
             </div>
 
             <h2 className="text-2xl font-semibold">
-              120,340{" "}
+              {userEngagementLoading ? "Loading..." : userEngagementData?.data?.totalNewUsers || 0}{" "}
               <span className="text-sm text-gray-400 ml-2">New Sign-ups</span>
             </h2>
           </div>
@@ -197,49 +220,69 @@ const AnalyticsRoute = () => {
               <div>
                 <p className="tetx-xl font-semibold">Returning Users</p>
                 <p className="text-neutral-400 ">
-                  {" "}
-                  <span className="text-green-500">+5.2%</span> vs last month
+                  {userEngagementData?.data?.returningUsersChangeText ? (
+                    <span className={userEngagementData.data.returningUsersChangeText.includes('+') ? "text-green-500" : "text-red-500"}>
+                      {userEngagementData.data.returningUsersChangeText} vs last month
+                    </span>
+                  ) : (
+                    <span className="text-gray-500">No change data</span>
+                  )}
                 </p>
               </div>
             </div>
 
             <h2 className="text-2xl font-semibold">
-              120,340{" "}
+              {userEngagementLoading ? "Loading..." : userEngagementData?.data?.totalReturningUsers || 0}{" "}
               <span className="text-sm text-gray-400 ml-2">
                 Returning Users
               </span>
             </h2>
           </div>
         </div>
-        {/* chart will be here  */}
       </div>
 
       {/* Donations Trend */}
       <div className="bg-white p-6 rounded-3xl border ">
-        <div className="h-[400px] w-full py-6">
-          <h1 className="text-2xl font-medium mb-6">Donation Trend</h1>
+        <div className="h-[460px] w-full py-6">
+          <div className="flex items-center justify-between mb-6">
+            <h1 className="text-2xl font-medium">Donation Trend</h1>
+            <div className="flex items-center gap-3">
+              <Select
+                size="middle"
+                value={donationType}
+                onChange={(v) => setDonationType(v)}
+                style={{ width: 150 }}
+              >
+                <Option value="all">All Types</Option>
+                <Option value="one-time">One-time</Option>
+                <Option value="recurring">Recurring</Option>
+                <Option value="round-up">Round-up</Option>
+              </Select>
+              <Select
+                size="middle"
+                value={year}
+                onChange={(v) => setYear(v)}
+                style={{ width: 120 }}
+              >
+                {Array.from({ length: 5 }, (_, idx) => new Date().getFullYear() - idx).map((y) => (
+                  <Option key={y} value={y}>{y}</Option>
+                ))}
+              </Select>
+            </div>
+          </div>
 
-          <ResponsiveContainer
-            width="100%"
-            height="100%"
-            Title="Donation Trend"
-          >
-            <BarChart data={dataChart} barSize={150}>
+          <ResponsiveContainer width="100%" height="100%" Title="Donation Trend">
+            <BarChart data={dataChart} barSize={35}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="name" tickLine={false} axisLine={false} />
               <YAxis tickLine={false} axisLine={false} />
               <RechartsTooltip />
               <Legend verticalAlign="bottom" height={36} />
-              <Bar
-                dataKey="Organization"
-                stackId="a"
-                fill={PALETTE.org}
-                radius={[6, 6, 0, 0]}
-              />
-              <Bar dataKey="Business" stackId="a" fill={PALETTE.biz} />
-              <Bar dataKey="Donor" stackId="a" fill={PALETTE.donor} />
+              <Bar dataKey="totalAmount" name="Total Amount" fill={PALETTE.org} radius={[6,6,0,0]} />
             </BarChart>
           </ResponsiveContainer>
+
+          {donationLoading && <div className="text-gray-500 mt-2">Loading donation data...</div>}
         </div>
       </div>
 

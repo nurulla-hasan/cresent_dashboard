@@ -18,7 +18,7 @@ const dashboardApis = baseApi.injectEndpoints({
                 const params = new URLSearchParams();
                 if (args) {
                     Object.entries(args).forEach(([key, value]) => {
-                        if (value) {
+                        if (value !== undefined && value !== null && value !== "") {
                             params.append(key, value);
                         }
                     });
@@ -38,7 +38,7 @@ const dashboardApis = baseApi.injectEndpoints({
                 const params = new URLSearchParams();
                 if (args) {
                     Object.entries(args).forEach(([key, value]) => {
-                        if (value) {
+                        if (value !== undefined && value !== null && value !== "") {
                             params.append(key, value);
                         }
                     });
@@ -63,13 +63,24 @@ const dashboardApis = baseApi.injectEndpoints({
 
         // GET DONATION CHART
         getDonationChart: builder.query({
-            query: () => ({
-                url: "/admin/donation-engagement",
-                method: "GET",
-            }),
+            query: (args) => {
+                const params = new URLSearchParams();
+                if (args) {
+                    Object.entries(args).forEach(([key, value]) => {
+                        if (value !== undefined && value !== null && value !== "") {
+                            params.append(key, value);
+                        }
+                    });
+                }
+                return {
+                    url: "/admin/donation-engagement",
+                    method: "GET",
+                    params,
+                };
+            },
             providesTags: ["USER"],
         }),
-        
+
         // GET DONATION CHART
         getCausesChart: builder.query({
             query: () => ({

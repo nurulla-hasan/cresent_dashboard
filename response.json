@@ -1,0 +1,94 @@
+{
+    "success": true,
+    "message": "Donations engagement report fetched successfully!",
+    "data": {
+        "year": 2025,
+        "donationType": "all",
+        "monthlyDonations": [
+            {
+                "donationType": "one-time",
+                "year": 2025,
+                "month": 1,
+                "totalAmount": 0,
+                "count": 0
+            },
+            {
+                "donationType": "one-time",
+                "year": 2025,
+                "month": 2,
+                "totalAmount": 0,
+                "count": 0
+            },
+            {
+                "donationType": "one-time",
+                "year": 2025,
+                "month": 3,
+                "totalAmount": 0,
+                "count": 0
+            },
+            {
+                "donationType": "one-time",
+                "year": 2025,
+                "month": 4,
+                "totalAmount": 0,
+                "count": 0
+            },
+            {
+                "donationType": "one-time",
+                "year": 2025,
+                "month": 5,
+                "totalAmount": 0,
+                "count": 0
+            },
+            {
+                "donationType": "one-time",
+                "year": 2025,
+                "month": 6,
+                "totalAmount": 0,
+                "count": 0
+            },
+            {
+                "donationType": "one-time",
+                "year": 2025,
+                "month": 7,
+                "totalAmount": 0,
+                "count": 0
+            },
+            {
+                "donationType": "one-time",
+                "year": 2025,
+                "month": 8,
+                "totalAmount": 0,
+                "count": 0
+            },
+            {
+                "donationType": "one-time",
+                "year": 2025,
+                "month": 9,
+                "totalAmount": 0,
+                "count": 0
+            },
+            {
+                "donationType": "one-time",
+                "year": 2025,
+                "month": 10,
+                "totalAmount": 0,
+                "count": 0
+            },
+            {
+                "donationType": "one-time",
+                "year": 2025,
+                "month": 11,
+                "totalAmount": 0,
+                "count": 0
+            },
+            {
+                "donationType": "one-time",
+                "year": 2025,
+                "month": 12,
+                "totalAmount": 5,
+                "count": 1
+            }
+        ]
+    }
+}

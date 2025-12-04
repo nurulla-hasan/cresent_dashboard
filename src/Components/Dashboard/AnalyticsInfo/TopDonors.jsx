@@ -34,7 +34,7 @@ const TopDonors= ({ topDonors = [], recentDonorDocs = [], donationsByCause = [],
       <div className="bg-white rounded-3xl p-6 border my-3">
         <div className="flex justify-between items-center ">
           <h1 className="text-2xl font-medium mb-2">Recent donors</h1>
-          <Link to="">
+          <Link to="/donor-app">
             <button className="text-purple-500 underline ">View All</button>
           </Link>
         </div>
