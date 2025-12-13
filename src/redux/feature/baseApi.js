@@ -4,9 +4,10 @@ import {
 } from "@reduxjs/toolkit/query/react";
 import { SetAccessToken } from "./auth/authSlice";
 
+export const baseApiUrl = "https://intervention-initially-model-disclose.trycloudflare.com/api/v1";
+
 const rawBaseQuery = fetchBaseQuery({
-  // baseUrl: "http://10.10.20.42:5000/api/v1",
-  baseUrl: "https://thin-plays-property-montgomery.trycloudflare.com/api/v1",
+  baseUrl: baseApiUrl,
 
   prepareHeaders: (headers, { getState }) => {
     const state = getState();
@@ -44,7 +45,8 @@ export const baseApi = createApi({
   tagTypes: [
     "PROFILE",
     "DASHBOARD",
-    "DONATION"
+    "DONATION",
+    "CAUSE",
   ],
   endpoints: () => ({}),
 });

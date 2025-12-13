@@ -10,7 +10,7 @@ type Pagination = {
 
 type ApiResponse<T> = {
   data: T[];
-  pagination: Pagination;
+  meta: Pagination;
   success: boolean;
   message: string;
 };
@@ -72,7 +72,7 @@ const useSmartFetchHook = <T, P extends QueryParams>(
   // Extract data from API response
   const list = data?.data ?? [];
   
-  const meta = (data as any)?.data?.pagination ?? {};
+  const meta = data?.meta ?? {};
 
   return {
     searchTerm,

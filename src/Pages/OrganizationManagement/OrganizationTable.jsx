@@ -39,6 +39,8 @@ const OrganizationTable = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [previewImage, setPreviewImage] = useState(null);
   const [form] = Form.useForm();
+  const [isViewOpen, setIsViewOpen] = useState(false);
+  const [viewRecord, setViewRecord] = useState(null);
 
   //  Handle image upload
   const handleBeforeUpload = (file) => {
@@ -62,6 +64,50 @@ const OrganizationTable = () => {
     setIsModalVisible(false);
   };
 
+  const handleExport = () => {
+    const rowsHtml = (data || [])
+      .map((r) => {
+        const firstCause = Array.isArray(r.causes) && r.causes.length > 0 ? r.causes[0]?.name : "-";
+        const created = r.createdAt ? new Date(r.createdAt).toLocaleString() : "-";
+        const status = r?.auth?.status || "-";
+        return `<tr>
+                  <td style="padding:8px;border:1px solid #ddd;">${r.name || "-"}</td>
+                  <td style="padding:8px;border:1px solid #ddd;">${r.email || "-"}</td>
+                  <td style="padding:8px;border:1px solid #ddd;">${firstCause}</td>
+                  <td style="padding:8px;border:1px solid #ddd;">${r.serviceType || "-"}</td>
+                  <td style="padding:8px;border:1px solid #ddd;">${created}</td>
+                  <td style="padding:8px;border:1px solid #ddd;">${status}</td>
+                </tr>`;
+      })
+      .join("");
+    const html = `<!doctype html>
+      <html><head><meta charset='utf-8'><title>Organizations</title>
+      <style>table{border-collapse:collapse;width:100%;font:14px system-ui} th,td{border:1px solid #ddd;padding:8px} th{background:#f3f4f6;text-align:left}</style>
+      </head><body>
+      <h2>Organizations</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th><th>Email</th><th>Cause Name</th><th>Service Type</th><th>Created At</th><th>Status</th>
+          </tr>
+        </thead>
+        <tbody>${rowsHtml}</tbody>
+      </table>
+      <script>window.onload=()=>window.print()</script>
+      </body></html>`;
+    const w = window.open("", "_blank");
+    if (w) {
+      w.document.open();
+      w.document.write(html);
+      w.document.close();
+    }
+  };
+
+  const handleView = (record) => {
+    setViewRecord(record);
+    setIsViewOpen(true);
+  };
+
   const handleDateRangeChange = (dates, dateStrings) => {
     setDateRange(dates);
     const newFilterParams = {};
@@ -78,16 +124,54 @@ const OrganizationTable = () => {
       dataIndex: "email",
       key: "email",
       render: (text, record) => (
-        <div className="flex gap-2 items-center">
+        <div className="flex items-center gap-2">
           <img
             src={user}
             alt={record.name}
-            className="h-10 w-10 rounded-full"
+            className="w-10 h-10 rounded-full"
           />
           <div>
             <p className="font-medium">{record.name}</p>
-            <p className="text-gray-400 text-sm">{record.email}</p>
+            <p className="text-sm text-gray-400">{record.email}</p>
           </div>
+        </div>
+      ),
+    },
+    {
+      title: "Cause Name",
+      dataIndex: "causes",
+      key: "causeName",
+      render: (causes) => {
+        const first = Array.isArray(causes) && causes.length > 0 ? causes[0] : null;
+        return first?.name || <span className="text-sm text-gray-400">No cause</span>;
+      },
+    },
+    {
+      title: "Service Type",
+      dataIndex: "serviceType",
+      key: "serviceType",
+      render: (value) => (
+        <div className="flex items-center gap-2 px-4 py-2 rounded-3xl">
+          {value === "non-profit" && (
+            <div className="flex items-center gap-1 px-4 py-1 text-green-600 bg-green-100 rounded-2xl">
+              <GoOrganization className="w-5 h-5" /> Non-profit
+            </div>
+          )}
+          {value === "Charity" && (
+            <div className="flex items-center gap-1 px-4 py-1 text-purple-600 bg-purple-100 rounded-2xl">
+              <FaUsers className="w-5 h-5" /> Charity
+            </div>
+          )}
+          {value === "Mosque" && (
+            <div className="flex items-center gap-1 px-4 py-1 text-indigo-600 bg-indigo-100 rounded-2xl">
+              <GoOrganization className="w-5 h-5" /> Mosque
+            </div>
+          )}
+          {!["non-profit", "Charity", "Mosque"].includes(value) && (
+            <div className="flex items-center gap-1 px-4 py-1 text-gray-600 bg-gray-100 rounded-2xl">
+              {value}
+            </div>
+          )}
         </div>
       ),
     },
@@ -97,30 +181,6 @@ const OrganizationTable = () => {
       key: "createdAt",
       render: (createdAt) => (
         <span className="font-medium">{createdAt ? new Date(createdAt).toLocaleString() : "-"}</span>
-      ),
-    },
-    {
-      title: "Service Type",
-      dataIndex: "serviceType",
-      key: "serviceType",
-      render: (value) => (
-        <div className="px-4 py-2 rounded-3xl flex items-center gap-2">
-          {value === "business" && (
-            <div className="flex items-center gap-1 bg-blue-100 text-blue-600 px-4 py-1 rounded-2xl">
-              <MdOtherHouses className="h-5 w-5" /> Business
-            </div>
-          )}
-          {value === "non-profit" && (
-            <div className="flex items-center gap-1 bg-green-100 text-green-600 px-4 py-1 rounded-2xl">
-              <GoOrganization className="h-5 w-5" /> Organization
-            </div>
-          )}
-          {value === "donor" && (
-            <div className="flex items-center gap-1 bg-pink-100 text-pink-600 px-4 py-1 rounded-2xl">
-              <FaUsers className="h-5 w-5" /> Donor
-            </div>
-          )}
-        </div>
       ),
     },
     {
@@ -144,17 +204,17 @@ const OrganizationTable = () => {
       title: () => <div className="text-center">Action</div>,
       key: "action",
       render: (_, record) => (
-        <div className="flex justify-center items-center gap-3 text-lg">
-          <div className="bg-neutral-100 h-8 w-8 rounded-full p-1 flex justify-center items-center cursor-pointer">
+        <div className="flex items-center justify-center gap-3 text-lg">
+          <div className="flex items-center justify-center w-8 h-8 p-1 rounded-full cursor-pointer bg-neutral-100" onClick={() => handleView(record)}>
             <VscEye />
           </div>
-          <div
+          {/* <div
             onClick={() => handleEdit(record)}
-            className="bg-neutral-100 h-8 w-8 rounded-full p-1 flex justify-center items-center cursor-pointer"
+            className="flex items-center justify-center w-8 h-8 p-1 rounded-full cursor-pointer bg-neutral-100"
           >
             <FaPencilAlt />
-          </div>
-          {/* <div className="bg-neutral-100 h-8 w-8 rounded-full p-1 flex justify-center items-center cursor-pointer">
+          </div> */}
+          {/* <div className="flex items-center justify-center w-8 h-8 p-1 rounded-full cursor-pointer bg-neutral-100">
             <RxCrossCircled />
           </div> */}
         </div>
@@ -163,8 +223,8 @@ const OrganizationTable = () => {
   ];
 
   return (
-    <div className="bg-white p-6 rounded-xl shadow-sm mb-10">
-      <div className="flex justify-between items-center mb-4">
+    <div className="p-6 mb-10 bg-white shadow-sm rounded-xl">
+      <div className="flex items-center justify-between mb-4">
         <h2 className="text-lg font-semibold">Organization Table</h2>
         <div className="flex items-center gap-2">
           <Input
@@ -179,6 +239,7 @@ const OrganizationTable = () => {
             onChange={handleDateRangeChange}
             value={dateRange}
           />
+          <Button onClick={handleExport}>Export</Button>
         </div>
       </div>
 
@@ -226,17 +287,17 @@ const OrganizationTable = () => {
               beforeUpload={handleBeforeUpload}
               accept="image/*"
             >
-              <div className="border border-dashed border-gray-300 p-4 rounded-full cursor-pointer flex flex-col items-center">
+              <div className="flex flex-col items-center p-4 border border-gray-300 border-dashed rounded-full cursor-pointer">
                 {previewImage ? (
                   <img
                     src={previewImage}
                     alt="Preview"
-                    className="h-24 w-24 rounded-full object-cover"
+                    className="object-cover w-24 h-24 rounded-full"
                   />
                 ) : (
                   <>
-                    <FaImage className="text-gray-400 h-8 w-8" />
-                    <p className="text-gray-400 text-sm mt-2">Upload Image</p>
+                    <FaImage className="w-8 h-8 text-gray-400" />
+                    <p className="mt-2 text-sm text-gray-400">Upload Image</p>
                   </>
                 )}
               </div>
@@ -278,6 +339,25 @@ const OrganizationTable = () => {
             </Button>
           </div>
         </Form>
+      </Modal>
+
+      <Modal
+        title="Organization Details"
+        open={isViewOpen}
+        onCancel={() => setIsViewOpen(false)}
+        footer={null}
+        centered
+      >
+        {viewRecord && (
+          <div className="space-y-2">
+            <div className="font-medium">{viewRecord.name}</div>
+            <div className="text-sm text-gray-600">{viewRecord.email}</div>
+            <div className="text-sm"><span className="font-medium">Service Type:</span> {viewRecord.serviceType || "-"}</div>
+            <div className="text-sm"><span className="font-medium">Status:</span> {viewRecord?.auth?.status || "-"}</div>
+            <div className="text-sm"><span className="font-medium">Created:</span> {viewRecord.createdAt ? new Date(viewRecord.createdAt).toLocaleString() : "-"}</div>
+            <div className="text-sm"><span className="font-medium">Cause Name:</span> {Array.isArray(viewRecord.causes) && viewRecord.causes[0]?.name ? viewRecord.causes[0].name : "No cause"}</div>
+          </div>
+        )}
       </Modal>
     </div>
   );
