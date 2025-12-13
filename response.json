@@ -1,0 +1,60 @@
+{
+    "success": true,
+    "message": "Causes retrieved successfully!",
+    "meta": {
+        "page": 1,
+        "limit": 10,
+        "total": 2,
+        "totalPage": 1
+    },
+    "data": [
+        {
+            "_id": "6933f01c8b8105d6f7ba8c45",
+            "name": "test",
+            "description": "rrrrrrrrrrrrrrrrrrd",
+            "category": "water",
+            "status": "pending",
+            "organization": {
+                "_id": "6930218bddbf3fdf987e870d",
+                "name": "Fahim ORG",
+                "serviceType": "non-profit",
+                "coverImage": "public/images/banner-1765001759395.png",
+                "aboutUs": "",
+                "dateOfEstablishment": "2025-12-03T10:48:26.369Z",
+                "registeredCharityName": "Eden Blankenship",
+                "isProfileVisible": true,
+                "logoImage": "public/images/download-(4)-1765001783867.jpg"
+            },
+            "createdAt": "2025-12-06T08:58:04.607Z",
+            "updatedAt": "2025-12-06T08:58:04.607Z",
+            "totalDonationAmount": 0,
+            "totalDonors": 0,
+            "totalDonations": 0,
+            "recentDonors": []
+        },
+        {
+            "_id": "693021bdddbf3fdf987e8716",
+            "name": "Zakats Fund",
+            "description": "Providing quality education to underprivileged children around the world",
+            "category": "zakat",
+            "status": "verified",
+            "organization": {
+                "_id": "6930218bddbf3fdf987e870d",
+                "name": "Fahim ORG",
+                "serviceType": "non-profit",
+                "coverImage": "public/images/banner-1765001759395.png",
+                "aboutUs": "",
+                "dateOfEstablishment": "2025-12-03T10:48:26.369Z",
+                "registeredCharityName": "Eden Blankenship",
+                "isProfileVisible": true,
+                "logoImage": "public/images/download-(4)-1765001783867.jpg"
+            },
+            "createdAt": "2025-12-03T11:40:45.272Z",
+            "updatedAt": "2025-12-03T11:45:07.949Z",
+            "totalDonationAmount": 0,
+            "totalDonors": 0,
+            "totalDonations": 0,
+            "recentDonors": []
+        }
+    ]
+}

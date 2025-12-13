@@ -5,7 +5,7 @@ import MainLayout from "../Layout/Main/Main";
 // Loading component
 const Loading = () => (
   <div className="flex items-center justify-center h-screen">
-    <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+    <div className="w-12 h-12 border-t-2 border-b-2 rounded-full animate-spin border-primary"></div>
   </div>
 );
 
@@ -25,7 +25,7 @@ const ForgatePassword = lazyLoad(() => import('../Pages/Auth/ForgatePassword/For
 const Newpass = lazyLoad(() => import('../Pages/Auth/NewPass/Newpass'));
 const VerifyPass = lazyLoad(() => import('../Pages/Auth/VerifyPass/VerifyPass'));
 const ContinuePage = lazyLoad(() => import('../Pages/Auth/ContinuePage/ContinuePage'));
-const Subscription = lazyLoad(() => import('../Pages/Subscription/Subscription'));
+// const Subscription = lazyLoad(() => import('../Pages/Subscription/Subscription'));
 const AdminProfile = lazyLoad(() => import('../Pages/AdminProfile/AdminProfile'));
 const Notifications = lazyLoad(() => import('../Pages/Notification/Notification'));
 const AllUsers = lazyLoad(() => import('../Components/UserManagemnet/AllUsers/AllUsers'));
@@ -76,10 +76,10 @@ export const router = createBrowserRouter([
         path: "/organization-management",
         element: <AllOrganization />,
       },
-      {
-        path: "/subdcription-management",
-        element: <Subscription />,
-      },
+      // {
+      //   path: "/subdcription-management",
+      //   element: <Subscription />,
+      // },
       {
         path: "/analytics",
         element: <AnalyticsRoute />,

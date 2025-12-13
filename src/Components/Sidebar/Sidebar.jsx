@@ -4,7 +4,7 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 
 import dashboard from "../../assets/image/dashboard.png";
 import users from "../../assets/image/users.png";
-import subscription from "../../assets/image/subscription.png";
+// import subscription from "../../assets/image/subscription.png";
 import analytics from "../../assets/image/analytics.png";
 import organization from "../../assets/image/organization.png";
 import donor from "../../assets/image/donor.png";
@@ -20,7 +20,7 @@ const Sidebar = ({ closeDrawer }) => {
   const menuItems = [
     { icon: dashboard, label: "Dashboard", Link: "/" },
     { icon: users, label: "User Management", Link: "/user-management" },
-    { icon: subscription, label: "Subscription & Payment", Link: "/subdcription-management" },
+    // { icon: subscription, label: "Subscription & Payment", Link: "/subdcription-management" },
     { icon: analytics, label: "Analytics", Link: "/analytics" },
     {
       icon: organization,
@@ -67,7 +67,7 @@ const Sidebar = ({ closeDrawer }) => {
   return (
     <div className="bg-[#f9f7f9] h-full border-r">
       <div className="flex flex-col md:h-full">
-        <div className="flex flex-col gap-2 md:my-5 mb-10 px-4 py-8">
+        <div className="flex flex-col gap-2 px-4 py-8 mb-10 md:my-5">
           {menuItems.map((item) => (
             <div key={item.label} className={item.className || ""}>
               <Link to={item.Link}>
@@ -121,7 +121,7 @@ const Sidebar = ({ closeDrawer }) => {
           {/* Logout button */}
           <button
             onClick={handleLogout}
-            className="flex items-center gap-2  rounded-2xl text-black hover:bg-primary py-4 px-5 cursor-pointer"
+            className="flex items-center gap-2 px-5 py-4 text-black cursor-pointer rounded-2xl hover:bg-primary"
           >
             <img src={logout} alt="Logout" />
             <p>Logout</p>
