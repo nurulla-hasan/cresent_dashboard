@@ -8,123 +8,82 @@ import {
   Table,
   Upload,
   Tag,
-  Dropdown,
-  Menu,
+  DatePicker,
+  Spin,
 } from "antd";
 import {
   FaEye,
   FaImage,
-  FaPencilAlt,
   FaCheckCircle,
   FaPlus,
 } from "react-icons/fa";
 import { RxCrossCircled, RxDotsVertical } from "react-icons/rx";
 import { BsExclamationCircle } from "react-icons/bs";
 import icon from "../../assets/image/leaf.png";
-import icon1 from "../../assets/image/edu.png";
-import icon2 from "../../assets/image/health.png";
-import { DownOutlined, SearchOutlined } from "@ant-design/icons";
+import { SearchOutlined, LoadingOutlined } from "@ant-design/icons";
+
+import useSmartFetchHook from "../../Components/hooks/useSmartFetchHook.ts";
+import { useGetRewardReportQuery } from "../../redux/feature/reward/rewardApis";
 
 const RewardsManagementTable = () => {
-  const [searchText, setSearchText] = useState("");
-  const originalData = [
-    {
-      key: "1",
-      rewardName: "10% Off Meals",
-      tier: "Bronze",
-      redemptions: "120",
-      name: "Green Bites",
-      email: "hello@greenbites.com",
-      icon: icon,
-      sector: "Food & Dining",
-      status: "Active",
-    },
-    {
-      key: "2",
-      rewardName: "Free Coding Course",
-      tier: "Silver",
-      redemptions: "80",
-      name: "EduTech",
-      email: "info@edutech.com",
-      icon: icon1,
-      sector: "Education",
-      status: "Pending",
-    },
-    {
-      key: "3",
-      rewardName: "Health Checkup Kit",
-      tier: "Gold",
-      redemptions: "200",
-      name: "Health First",
-      email: "support@hflabs.org",
-      icon: icon2,
-      sector: "Healthcare",
-      status: "Inactive",
-    },
-  ];
+  const { RangePicker } = DatePicker;
+  const [dateRange, setDateRange] = useState(null);
+  const [selectedReward, setSelectedReward] = useState(null);
+  const [isViewModalOpen, setIsViewModalOpen] = useState(false);
 
-  const [data, setData] = useState(originalData);
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  const [previewImage, setPreviewImage] = useState(null);
-  const [selectedBusiness, setSelectedBusiness] = useState(null);
+  const {
+    searchTerm,
+    setSearchTerm,
+    setCurrentPage,
+    data: apiResponse,
+    pagination,
+    isLoading,
+    setFilterParams,
+  } = useSmartFetchHook(useGetRewardReportQuery);
+
   const [form] = Form.useForm();
 
-  const handleBeforeUpload = (file) => {
-    setPreviewImage(URL.createObjectURL(file));
-    form.setFieldsValue({ icon: file });
-    return false;
-  };
-
-  const handleEdit = (record) => {
-    setSelectedBusiness(record);
-    form.setFieldsValue({
-      name: record.name,
-      email: record.email,
-      sector: record.sector,
-      status: record.status,
-    });
-    setPreviewImage(record.icon);
-    setIsModalVisible(true);
-  };
-
-  const handleCancel = () => {
-    setIsModalVisible(false);
-    form.resetFields();
-    setPreviewImage(null);
-  };
-
-  const handleSave = (values) => {
-    const updatedData = data.map((item) =>
-      item.key === selectedBusiness.key
-        ? { ...item, ...values, icon: previewImage || item.icon }
-        : item
-    );
-    setData(updatedData);
-    setIsModalVisible(false);
-  };
-
-  const handleDelete = (key) => {
-    setData(data.filter((item) => item.key !== key));
+  const handleView = (record) => {
+    setSelectedReward(record);
+    setIsViewModalOpen(true);
   };
 
   const renderStatus = (status) => {
     switch (status) {
-      case "Active":
+      case "active":
         return (
           <Tag color="green" className="flex items-center gap-1 px-2 py-1 rounded-full w-fit">
-            <FaCheckCircle /> Active
+            <FaCheckCircle /> active
           </Tag>
         );
-      case "Pending":
+      case "inactive":
+        return (
+          <Tag color="red" className="flex items-center gap-1 px-2 py-1 rounded-full w-fit">
+            <RxCrossCircled /> inactive
+          </Tag>
+        );
+      case "expired":
+        return (
+          <Tag color="default" className="flex items-center gap-1 px-2 py-1 rounded-full w-fit">
+            expired
+          </Tag>
+        );
+      case "upcoming":
+        return (
+          <Tag color="blue" className="flex items-center gap-1 px-2 py-1 rounded-full w-fit">
+            upcoming
+          </Tag>
+        );
+      case "sold-out":
         return (
           <Tag color="gold" className="flex items-center gap-1 px-2 py-1 rounded-full w-fit">
-            <BsExclamationCircle /> Pending
+            <BsExclamationCircle /> sold-out
           </Tag>
         );
       default:
         return (
-          <Tag color="red" className="flex items-center gap-1 px-2 py-1 rounded-full w-fit">
-            <RxCrossCircled /> Inactive
+          <Tag className="flex items-center gap-1 px-2 py-1 rounded-full w-fit">
+            {status || "-"}
           </Tag>
         );
     }
@@ -132,40 +91,44 @@ const RewardsManagementTable = () => {
 
   const columns = [
      {
-      title: "Reward Name",
-      dataIndex: "rewardName",
-      key: "rewardName",
+      title: "Reward Title",
+      dataIndex: "title",
+      key: "title",
     },
     {
       title: "Business",
-      dataIndex: "name",
-      key: "name",
-      render: (_, record) => (
+      dataIndex: "business",
+      key: "business",
+      render: (business) => (
         <div className="flex items-center gap-3">
           <img
-            src={record.icon}
-            alt={record.name}
-            className="h-10 w-10 object-contain rounded-full"
+            src={icon}
+            alt={business?.name}
+            className="object-contain w-10 h-10 rounded-full"
           />
           <div className="flex flex-col">
-            <span className="font-semibold">{record.name}</span>
-            <span className="text-gray-500 text-sm">{record.email}</span>
+            <span className="font-semibold">{business?.name || "-"}</span>
+            <span className="text-sm text-gray-500">{business?._id || "-"}</span>
           </div>
         </div>
       ),
     },
-   
     {
-      title: "Tier",
-      dataIndex: "tier",
-      key: "tier",
+      title: "Category",
+      dataIndex: "category",
+      key: "category",
+    },
+    {
+      title: "Points",
+      dataIndex: "pointsCost",
+      key: "pointsCost",
     },
     {
       title: "Redemptions",
-      dataIndex: "redemptions",
-      key: "redemptions",
+      dataIndex: "redeemedCount",
+      key: "redeemedCount",
+      render: (_v, record) => record.redeemedCount ?? record.redemptions ?? 0,
     },
-  
     {
       title: "Status",
       dataIndex: "status",
@@ -178,117 +141,133 @@ const RewardsManagementTable = () => {
       render: (_, record) => (
         <div className="flex gap-3 text-lg">
           <div
-            onClick={() => handleEdit(record)}
-            className="bg-neutral-100 h-8 w-8 rounded-full p-1 flex justify-center items-center cursor-pointer"
+            onClick={() => handleView(record)}
+            className="flex items-center justify-center w-8 h-8 p-1 rounded-full cursor-pointer bg-neutral-100"
           >
             <FaEye />
-          </div>
-          <div
-            onClick={() => handleEdit(record)}
-            className="bg-neutral-100 h-8 w-8 rounded-full p-1 flex justify-center items-center cursor-pointer"
-          >
-            <FaPencilAlt />
-          </div>
-          <div
-            onClick={() => handleDelete(record.key)}
-            className="bg-neutral-100 h-8 w-8 rounded-full p-1 flex justify-center items-center cursor-pointer text-red-500"
-          >
-            <RxCrossCircled />
           </div>
         </div>
       ),
     },
   ];
 
-  const menu = (
-    <Menu>
-      <Menu.Item>Sort A - Z</Menu.Item>
-      <Menu.Item>Sort Z - A</Menu.Item>
-      <Menu.Item>Recent First</Menu.Item>
-      <Menu.Item>Oldest First</Menu.Item>
-    </Menu>
-  );
+
+  const handleDateRangeChange = (dates, dateStrings) => {
+    setDateRange(dates);
+    const newParams = {};
+    if (dates && dates[0] && dates[1]) {
+      newParams.fromDate = dateStrings[0];
+      newParams.toDate = dateStrings[1];
+    }
+    setFilterParams(newParams);
+  };
 
   return (
-    <div className="bg-white p-6 rounded-xl shadow-sm mb-10">
-      <div className="flex justify-between items-center mb-4">
+    <div className="p-6 mb-10 bg-white shadow-sm rounded-xl">
+      <div className="flex items-center justify-between mb-4">
         <h2 className="text-lg font-semibold">Rewards Management</h2>
         <div className="flex items-center gap-2">
-          <Input
+          <Input 
             prefix={<SearchOutlined />}
             placeholder="Search..."
-            onChange={(e) => setSearchText(e.target.value)}
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
             className="w-60"
           />
-          <Dropdown overlay={menu} trigger={["click"]}>
-            <Button>
-              Filter <DownOutlined />
-            </Button>
-          </Dropdown>
-          <button className="flex justify-center items-center gap-2 bg-white px-6 py-2 rounded-3xl border">
+          <RangePicker
+            placeholder={["From date", "To date"]}
+            onChange={handleDateRangeChange}
+            value={dateRange}
+          />
+          {/* <button className="flex items-center justify-center gap-2 px-6 py-2 bg-white border rounded-3xl">
             <FaPlus /> Add
-          </button>
-          <RxDotsVertical />
+          </button> */}
+          {/* <RxDotsVertical /> */}
         </div>
       </div>
 
-      <Table columns={columns} dataSource={data} pagination={{ pageSize: 5 }} rowKey="key" />
+      <Spin spinning={isLoading} indicator={<LoadingOutlined spin />}>
+        <Table
+          columns={columns}
+          dataSource={apiResponse}
+          loading={isLoading}
+          rowKey="_id"
+          onChange={(tablePagination, filters, sorter) => {
+            setCurrentPage(tablePagination.current);
+            const newParams = {};
+            if (sorter?.field) {
+              newParams.sortBy = sorter.field;
+              newParams.sortOrder = sorter.order === "ascend" ? "asc" : "desc";
+            }
+            Object.keys(filters).forEach((key) => {
+              if (filters[key]) {
+                newParams[key] = filters[key][0];
+              }
+            });
+            setFilterParams(newParams);
+          }}
+          pagination={{
+            current: pagination.page || 1,
+            pageSize: pagination.limit || 10,
+            total: pagination.total || 0,
+            showTotal: (total) => `Total ${total} items`,
+            showSizeChanger: false,
+            position: ["bottomRight"],
+          }}
+        />
+      </Spin>
 
-      {/* ✨ Edit Modal */}
       <Modal
-        title="Edit Business"
-        open={isModalVisible}
-        onCancel={handleCancel}
+        title="Reward Details"
+        open={isViewModalOpen}
+        onCancel={() => setIsViewModalOpen(false)}
         footer={null}
         centered
       >
-        <Form layout="vertical" form={form} onFinish={handleSave}>
-          <div className="flex justify-center mb-4">
-            <Upload
-              showUploadList={false}
-              beforeUpload={handleBeforeUpload}
-              accept="image/*"
-            >
-              <div className="border border-dashed border-gray-300 p-4 rounded-full cursor-pointer flex flex-col items-center">
-                {previewImage ? (
-                  <img
-                    src={previewImage}
-                    alt="Preview"
-                    className="h-24 w-24 rounded-full object-cover"
-                  />
-                ) : (
-                  <>
-                    <FaImage className="text-gray-400 h-8 w-8" />
-                    <p className="text-gray-400 text-sm mt-2">Upload Icon</p>
-                  </>
-                )}
+        {selectedReward ? (
+          <div className="space-y-3">
+            <div>
+              <p className="text-sm text-gray-500">Title</p>
+              <p className="font-medium">{selectedReward.title}</p>
+            </div>
+            <div>
+              <p className="text-sm text-gray-500">Business</p>
+              <p className="font-medium">{selectedReward.business?.name || "-"}</p>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <p className="text-sm text-gray-500">Category</p>
+                <p className="font-medium">{selectedReward.category}</p>
               </div>
-            </Upload>
+              <div>
+                <p className="text-sm text-gray-500">Type</p>
+                <p className="font-medium">{selectedReward.type}</p>
+              </div>
+              <div>
+                <p className="text-sm text-gray-500">Points Cost</p>
+                <p className="font-medium">{selectedReward.pointsCost}</p>
+              </div>
+              <div>
+                <p className="text-sm text-gray-500">Status</p>
+                <div>{renderStatus(selectedReward.status)}</div>
+              </div>
+            </div>
+            <div>
+              <p className="text-sm text-gray-500">Description</p>
+              <p className="font-medium">{selectedReward.description || "-"}</p>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <p className="text-sm text-gray-500">Start Date</p>
+                <p className="font-medium">{selectedReward.startDate ? new Date(selectedReward.startDate).toLocaleString() : "-"}</p>
+              </div>
+              <div>
+                <p className="text-sm text-gray-500">Expiry Date</p>
+                <p className="font-medium">{selectedReward.expiryDate ? new Date(selectedReward.expiryDate).toLocaleString() : "-"}</p>
+              </div>
+            </div>
           </div>
-
-          <Form.Item name="name" label="Business Name" rules={[{ required: true }]}>
-            <Input placeholder="Enter business name" />
-          </Form.Item>
-
-          <Form.Item name="email" label="Email" rules={[{ required: true }]}>
-            <Input placeholder="Enter email address" />
-          </Form.Item>
-
-          <Form.Item name="sector" label="Sector" rules={[{ required: true }]}>
-            <Input placeholder="Enter sector" />
-          </Form.Item>
-
-          <Form.Item name="status" label="Status" rules={[{ required: true }]}>
-            <Input placeholder="Active / Pending / Inactive" />
-          </Form.Item>
-
-          <div className="flex justify-end gap-3 mt-4">
-            <Button onClick={handleCancel}>Cancel</Button>
-            <Button type="primary" htmlType="submit">
-              Save Changes
-            </Button>
-          </div>
-        </Form>
+        ) : null}
       </Modal>
     </div>
   );

@@ -1,231 +1,81 @@
 {
     "success": true,
-    "message": "Organizations report fetched successfully!",
+    "message": "Donors retrived successfully!",
     "meta": {
-        "limit": 10,
         "page": 1,
-        "total": 11,
-        "totalPage": 2
+        "limit": 10,
+        "total": 2,
+        "totalPage": 1
     },
     "data": [
         {
-            "_id": "693d3498c139b728a8d734d7",
-            "auth": {
-                "id": "693d3498c139b728a8d734bb",
-                "email": "gohomen778@alexida.com",
-                "status": "verified",
-                "isActive": true
-            },
-            "name": "Copeland and Merrill Inc",
-            "serviceType": "Charity",
-            "address": "Walters and Castaneda Traders",
+            "_id": "69301feaddbf3fdf987e86e8",
+            "name": "Mostafizur",
+            "address": "Dhaka, Mohakhai",
+            "state": "Dhaka",
+            "postalCode": "90001",
+            "image": "/images/scaled_20-1765705568878.jpg",
+            "createdAt": "2025-12-03T11:32:58.108Z",
+            "updatedAt": "2025-12-14T09:46:09.298Z",
+            "phoneNumber": "+1-555-123-4567",
+            "authId": "6930158addbf3fdf987e86c4",
+            "email": "mostafizurrahaman0401@gmail.com",
+            "isActive": true,
+            "status": "verified",
+            "totalDonationAmount": 405,
+            "badges": [
+                {
+                    "userBadgeId": "693e472ce04b40ceaa3a49c2",
+                    "badge": "693d27dc5dec7cea8e982137",
+                    "badge_actual_name": "First Drop",
+                    "currentTier": "one-tier",
+                    "badgeName": "First Drop"
+                },
+                {
+                    "userBadgeId": "693e472ce04b40ceaa3a49c3",
+                    "badge": "693d08925dec7cea8e982086",
+                    "badge_actual_name": "Water Badge",
+                    "currentTier": "silver",
+                    "badgeName": "Water Guardian"
+                },
+                {
+                    "userBadgeId": "693e472ce04b40ceaa3a49c4",
+                    "badge": "693d26cc5dec7cea8e98211f",
+                    "badge_actual_name": "Top Contributor",
+                    "currentTier": "colour",
+                    "badgeName": "Contributor"
+                },
+                {
+                    "userBadgeId": "693e472ce04b40ceaa3a49c5",
+                    "badge": "693d27a35dec7cea8e98212e",
+                    "badge_actual_name": "Cause Explorer",
+                    "currentTier": "colour",
+                    "badgeName": "Cause Beginner"
+                },
+                {
+                    "userBadgeId": "693e472ce04b40ceaa3a49c6",
+                    "badge": "693d27ef5dec7cea8e98213b",
+                    "badge_actual_name": "Monthly Mover",
+                    "currentTier": "colour",
+                    "badgeName": "Monthly Starter"
+                }
+            ]
+        },
+        {
+            "_id": "69366be125aa629488da1173",
+            "name": "Donor One",
+            "address": "123 Main Street",
             "state": "California",
-            "postalCode": "Ipsum doloribus sun",
-            "website": "Bonner Casey Traders",
-            "phoneNumber": "+1 (481) 897-3611",
-            "coverImage": null,
-            "logoImage": null,
-            "isProfileVisible": true,
-            "createdAt": "2025-12-13T09:40:40.979Z",
-            "updatedAt": "2025-12-13T09:40:40.979Z",
-            "causes": []
-        },
-        {
-            "_id": "693d32ef147e29807c0d1d9a",
-            "auth": {
-                "id": "693d32ee147e29807c0d1d98",
-                "email": "hifyhager@mailinator.com",
-                "status": "pending",
-                "isActive": true
-            },
-            "name": "Mcfarland and Hale Traders",
-            "serviceType": "Mosque",
-            "address": "Mejia and Crane LLC",
-            "state": "California",
-            "postalCode": "Recusandae Sapiente",
-            "website": "Eaton Simon Trading",
-            "phoneNumber": "+1 (331) 608-3462",
-            "coverImage": null,
-            "logoImage": null,
-            "isProfileVisible": true,
-            "createdAt": "2025-12-13T09:33:35.514Z",
-            "updatedAt": "2025-12-13T09:33:35.514Z",
-            "causes": []
-        },
-        {
-            "_id": "693d2c63ff6fda2305fd8b72",
-            "auth": {
-                "id": "693d2c63ff6fda2305fd8b70",
-                "email": "xojajuced@mailinator.com",
-                "status": "pending",
-                "isActive": true
-            },
-            "name": "Hawkins Strickland Co",
-            "serviceType": "Mosque",
-            "address": "Leonard Carpenter Traders",
-            "state": "New York",
-            "postalCode": "Mollitia ea error et",
-            "website": "Hardy Gay Plc",
-            "phoneNumber": "+1 (564) 466-4522",
-            "coverImage": null,
-            "logoImage": null,
-            "isProfileVisible": true,
-            "createdAt": "2025-12-13T09:05:39.758Z",
-            "updatedAt": "2025-12-13T09:05:39.758Z",
-            "causes": []
-        },
-        {
-            "_id": "693d2c31ff6fda2305fd8b67",
-            "auth": {
-                "id": "693d2c31ff6fda2305fd8b65",
-                "email": "rabeyaakter55@gmail.com",
-                "status": "pending",
-                "isActive": true
-            },
-            "name": "Special Org Foundation",
-            "serviceType": "Community Welfare",
-            "address": "42 Charity Lane, Sydney",
-            "state": "NSW",
-            "postalCode": "2000",
-            "website": "https://specialorg.example.com",
-            "phoneNumber": "+61412345678",
-            "coverImage": null,
-            "logoImage": null,
-            "isProfileVisible": true,
-            "createdAt": "2025-12-13T09:04:49.872Z",
-            "updatedAt": "2025-12-13T09:04:49.872Z",
-            "causes": []
-        },
-        {
-            "_id": "693d2c19ff6fda2305fd8b60",
-            "auth": {
-                "id": "693d2c18ff6fda2305fd8b5e",
-                "email": "supadmin2454@yopmail.com",
-                "status": "pending",
-                "isActive": true
-            },
-            "name": "Special Org Foundation",
-            "serviceType": "Community Welfare",
-            "address": "42 Charity Lane, Sydney",
-            "state": "NSW",
-            "postalCode": "2000",
-            "website": "https://specialorg.example.com",
-            "phoneNumber": "+61412345678",
-            "coverImage": null,
-            "logoImage": null,
-            "isProfileVisible": true,
-            "createdAt": "2025-12-13T09:04:25.324Z",
-            "updatedAt": "2025-12-13T09:04:25.324Z",
-            "causes": []
-        },
-        {
-            "_id": "693d2c09ff6fda2305fd8b59",
-            "auth": {
-                "id": "693d2c09ff6fda2305fd8b57",
-                "email": "supadmin245@yopmail.com",
-                "status": "pending",
-                "isActive": true
-            },
-            "name": "Special Org Foundation",
-            "serviceType": "Community Welfare",
-            "address": "42 Charity Lane, Sydney",
-            "state": "NSW",
-            "postalCode": "2000",
-            "website": "https://specialorg.example.com",
-            "phoneNumber": "+61412345678",
-            "coverImage": null,
-            "logoImage": null,
-            "isProfileVisible": true,
-            "createdAt": "2025-12-13T09:04:09.919Z",
-            "updatedAt": "2025-12-13T09:04:09.919Z",
-            "causes": []
-        },
-        {
-            "_id": "69395173dafddc5638d9a16b",
-            "auth": {
-                "id": "69395172dafddc5638d9a153",
-                "email": "specialorg20@yopmail.com",
-                "status": "verified",
-                "isActive": true
-            },
-            "name": "Special Org Foundation",
-            "serviceType": "Community Welfare",
-            "address": "42 Charity Lane, Sydney",
-            "state": "NSW",
-            "postalCode": "2000",
-            "website": "https://specialorg.example.com",
-            "phoneNumber": "+61412345678",
-            "coverImage": "public/images/screenshot_64-1765602668064.png",
-            "logoImage": "public/images/image-1765364082895.jpg",
-            "isProfileVisible": true,
-            "createdAt": "2025-12-10T10:54:43.607Z",
-            "updatedAt": "2025-12-13T05:11:08.147Z",
-            "causes": []
-        },
-        {
-            "_id": "69394a58a8dcb5b2c055b5f0",
-            "auth": {
-                "id": "69394a58a8dcb5b2c055b5ee",
-                "email": "specialorg1@yopmail.com",
-                "status": "verified",
-                "isActive": true
-            },
-            "name": "Special Org Foundation",
-            "serviceType": "Community Welfare",
-            "address": "42 Charity Lane, Sydney",
-            "state": "NSW",
-            "postalCode": "2000",
-            "website": "https://specialorg.example.com",
-            "phoneNumber": "+61412345678",
-            "coverImage": "public/images/1-1765362264085.jpg",
-            "logoImage": "public/images/image-1765362264082.jpg",
-            "isProfileVisible": true,
-            "createdAt": "2025-12-10T10:24:24.772Z",
-            "updatedAt": "2025-12-10T10:24:24.772Z",
-            "causes": []
-        },
-        {
-            "_id": "6939490d6aaad4106d92bc6b",
-            "auth": {
-                "id": "6939490c6aaad4106d92bc69",
-                "email": "specialorg@yopmail.com",
-                "status": "verified",
-                "isActive": false
-            },
-            "name": "Special Org Foundation",
-            "serviceType": "Community Welfare",
-            "address": "42 Charity Lane, Sydney",
-            "state": "NSW",
-            "postalCode": "2000",
-            "website": "https://specialorg.example.com",
-            "phoneNumber": "+61412345678",
-            "coverImage": "public/images/1-1765361932921.jpg",
-            "logoImage": "public/images/image-1765361932920.jpg",
-            "isProfileVisible": true,
-            "createdAt": "2025-12-10T10:18:53.559Z",
-            "updatedAt": "2025-12-10T10:18:53.559Z",
-            "causes": []
-        },
-        {
-            "_id": "69366a17307f928632cf8e51",
-            "auth": {
-                "id": "693669b1307f928632cf8e49",
-                "email": "org2@yopmail.com",
-                "status": "verified",
-                "isActive": true
-            },
-            "name": "AS SOONAH FOUNDATION",
-            "serviceType": "non-profit",
-            "address": "12 Main Road",
-            "state": "VIC",
-            "postalCode": "3000",
-            "website": "https://greencare.org",
-            "phoneNumber": "+61 430 888 111",
-            "coverImage": null,
-            "isProfileVisible": true,
-            "createdAt": "2025-12-08T06:03:03.729Z",
-            "updatedAt": "2025-12-08T06:03:03.729Z",
-            "causes": []
+            "postalCode": "90001",
+            "image": "public/images/scaled_efda2035-9ebc-4d47-be9a-5ac9ccd017fc9055253296020019462-1765174241021.jpg",
+            "createdAt": "2025-12-08T06:10:41.074Z",
+            "updatedAt": "2025-12-08T06:10:41.074Z",
+            "authId": "69366ba125aa629488da116a",
+            "email": "donor1@yopmail.com",
+            "isActive": true,
+            "status": "verified",
+            "totalDonationAmount": 0,
+            "badges": []
         }
     ]
 }

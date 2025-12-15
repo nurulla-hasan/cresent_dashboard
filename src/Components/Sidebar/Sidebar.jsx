@@ -9,7 +9,7 @@ import analytics from "../../assets/image/analytics.png";
 import organization from "../../assets/image/organization.png";
 import donor from "../../assets/image/donor.png";
 import business from "../../assets/image/business.png";
-import setting from "../../assets/image/settings.png";
+// import setting from "../../assets/image/settings.png";
 import logout from "../../assets/image/logout.png";
 
 const Sidebar = ({ closeDrawer }) => {
@@ -29,12 +29,12 @@ const Sidebar = ({ closeDrawer }) => {
     },
     { icon: donor, label: "Donor App", Link: "/donor-app" },
     { icon: business, label: "Business Admin", Link: "/business-admin" },
-    {
-      icon: setting,
-      label: "Settings",
-      Link: "/settings/contact-us",
-      className: "mt-32",
-    },
+    // {
+    //   icon: setting,
+    //   label: "Settings",
+    //   Link: "/settings/contact-us",
+    //   className: "mt-32",
+    // },
   ];
 
   // Find active menu item based on current path

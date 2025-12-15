@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useDispatch } from "react-redux";
 import {
   DatePicker,
   Form,
@@ -7,18 +8,25 @@ import {
   Table,
   Upload,
 } from "antd";
-import { SearchOutlined } from "@ant-design/icons";
+import { SearchOutlined, LoadingOutlined } from "@ant-design/icons";
 import { VscEye } from "react-icons/vsc";
+import { RxCross2 } from "react-icons/rx";
 import user from "../../assets/image/user.png";
 import { FaImage } from "react-icons/fa";
+import { Check, Trash2 } from "lucide-react";
 import useSmartFetchHook from "../hooks/useSmartFetchHook.ts";
 import { useGetUserReportQuery } from "../../redux/feature/user/userApis.js";
+import { baseApi } from "../../redux/feature/baseApi";
 
 const ProfileTables = () => {
   const { RangePicker } = DatePicker;
   const [dateRange, setDateRange] = useState(null);
+  const dispatch = useDispatch();
+  const [rowLoadingId, setRowLoadingId] = useState(null);
+  const [isViewOpen, setIsViewOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
 
-  const {
+  const { 
     searchTerm,
     setSearchTerm,
     setCurrentPage,
@@ -26,10 +34,12 @@ const ProfileTables = () => {
     pagination,
     isLoading,
     setFilterParams,
-  } = useSmartFetchHook(useGetUserReportQuery, { limit: 5 });
+  } = useSmartFetchHook(useGetUserReportQuery);
 
   // Extract users array from API response
-  const data = apiResponse?.users || [];
+  const data = apiResponse || [];
+  // Hide pending users from this table view
+  // const filteredData = Array.isArray(data) ? data.filter((u) => u?.status !== "pending") : [];
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [previewImage, setPreviewImage] = useState(null);
   const [form] = Form.useForm();
@@ -48,6 +58,50 @@ const ProfileTables = () => {
 
   const handleSave = (_values) => {
     setIsModalVisible(false);
+  };
+
+  const handleView = (record) => {
+    setSelectedUser(record);
+    setIsViewOpen(true);
+  };
+
+  const handleAccept = async (record) => {
+    try {
+      setRowLoadingId(record._id);
+      await dispatch(
+        baseApi.endpoints.changeUserStatus.initiate({ id: record._id, status: "verified" })
+      ).unwrap();
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setRowLoadingId(null);
+    }
+  };
+
+  const handleSuspend = async (record) => {
+    try {
+      setRowLoadingId(record._id);
+      await dispatch(
+        baseApi.endpoints.changeUserStatus.initiate({ id: record._id, status: "suspended" })
+      ).unwrap();
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setRowLoadingId(null);
+    }
+  };
+
+  const handleDelete = async (record) => {
+    try {
+      setRowLoadingId(record._id);
+      await dispatch(
+        baseApi.endpoints.deleteUser.initiate(record._id)
+      ).unwrap();
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setRowLoadingId(null);
+    }
   };
 
   const handleDateRangeChange = (dates, dateStrings) => {
@@ -70,15 +124,15 @@ const ProfileTables = () => {
       dataIndex: "email",
       key: "email",
       render: (email) => (
-        <div className="flex gap-2 items-center">
+        <div className="flex items-center gap-2">
           <img
             src={user}
             alt={email}
-            className="h-10 w-10 rounded-full"
+            className="w-10 h-10 rounded-full"
           />
           <div>
             <p className="font-medium">{email}</p>
-            <p className="text-gray-400 text-sm">{email}</p>
+            <p className="text-sm text-gray-400">{email}</p>
           </div>
         </div>
       ),
@@ -160,19 +214,61 @@ const ProfileTables = () => {
       title: "Action",
       key: "action",
       align: "center",
-      render: (_, _record) => (
-        <div className="flex justify-center items-center gap-3 text-lg">
-          <div className="bg-neutral-100 h-8 w-8 rounded-full p-1 flex justify-center items-center cursor-pointer">
-            <VscEye />
+      render: (_, record) => {
+        const isRowLoading = rowLoadingId === record?._id;
+        const isPending = record?.status === "pending";
+        const isSuspended = record?.status === "suspended";
+        return (
+          <div className="flex items-center justify-center gap-3 text-lg">
+            <div
+              onClick={() => handleView(record)}
+              className="flex items-center justify-center w-8 h-8 p-1 rounded-full cursor-pointer bg-neutral-100"
+              title="View"
+            >
+              <VscEye />
+            </div>
+            {isPending ? (
+              <>
+                <div
+                  onClick={() => { if (!isRowLoading) handleSuspend(record); }}
+                  className={`flex items-center justify-center w-8 h-8 p-1 rounded-full ${!isRowLoading ? "cursor-pointer bg-neutral-100" : "cursor-not-allowed bg-neutral-50 opacity-50"}`}
+                  title={isRowLoading ? "Processing..." : "Suspend"}
+                >
+                  {isRowLoading ? <LoadingOutlined /> : <RxCross2 />}
+                </div>
+                <div
+                  onClick={() => { if (!isRowLoading) handleAccept(record); }}
+                  className={`flex items-center justify-center w-8 h-8 p-1 rounded-full ${!isRowLoading ? "cursor-pointer bg-neutral-100" : "cursor-not-allowed bg-neutral-50 opacity-50"}`}
+                  title={isRowLoading ? "Processing..." : "Accept"}
+                >
+                  {isRowLoading ? <LoadingOutlined /> : <Check size={18} />}
+                </div>
+              </>
+            ) : (
+              <div
+                onClick={() => { if (!isRowLoading) (isSuspended ? handleAccept(record) : handleSuspend(record)); }}
+                className={`flex items-center justify-center w-8 h-8 p-1 rounded-full ${!isRowLoading ? "cursor-pointer bg-neutral-100" : "cursor-not-allowed bg-neutral-50 opacity-50"}`}
+                title={isRowLoading ? "Processing..." : (isSuspended ? "Unblock" : "Block")}
+              >
+                {isRowLoading ? <LoadingOutlined /> : (isSuspended ? <Check size={18} /> : <RxCross2 />)}
+              </div>
+            )}
+            <div
+              onClick={() => { if (!isRowLoading) handleDelete(record); }}
+              className={`flex items-center justify-center w-8 h-8 p-1 rounded-full ${!isRowLoading ? "cursor-pointer bg-neutral-100" : "cursor-not-allowed bg-neutral-50 opacity-50"}`}
+              title={isRowLoading ? "Processing..." : "Delete"}
+            >
+              {isRowLoading ? <LoadingOutlined /> : <Trash2 size={16} />}
+            </div>
           </div>
-        </div>
-      ),
+        );
+      },
     },
   ];
 
   return (
-    <div className="bg-white p-6 rounded-xl shadow-sm mb-10">
-      <div className="flex justify-between items-center mb-4">
+    <div className="p-6 mb-10 bg-white shadow-sm rounded-xl">
+      <div className="flex items-center justify-between mb-4">
         <h2 className="text-lg font-semibold">Profiles</h2>
         <div className="flex items-center gap-2">
           <Input
@@ -231,7 +327,7 @@ const ProfileTables = () => {
         centered
       >
         <Form layout="vertical" form={form} onFinish={handleSave}>
-          <p className="text-gray-400 mb-3">
+          <p className="mb-3 text-gray-400">
             Update profile information of the user.{" "}
           </p>
           <div className="flex justify-center mb-4">
@@ -240,23 +336,23 @@ const ProfileTables = () => {
               beforeUpload={handleBeforeUpload}
               accept="image/*"
             >
-              <div className="border border-dashed border-gray-300 p-4 rounded-full cursor-pointer flex flex-col items-center">
+              <div className="flex flex-col items-center p-4 border border-gray-300 border-dashed rounded-full cursor-pointer">
                 {previewImage ? (
                   <img
                     src={previewImage}
                     alt="Preview"
-                    className="h-24 w-24 rounded-full object-cover"
+                    className="object-cover w-24 h-24 rounded-full"
                   />
                 ) : (
                   <>
-                    <FaImage className="text-gray-400 h-8 w-8" />
-                    <p className="text-gray-400 text-sm mt-2">Upload Image</p>
+                    <FaImage className="w-8 h-8 text-gray-400" />
+                    <p className="mt-2 text-sm text-gray-400">Upload Image</p>
                   </>
                 )}
               </div>
             </Upload>
           </div>
-          <div className="flex justify-between items-center gap-2">
+          <div className="flex items-center justify-between gap-2">
             <div className="w-[50%]">
               <Form.Item
                 name="firstName"
@@ -294,18 +390,57 @@ const ProfileTables = () => {
           <div className="flex justify-end gap-3 mt-4">
             <button
               onClick={handleCancel}
-              className="bg-white px-4 py-2 rounded-3xl border"
+              className="px-4 py-2 bg-white border rounded-3xl"
             >
               Discard Changes
             </button>
             <button
               type="submit"
-              className="bg-black text-white px-4 py-2 rounded-3xl border"
+              className="px-4 py-2 text-white bg-black border rounded-3xl"
             >
               Apply Changes
             </button>
           </div>
         </Form>
+      </Modal>
+
+      {/* View User Modal */}
+      <Modal
+        title="User Details"
+        open={isViewOpen}
+        onCancel={() => setIsViewOpen(false)}
+        footer={null}
+        centered
+      >
+        {selectedUser ? (
+          <div className="space-y-4">
+            <div className="flex items-center gap-3">
+              <img src={user} alt="avatar" className="w-12 h-12 rounded-full" />
+              <div>
+                <p className="text-sm text-gray-500">Email</p>
+                <p className="font-medium">{selectedUser.email}</p>
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <p className="text-sm text-gray-500">Status</p>
+                <p className="font-medium capitalize">{selectedUser.status}</p>
+              </div>
+              <div>
+                <p className="text-sm text-gray-500">Verified by OTP</p>
+                <p className="font-medium">{selectedUser.isVerifiedByOTP ? "Yes" : "No"}</p>
+              </div>
+              <div>
+                <p className="text-sm text-gray-500">Active</p>
+                <p className="font-medium">{selectedUser.isActive ? "Active" : "Inactive"}</p>
+              </div>
+              <div>
+                <p className="text-sm text-gray-500">Created At</p>
+                <p className="font-medium">{selectedUser.createdAt ? new Date(selectedUser.createdAt).toLocaleString() : "-"}</p>
+              </div>
+            </div>
+          </div>
+        ) : null}
       </Modal>
     </div>
   );

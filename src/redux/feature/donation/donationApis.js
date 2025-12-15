@@ -22,9 +22,32 @@ const dashboardApis = baseApi.injectEndpoints({
             },
             providesTags: ["DONATION"],
         }),
+
+
+        // GET DONOR DATA
+        getDonationReport: builder.query({
+            query: (args) => {
+                const params = new URLSearchParams();
+                if (args) {
+                    Object.entries(args).forEach(([key, value]) => {
+                        if (value) {
+                            params.append(key, value);
+                        }
+                    });
+                }
+                return {
+                    url: "/admin/donors",
+                    method: "GET",
+                    params,
+                };
+            },
+            providesTags: ["DONATION"],
+        }),
+        
     }),
 });
 
 export const {
     useGetDonationHistoryQuery,
+    useGetDonationReportQuery,
 } = dashboardApis

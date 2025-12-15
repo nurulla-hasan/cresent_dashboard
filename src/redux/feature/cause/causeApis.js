@@ -37,7 +37,7 @@ const dashboardApis = baseApi.injectEndpoints({
                 method: "PATCH",
                 body: payload,
             }),
-            invalidatesTags: ["CAUSE"],
+            invalidatesTags: ["CAUSE"], 
         }),
 
         // CHANGE CAUSE STATUS

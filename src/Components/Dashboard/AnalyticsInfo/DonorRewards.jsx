@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Modal,
   Button,
@@ -13,6 +13,8 @@ import {
   Table,
   Tag,
   Space,
+  Spin,
+  DatePicker,
 } from "antd";
 import {
   EditOutlined,
@@ -26,14 +28,17 @@ import {
   BellOutlined,
   RedoOutlined,
 } from "@ant-design/icons";
+import { LoadingOutlined } from "@ant-design/icons";
 import muffin from "../../../assets/image/muffin.png";
 import free from "../../../assets/image/free.png";
 import entire from "../../../assets/image/entire.png";
 import qr from "../../../assets/image/qr.png";
 import nfc from "../../../assets/image/nfc.png";
 import manual from "../../../assets/image/manual.png";
-import { FaPlus } from "react-icons/fa6";
+// import { FaPlus } from "react-icons/fa6";
 import RewardExport from "./RewardExport";
+import useSmartFetchHook from "../../hooks/useSmartFetchHook.ts";
+import { useGetRewardReportQuery } from "../../../redux/feature/reward/rewardApis";
 
 // Data for the rewards (mock data as per your design)
 const initialRewards = [
@@ -116,22 +121,65 @@ const redemptionData = [
 ];
 
 const DonorRewards = () => {
+  const { RangePicker } = DatePicker;
+  const [dateRange, setDateRange] = useState(null);
+
+  const { data: rewardList, isLoading, searchTerm, setSearchTerm, setFilterParams } = useSmartFetchHook(
+    useGetRewardReportQuery,
+    { limit: 12 }
+  );
+
   const [rewards, setRewards] = useState(initialRewards);
-  const [isAddModalVisible, setIsAddModalVisible] = useState(false);
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
   const [editReward, setEditReward] = useState(null);
   const [drawerVisible, setDrawerVisible] = useState(false);
   const [selectedReward, setSelectedReward] = useState(null);
 
-  const handleAddReward = (values) => {
-    const newReward = {
-      id: rewards.length + 1,
-      ...values,
-    };
-    setRewards([...rewards, newReward]);
-    setIsAddModalVisible(false);
-    notification.success({ message: "Reward Added Successfully!" });
+  useEffect(() => {
+    if (!Array.isArray(rewardList)) return;
+
+    const mapped = rewardList.map((r) => {
+      const category = r?.category;
+      const iconByCategory =
+        category === "food"
+          ? muffin
+          : category === "groceries"
+          ? free
+          : category === "travel"
+          ? entire
+          : free;
+
+      const redeem = [];
+      if (r?.inStoreRedemptionMethods?.staticCode) redeem.push(manual);
+      if (r?.inStoreRedemptionMethods?.qrCode) redeem.push(qr);
+      if (r?.inStoreRedemptionMethods?.nfcTap) redeem.push(nfc);
+
+      return {
+        id: r?._id,
+        title: r?.title,
+        description: r?.business?.name || "",
+        redemptions: r?.redeemedCount ?? r?.redemptions ?? 0,
+        expires: r?.expiryDate ? new Date(r.expiryDate).toLocaleDateString() : "-",
+        icon: iconByCategory,
+        offeredBy: r?.business?.name || "-",
+        redeem,
+        _raw: r,
+      };
+    });
+
+    setRewards(mapped);
+  }, [rewardList]);
+
+  const handleDateRangeChange = (dates, dateStrings) => {
+    setDateRange(dates);
+    const newParams = {};
+    if (dates && dates[0] && dates[1]) {
+      newParams.fromDate = dateStrings[0];
+      newParams.toDate = dateStrings[1];
+    }
+    setFilterParams(newParams);
   };
+
 
   const handleEditReward = (values) => {
     const updatedRewards = rewards.map((reward) =>
@@ -166,7 +214,7 @@ const DonorRewards = () => {
       render: (text, record) => (
         <div>
           <p className="font-medium">{record.name}</p>
-          <p className="text-gray-500 text-sm">{record.email}</p>
+          <p className="text-sm text-gray-500">{record.email}</p>
         </div>
       ),
     },
@@ -188,7 +236,7 @@ const DonorRewards = () => {
       render: (text, record) => (
         <span>
           {record.date} <br />
-          <span className="text-gray-500 text-sm">{record.time}</span>
+          <span className="text-sm text-gray-500">{record.time}</span>
         </span>
       ),
     },
@@ -236,58 +284,81 @@ const DonorRewards = () => {
   );
 
   return (
-    <div className="container mx-auto p-6">
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-3">
-        {rewards.map((reward) => (
-          <div key={reward.id} className="shadow-lg p-6 space-y-6">
-            <div className="flex justify-between items-center gap-2">
-              <div className="flex justify-center items-center gap-2 text-2xl font-semibold mb-6">
-                <img src={reward.icon} alt="" />
-                <h1>{reward.title}</h1>
+    <div className="container p-6 mx-auto">
+      <div className="flex items-center justify-between gap-4 mb-4">
+        <div>
+          <h2 className="text-lg font-semibold">Rewards</h2>
+          <p className="text-sm text-gray-500">Search and filter rewards</p>
+        </div>
+        <div className="flex items-center gap-2">
+          <Input
+            placeholder="Search rewards..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-60"
+            disabled={isLoading}
+          />
+          <RangePicker
+            placeholder={["From date", "To date"]}
+            onChange={handleDateRangeChange}
+            value={dateRange}
+            disabled={isLoading}
+          />
+        </div>
+      </div>
+      <Spin spinning={isLoading} indicator={<LoadingOutlined spin />}>
+        <div className="grid grid-cols-1 gap-6 mb-3 sm:grid-cols-2 lg:grid-cols-3">
+          {rewards.map((reward) => (
+            <div key={reward.id} className="p-6 space-y-6 shadow-lg">
+              <div className="flex items-center justify-between gap-2">
+                <div className="flex items-center justify-center gap-2 mb-6 text-2xl font-semibold">
+                  <img src={reward.icon} alt="" />
+                  <h1>{reward.title}</h1>
+                </div>
+                <Dropdown overlay={rewardMenu(reward)} trigger={["click"]}>
+                  <Button type="link" icon={<EllipsisOutlined />} />
+                </Dropdown>
               </div>
-              <Dropdown overlay={rewardMenu(reward)} trigger={["click"]}>
-                <Button type="link" icon={<EllipsisOutlined />} />
-              </Dropdown>
-            </div>
-            <div className="flex justify-between items-center gap-2">
-              <p className="text-gray-400">Expires: {reward.expires}</p>
-              <div className="flex justify-between items-center gap-2">
-                <p>Active</p> <Switch />
+              <div className="flex items-center justify-between gap-2">
+                <p className="text-gray-400">Expires: {reward.expires}</p>
+                <div className="flex items-center justify-between gap-2">
+                  <p>Active</p> <Switch />
+                </div>
               </div>
-            </div>
-            <div>
-              <p className="text-gray-400">Offered by:</p>
-              <p>{reward.description}</p>
-            </div>
-            <div className="flex justify-between items-center gap-2">
               <div>
-                <p className="text-2xl font-semibold">{reward.redemptions}</p>
-                <p className="text-gray-400">Redemptions</p>
+                <p className="text-gray-400">Offered by:</p>
+                <p>{reward.description}</p>
               </div>
-              <div>
-                <p className="">Redeem Via</p>
-                <div className="flex justify-emd items-end gap-2 mt-2">
-                  {reward.redeem.map((method, index) => (
-                    <img
-                      key={index}
-                      src={method}
-                      alt="redeem option"
-                      className="w-6 h-6"
-                    />
-                  ))}
+              <div className="flex items-center justify-between gap-2">
+                <div>
+                  <p className="text-2xl font-semibold">{reward.redemptions}</p>
+                  <p className="text-gray-400">Redemptions</p>
+                </div>
+                <div>
+                  <p className="">Redeem Via</p>
+                  <div className="flex items-end gap-2 mt-2 justify-emd">
+                    {reward.redeem.map((method, index) => (
+                      <img
+                        key={index}
+                        src={method}
+                        alt="redeem option"
+                        className="w-6 h-6"
+                      />
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        ))}
-        <div className=" bg-white border rounded-md mt-5 flex flex-col justify-center items-center text-gray-400 cursor-pointer">
+          ))}
+        {/* <div className="flex flex-col items-center justify-center mt-5 text-gray-400 bg-white border rounded-md cursor-pointer ">
           <FaPlus
             onClick={() => setIsAddModalVisible(true)}
-            className="h-8 w-8"
+            className="w-8 h-8"
           />
           <p>Add New Reward</p>
+        </div> */}
         </div>
-      </div>
+      </Spin>
       <RewardExport />
 
       {/* Reward Detail Drawer */}
@@ -307,7 +378,7 @@ const DonorRewards = () => {
               <img src={selectedReward.icon} alt="" className="w-10 h-10" />
               <div>
                 <h2 className="text-lg font-semibold">{selectedReward.title}</h2>
-                <p className="text-gray-500 text-sm">
+                <p className="text-sm text-gray-500">
                   Enjoy a freshly brewed coffee, free of charge, at any{" "}
                   {selectedReward.offeredBy} location. Valid once per donor until
                   expiry.
@@ -317,13 +388,13 @@ const DonorRewards = () => {
 
             {/* Offered By */}
             <div className="mb-4">
-              <p className="text-gray-500 text-sm">Offered By</p>
+              <p className="text-sm text-gray-500">Offered By</p>
               <p className="font-medium">{selectedReward.offeredBy}</p>
             </div>
 
             {/* Contact Info */}
             <div className="mb-4">
-              <p className="text-gray-500 text-sm">Contact Information</p>
+              <p className="text-sm text-gray-500">Contact Information</p>
               <div className="flex items-center gap-2 mt-1">
                 <MailOutlined /> <span>hello@greenobites.com</span>
               </div>
@@ -333,7 +404,7 @@ const DonorRewards = () => {
             </div>
 
             {/* Reward Code & Redeem Options */}
-            <div className="flex justify-between items-center border p-3 rounded-md mb-6">
+            <div className="flex items-center justify-between p-3 mb-6 border rounded-md">
               <p className="font-medium">#RW-20345</p>
               <Space size="large">
                 <QrcodeOutlined className="text-xl" />
@@ -343,7 +414,7 @@ const DonorRewards = () => {
             </div>
 
             {/* Redemption Stats */}
-            <h3 className="font-semibold mb-2">Redemption Stats</h3>
+            <h3 className="mb-2 font-semibold">Redemption Stats</h3>
             <Table
               columns={columns}
               dataSource={redemptionData}
@@ -355,7 +426,7 @@ const DonorRewards = () => {
       </Drawer>
 
       {/* Add Modal */}
-      <Modal
+      {/* <Modal
         title="Add New Reward"
         visible={isAddModalVisible}
         onCancel={() => setIsAddModalVisible(false)}
@@ -397,7 +468,7 @@ const DonorRewards = () => {
             </Button>
           </div>
         </Form>
-      </Modal>
+      </Modal> */}
 
       {/* Edit Modal */}
       <Modal

@@ -21,7 +21,7 @@ const dashboardApis = baseApi.injectEndpoints({
                         if (value !== undefined && value !== null && value !== "") {
                             params.append(key, value);
                         }
-                    });
+                    }); 
                 }
                 return {
                     url: "/admin/users",
@@ -31,6 +31,28 @@ const dashboardApis = baseApi.injectEndpoints({
             },
             providesTags: ["USER"],
         }),
+
+        // UPDATE USER STATUS
+        changeUserStatus: builder.mutation({
+            query: ({ id, status }) => ({
+                url: `/admin/change-user-status/${id}`,
+                method: "PATCH",
+                body: { status },
+            }),
+            invalidatesTags: ["USER"],
+        }),
+
+
+        // DELETE USER STATUS
+        deleteUser: builder.mutation({
+            query: (id) => ({
+                url: `/admin/delete-user/${id}`,
+                method: "DELETE",
+            }),
+            invalidatesTags: ["USER"],
+        }),
+
+
 
         // GET PENDING USER REPORT
         getUserPendingReport: builder.query({
