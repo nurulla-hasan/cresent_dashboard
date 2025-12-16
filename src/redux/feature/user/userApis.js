@@ -43,7 +43,7 @@ const dashboardApis = baseApi.injectEndpoints({
         }),
 
 
-        // DELETE USER STATUS
+        // DELETE USER
         deleteUser: builder.mutation({
             query: (id) => ({
                 url: `/admin/delete-user/${id}`,
@@ -121,5 +121,7 @@ export const {
     useGetUserPendingReportQuery,
     useGetUserEngagementQuery,
     useGetDonationChartQuery,
-    useGetCausesChartQuery
+    useGetCausesChartQuery,
+    useChangeUserStatusMutation,
+    useDeleteUserMutation,
 } = dashboardApis

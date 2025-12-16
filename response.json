@@ -1,81 +1,84 @@
 {
     "success": true,
-    "message": "Donors retrived successfully!",
+    "message": "Businesses report fetched successfully!",
     "meta": {
-        "page": 1,
         "limit": 10,
-        "total": 2,
+        "page": 1,
+        "total": 6,
         "totalPage": 1
     },
     "data": [
         {
-            "_id": "69301feaddbf3fdf987e86e8",
-            "name": "Mostafizur",
-            "address": "Dhaka, Mohakhai",
-            "state": "Dhaka",
-            "postalCode": "90001",
-            "image": "/images/scaled_20-1765705568878.jpg",
-            "createdAt": "2025-12-03T11:32:58.108Z",
-            "updatedAt": "2025-12-14T09:46:09.298Z",
-            "phoneNumber": "+1-555-123-4567",
-            "authId": "6930158addbf3fdf987e86c4",
-            "email": "mostafizurrahaman0401@gmail.com",
-            "isActive": true,
-            "status": "verified",
-            "totalDonationAmount": 405,
-            "badges": [
-                {
-                    "userBadgeId": "693e472ce04b40ceaa3a49c2",
-                    "badge": "693d27dc5dec7cea8e982137",
-                    "badge_actual_name": "First Drop",
-                    "currentTier": "one-tier",
-                    "badgeName": "First Drop"
-                },
-                {
-                    "userBadgeId": "693e472ce04b40ceaa3a49c3",
-                    "badge": "693d08925dec7cea8e982086",
-                    "badge_actual_name": "Water Badge",
-                    "currentTier": "silver",
-                    "badgeName": "Water Guardian"
-                },
-                {
-                    "userBadgeId": "693e472ce04b40ceaa3a49c4",
-                    "badge": "693d26cc5dec7cea8e98211f",
-                    "badge_actual_name": "Top Contributor",
-                    "currentTier": "colour",
-                    "badgeName": "Contributor"
-                },
-                {
-                    "userBadgeId": "693e472ce04b40ceaa3a49c5",
-                    "badge": "693d27a35dec7cea8e98212e",
-                    "badge_actual_name": "Cause Explorer",
-                    "currentTier": "colour",
-                    "badgeName": "Cause Beginner"
-                },
-                {
-                    "userBadgeId": "693e472ce04b40ceaa3a49c6",
-                    "badge": "693d27ef5dec7cea8e98213b",
-                    "badge_actual_name": "Monthly Mover",
-                    "currentTier": "colour",
-                    "badgeName": "Monthly Starter"
-                }
-            ]
+            "_id": "693804a6d1a53418b083b1af",
+            "auth": {
+                "id": "693804a6d1a53418b083b1ad",
+                "email": "azmir.azamkhan@gmail.com",
+                "status": "verified",
+                "isActive": true
+            },
+            "name": "jdjdkwka",
+            "createdAt": "2025-12-09T11:14:46.666Z",
+            "updatedAt": "2025-12-09T11:14:46.666Z"
         },
         {
-            "_id": "69366be125aa629488da1173",
-            "name": "Donor One",
-            "address": "123 Main Street",
-            "state": "California",
-            "postalCode": "90001",
-            "image": "public/images/scaled_efda2035-9ebc-4d47-be9a-5ac9ccd017fc9055253296020019462-1765174241021.jpg",
-            "createdAt": "2025-12-08T06:10:41.074Z",
-            "updatedAt": "2025-12-08T06:10:41.074Z",
-            "authId": "69366ba125aa629488da116a",
-            "email": "donor1@yopmail.com",
-            "isActive": true,
-            "status": "verified",
-            "totalDonationAmount": 0,
-            "badges": []
+            "_id": "6938025f1b365e1ec585e508",
+            "auth": {
+                "id": "6938025e1b365e1ec585e506",
+                "email": "azmirdroid@gmail.com",
+                "status": "verified",
+                "isActive": true
+            },
+            "name": "kdjjskz",
+            "createdAt": "2025-12-09T11:05:03.292Z",
+            "updatedAt": "2025-12-09T11:05:03.292Z"
+        },
+        {
+            "_id": "6937ff33af002a593cccd7df",
+            "auth": {
+                "id": "6937ff32af002a593cccd7dd",
+                "email": "business3@yopmail.com",
+                "status": "verified",
+                "isActive": true
+            },
+            "name": "TechMart BD",
+            "createdAt": "2025-12-09T10:51:31.390Z",
+            "updatedAt": "2025-12-09T10:51:31.390Z"
+        },
+        {
+            "_id": "6937fab8712dc774a7d346ef",
+            "auth": {
+                "id": "6937fab7712dc774a7d346ed",
+                "email": "business2@yopmail.com",
+                "status": "verified",
+                "isActive": true
+            },
+            "name": "TechMart BD",
+            "createdAt": "2025-12-09T10:32:24.446Z",
+            "updatedAt": "2025-12-09T10:32:24.446Z"
+        },
+        {
+            "_id": "6937faab712dc774a7d346ea",
+            "auth": {
+                "id": "6937faaa712dc774a7d346e8",
+                "email": "xirexo5864@badfist.com",
+                "status": "verified",
+                "isActive": true
+            },
+            "name": "TechMart BD",
+            "createdAt": "2025-12-09T10:32:11.518Z",
+            "updatedAt": "2025-12-09T10:32:11.518Z"
+        },
+        {
+            "_id": "6936d5e943232039a271a5ea",
+            "auth": {
+                "id": "6936d43943232039a271a5dc",
+                "email": "business1@yopmail.com",
+                "status": "verified",
+                "isActive": true
+            },
+            "name": "TechMart BD",
+            "createdAt": "2025-12-08T13:43:05.575Z",
+            "updatedAt": "2025-12-11T06:28:13.143Z"
         }
     ]
 }

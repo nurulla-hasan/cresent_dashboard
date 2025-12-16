@@ -223,47 +223,103 @@ const RewardsManagementTable = () => {
         onCancel={() => setIsViewModalOpen(false)}
         footer={null}
         centered
+        width={600}
       >
         {selectedReward ? (
-          <div className="space-y-3">
-            <div>
-              <p className="text-sm text-gray-500">Title</p>
-              <p className="font-medium">{selectedReward.title}</p>
-            </div>
-            <div>
-              <p className="text-sm text-gray-500">Business</p>
-              <p className="font-medium">{selectedReward.business?.name || "-"}</p>
-            </div>
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <p className="text-sm text-gray-500">Category</p>
-                <p className="font-medium">{selectedReward.category}</p>
+          <div className="space-y-6">
+            {/* Header Section */}
+            <div className="flex items-start justify-between">
+              <div className="flex-1">
+                <h3 className="mb-2 text-xl font-semibold text-gray-900">
+                  {selectedReward.title}
+                </h3>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm text-gray-500">by</span>
+                  <span className="text-sm font-medium text-gray-700">
+                    {selectedReward.business?.name || "Unknown Business"}
+                  </span>
+                </div>
               </div>
-              <div>
-                <p className="text-sm text-gray-500">Type</p>
-                <p className="font-medium">{selectedReward.type}</p>
-              </div>
-              <div>
-                <p className="text-sm text-gray-500">Points Cost</p>
-                <p className="font-medium">{selectedReward.pointsCost}</p>
-              </div>
-              <div>
-                <p className="text-sm text-gray-500">Status</p>
-                <div>{renderStatus(selectedReward.status)}</div>
+              <div className="flex-shrink-0">
+                {renderStatus(selectedReward.status)}
               </div>
             </div>
-            <div>
-              <p className="text-sm text-gray-500">Description</p>
-              <p className="font-medium">{selectedReward.description || "-"}</p>
+
+            {/* Description */}
+            <div className="p-4 rounded-lg bg-gray-50">
+              <p className="mb-2 text-sm font-medium text-gray-700">Description</p>
+              <p className="text-sm leading-relaxed text-gray-600">
+                {selectedReward.description || "No description provided"}
+              </p>
             </div>
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <p className="text-sm text-gray-500">Start Date</p>
-                <p className="font-medium">{selectedReward.startDate ? new Date(selectedReward.startDate).toLocaleString() : "-"}</p>
+
+            {/* Key Details Grid */}
+            <div className="grid grid-cols-2 gap-4">
+              <div className="p-4 border border-blue-100 rounded-lg bg-blue-50">
+                <div className="flex items-center gap-2 mb-1">
+                  <div className="flex items-center justify-center w-8 h-8 bg-blue-100 rounded-full">
+                    <span className="text-xs font-semibold text-blue-600">C</span>
+                  </div>
+                  <p className="text-xs font-medium tracking-wide text-blue-700 uppercase">Category</p>
+                </div>
+                <p className="text-sm font-semibold text-gray-900">{selectedReward.category}</p>
               </div>
-              <div>
-                <p className="text-sm text-gray-500">Expiry Date</p>
-                <p className="font-medium">{selectedReward.expiryDate ? new Date(selectedReward.expiryDate).toLocaleString() : "-"}</p>
+
+              <div className="p-4 border border-purple-100 rounded-lg bg-purple-50">
+                <div className="flex items-center gap-2 mb-1">
+                  <div className="flex items-center justify-center w-8 h-8 bg-purple-100 rounded-full">
+                    <span className="text-xs font-semibold text-purple-600">T</span>
+                  </div>
+                  <p className="text-xs font-medium tracking-wide text-purple-700 uppercase">Type</p>
+                </div>
+                <p className="text-sm font-semibold text-gray-900">{selectedReward.type}</p>
+              </div>
+
+              <div className="p-4 border border-green-100 rounded-lg bg-green-50">
+                <div className="flex items-center gap-2 mb-1">
+                  <div className="flex items-center justify-center w-8 h-8 bg-green-100 rounded-full">
+                    <span className="text-xs font-semibold text-green-600">P</span>
+                  </div>
+                  <p className="text-xs font-medium tracking-wide text-green-700 uppercase">Points Cost</p>
+                </div>
+                <p className="text-lg font-bold text-gray-900">{selectedReward.pointsCost}</p>
+              </div>
+
+              <div className="p-4 border border-orange-100 rounded-lg bg-orange-50">
+                <div className="flex items-center gap-2 mb-1">
+                  <div className="flex items-center justify-center w-8 h-8 bg-orange-100 rounded-full">
+                    <span className="text-xs font-semibold text-orange-600">D</span>
+                  </div>
+                  <p className="text-xs font-medium tracking-wide text-orange-700 uppercase">Duration</p>
+                </div>
+                <div className="text-sm">
+                  <p className="font-medium text-gray-900">
+                    {selectedReward.startDate ? new Date(selectedReward.startDate).toLocaleDateString() : "-"}
+                  </p>
+                  <p className="text-xs text-gray-500">to</p>
+                  <p className="font-medium text-gray-900">
+                    {selectedReward.expiryDate ? new Date(selectedReward.expiryDate).toLocaleDateString() : "-"}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Timeline Section */}
+            <div className="pt-4 border-t">
+              <h4 className="mb-3 text-sm font-medium text-gray-700">Timeline</h4>
+              <div className="space-y-2">
+                <div className="flex items-center justify-between px-3 py-2 rounded-lg bg-gray-50">
+                  <span className="text-sm text-gray-600">Start Date</span>
+                  <span className="text-sm font-medium text-gray-900">
+                    {selectedReward.startDate ? new Date(selectedReward.startDate).toLocaleString() : "-"}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between px-3 py-2 rounded-lg bg-gray-50">
+                  <span className="text-sm text-gray-600">Expiry Date</span>
+                  <span className="text-sm font-medium text-gray-900">
+                    {selectedReward.expiryDate ? new Date(selectedReward.expiryDate).toLocaleString() : "-"}
+                  </span>
+                </div>
               </div>
             </div>
           </div>

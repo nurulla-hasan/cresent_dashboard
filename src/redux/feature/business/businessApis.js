@@ -20,10 +20,8 @@ const organizationApis = baseApi.injectEndpoints({
                     params,
                 };
             },
-            providesTags: ["BUSINESS"],
+            providesTags: ["USER"],
         }),
-
-
 
     }),
 });

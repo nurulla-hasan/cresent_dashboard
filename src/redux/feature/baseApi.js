@@ -4,7 +4,7 @@ import {
 } from "@reduxjs/toolkit/query/react";
 import { SetAccessToken } from "./auth/authSlice";
 
-export const baseApiUrl = "https://installed-appointments-parties-attacks.trycloudflare.com/api/v1";
+export const baseApiUrl = "https://adjacent-cancer-knights-maui.trycloudflare.com/api/v1";
 
 const rawBaseQuery = fetchBaseQuery({
   baseUrl: baseApiUrl,
