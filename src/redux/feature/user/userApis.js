@@ -21,7 +21,7 @@ const dashboardApis = baseApi.injectEndpoints({
                         if (value !== undefined && value !== null && value !== "") {
                             params.append(key, value);
                         }
-                    }); 
+                    });
                 }
                 return {
                     url: "/admin/users",
@@ -76,10 +76,21 @@ const dashboardApis = baseApi.injectEndpoints({
 
         // GET USER ENGAGEMENT
         getUserEngagement: builder.query({
-            query: () => ({
-                url: "/admin/user-engagement",
-                method: "GET",
-            }),
+            query: (args) => {
+                const params = new URLSearchParams();
+                if (args) {
+                    Object.entries(args).forEach(([key, value]) => {
+                        if (value !== undefined && value !== null && value !== "") {
+                            params.append(key, value);
+                        }
+                    });
+                }
+                return {
+                    url: "/admin/user-engagement",
+                    method: "GET",
+                    params
+                };
+            },
             providesTags: ["USER"],
         }),
 

@@ -8,7 +8,7 @@ import { IoIosNotificationsOutline } from "react-icons/io";
 import { Link } from "react-router-dom";
 import brandlogo from "../../assets/image/Logo.png";
 import user from "../../assets/image/p.png";
-import Search from "antd/es/transfer/search";
+// import Search from "antd/es/transfer/search";
 
 const MainLayout = () => {
   const [drawer, setDrawer] = useState(false);
@@ -26,18 +26,18 @@ const MainLayout = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const onSearch = () => {
-    console.log("Search input: ");
-  };
+  // const onSearch = () => {
+  //   console.log("Search input: ");
+  // };
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="flex flex-col min-h-screen">
       {/* header */}
       <div className="h-20 bg-[#f9f7f9] flex justify-between items-center px-2 md:px-8 gap-2 border-b">
         {isMobile && (
           <GiHamburgerMenu
             onClick={toggleDrawer}
-            className="h-8 w-8 cursor-pointer"
+            className="w-8 h-8 cursor-pointer"
           />
         )}
 
@@ -47,7 +47,7 @@ const MainLayout = () => {
             <img
               src={brandlogo}
               alt="brandlogo"
-              className="md:h-full md:w-full object-contain"
+              className="object-contain md:h-full md:w-full"
             />
           </Link>
         </div>
@@ -61,7 +61,7 @@ const MainLayout = () => {
               },
             }}
           >
-            <div className="w-[320px] flex items-center gap-2 p-3 rounded-[60px]  backdrop-blur-sm">
+            {/* <div className="w-[320px] flex items-center gap-2 p-3 rounded-[60px]  backdrop-blur-sm">
               <Search
                 allowClear
                 placeholder="Input search text"
@@ -70,18 +70,18 @@ const MainLayout = () => {
                 bordered={false}
                 style={{ flex: 1, padding: 0 }}
               />
-            </div>
+            </div> */}
           </ConfigProvider>
         </div>
 
         {/* user + notifications */}
         <div>
-          <div className="flex justify-between items-center gap-2 mx-10">
+          <div className="flex items-center justify-between gap-2 mx-10">
             <div className="relative flex items-center gap-5 py-5">
               <Link to="/notification">
                 <div className="relative">
-                  <IoIosNotificationsOutline className="h-10 w-10 bg-white text-black p-1 border rounded-full" />
-                  <span className="bg-red-500 h-5 w-5 rounded-full flex justify-center items-center absolute top-0 right-0 text-white text-xs">
+                  <IoIosNotificationsOutline className="w-10 h-10 p-1 text-black bg-white border rounded-full" />
+                  <span className="absolute top-0 right-0 flex items-center justify-center w-5 h-5 text-xs text-white bg-red-500 rounded-full">
                     1
                   </span>
                 </div>
@@ -91,9 +91,9 @@ const MainLayout = () => {
                   <img
                     src={user}
                     alt=""
-                    className="w-10 h-10 rounded-full border border-primary"
+                    className="w-10 h-10 border rounded-full border-primary"
                   />
-                  <p className="md:text-xl font-semibold">Super Admin</p>
+                  <p className="font-semibold md:text-xl">Super Admin</p>
                 </div>
               </Link>
             </div>

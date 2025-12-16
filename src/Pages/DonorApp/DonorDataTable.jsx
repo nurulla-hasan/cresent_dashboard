@@ -71,24 +71,50 @@ const DonorDataTable = () => {
       dataIndex: "totalDonationAmount",
       key: "totalDonationAmount",
       sorter: true,
-      render: (v) => <p className="font-medium">{v ?? 0}</p>,
-    },
+      render: (v) => <p className="font-medium">${(v ?? 0).toFixed(2)}</p>,},
     {
       title: <div className="flex items-center gap-2">Badges Earned</div>,
       dataIndex: "badges",
       key: "badges",
-      render: (badges = []) => (
-        <div className="flex flex-col gap-1">
-          {badges.map((b, i) => (
-            <span
-              key={i}
-              className="px-2 py-1 text-xs text-gray-600 bg-gray-100 rounded-full w-fit"
-            >
-              {b?.badgeName || b?.badge_actual_name || "-"}
-            </span>
-          ))}
-        </div>
-      ),
+      render: (badges = []) => {
+        const maxVisible = 3;
+        const visibleBadges = badges.slice(0, maxVisible);
+        const remainingCount = Math.max(0, badges.length - maxVisible);
+
+        return (
+          <div className="relative group">
+            <div className="flex flex-wrap gap-1">
+              {visibleBadges.map((b, i) => (
+                <span
+                  key={i}
+                  className="px-2 py-1 text-xs text-gray-600 bg-gray-100 rounded-full w-fit"
+                >
+                  {b?.badgeName || b?.badge_actual_name || "-"}
+                </span>
+              ))}
+              {remainingCount > 0 && (
+                <span className="px-2 py-1 text-xs text-gray-400 rounded-full bg-gray-50">
+                  +{remainingCount} more
+                </span>
+              )}
+            </div>
+            {badges.length > 0 && (
+              <div className="absolute z-10 hidden w-48 p-2 mt-1 text-sm bg-white border rounded shadow-lg group-hover:block">
+                <div className="flex flex-col gap-1">
+                  {badges.map((b, i) => (
+                    <span
+                      key={i}
+                      className="px-2 py-1 text-gray-600 rounded bg-gray-50"
+                    >
+                      {b?.badgeName || b?.badge_actual_name || "-"}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        );
+      },
     },
 
     {
@@ -109,21 +135,12 @@ const DonorDataTable = () => {
       align: "center",
       render: (_, _record) => (
         <div className="flex items-center justify-center gap-3 text-lg">
-          <div 
+          <div
             onClick={() => handleView(_record)}
             className="flex items-center justify-center w-8 h-8 p-1 transition-colors rounded-full cursor-pointer bg-neutral-100 hover:bg-neutral-200"
           >
             <VscEye />
           </div>
-          {/* <div
-            onClick={() => handleEdit(record)}
-            className="flex items-center justify-center w-8 h-8 p-1 rounded-full cursor-pointer bg-neutral-100"
-          >
-            <FaPencilAlt />
-          </div>
-          <div className="flex items-center justify-center w-8 h-8 p-1 rounded-full cursor-pointer bg-neutral-100">
-            <RxCrossCircled />
-          </div> */}
         </div>
       ),
     },
@@ -142,17 +159,6 @@ const DonorDataTable = () => {
             className="w-60"
             disabled={isLoading}
           />
-          {/* <Select
-            defaultValue="all"
-            style={{ width: 140 }}
-            onChange={handleStatusFilter}
-            disabled={isLoading}
-          >
-            <Option value="all">All Status</Option>
-            <Option value="verified">Verified</Option>
-            <Option value="pending">Pending</Option>
-            <Option value="suspended">Suspended</Option>
-          </Select> */}
           <RangePicker
             placeholder={["From date", "To date"]}
             onChange={handleDateRangeChange}
@@ -216,7 +222,7 @@ const DonorDataTable = () => {
                 <h3 className="text-xl font-semibold">{selectedDonor.name}</h3>
                 <p className="text-gray-500">{selectedDonor.email}</p>
                 <div className="mt-2">
-                  <Tag 
+                  <Tag
                     color={selectedDonor.status === 'verified' ? 'green' : selectedDonor.status === 'pending' ? 'orange' : 'red'}
                     className="capitalize"
                   >
@@ -260,7 +266,7 @@ const DonorDataTable = () => {
                 <div className="flex items-center justify-between">
                   <span className="text-gray-600">Total Donation Amount</span>
                   <span className="text-2xl font-bold text-blue-600">
-                    ${selectedDonor.totalDonationAmount || 0}
+                    ${(selectedDonor.totalDonationAmount).toFixed(2) || 0}
                   </span>
                 </div>
               </div>
@@ -272,7 +278,7 @@ const DonorDataTable = () => {
                 <h4 className="mb-3 font-semibold">Badges Earned ({selectedDonor.badges.length})</h4>
                 <div className="flex flex-wrap gap-2">
                   {selectedDonor.badges.map((badge, index) => (
-                    <div 
+                    <div
                       key={index}
                       className="px-3 py-2 border border-purple-200 rounded-lg bg-gradient-to-r from-purple-50 to-pink-50"
                     >

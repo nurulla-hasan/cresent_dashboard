@@ -1,85 +1,52 @@
-/* eslint-disable no-unused-vars */
-import { useState } from "react";
-import {
-  Button,
-  DatePicker,
-  Dropdown,
-  Form,
-  Input,
-  Menu,
-  Modal,
-  Table,
-  Upload,
-} from "antd";
-import { FaImage, FaPencilAlt } from "react-icons/fa";
-import { RxCrossCircled } from "react-icons/rx";
-import icon from "../../assets/image/b1.png";
-import icon1 from "../../assets/image/b2.png";
+import { useMemo, useState } from "react";
+import { Button, Dropdown, Input, Menu, Modal, Table, Tag } from "antd";
 import { DownOutlined, SearchOutlined } from "@ant-design/icons";
-import { FaPlus } from "react-icons/fa6";
+import { VscEye } from "react-icons/vsc";
+import { FaPencilAlt } from "react-icons/fa";
+import { RxCrossCircled } from "react-icons/rx";
+
+import useSmartFetchHook from "../../Components/hooks/useSmartFetchHook.ts";
+import { useGetBadgeReportQuery } from "../../redux/feature/badge/badgeApis";
+import { getImageUrl } from "../../lib/utils";
 const BadgeTable = () => {
-  const originalData = [
-    {
-      key: "1",
-      name: "First Reward",
-      icon: icon,
-      Criteria: "Redeem first reward",
-    },
-    {
-      key: "2",
-      name: "Consistent Giver",
-      icon: icon,
-      Criteria: "Make donations consistently",
-    },
-    {
-      key: "3",
-      name: "Star Donor",
-      icon: icon1,
-      Criteria: "Donate over $500",
-    },
-  ];
-  const [searchText, setSearchText] = useState("");
-  const [data, setData] = useState(originalData);
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  const [previewImage, setPreviewImage] = useState(null);
+  const [isViewOpen, setIsViewOpen] = useState(false);
   const [selectedBadge, setSelectedBadge] = useState(null);
-  const [form] = Form.useForm();
 
-  const handleBeforeUpload = (file) => {
-    setPreviewImage(URL.createObjectURL(file));
-    form.setFieldsValue({ badgeIcon: file });
-    return false;
-  };
+  const [isActiveFilter, setIsActiveFilter] = useState(null);
+  const [featuredFilter, setFeaturedFilter] = useState(null);
+  const [unlockTypeFilter, setUnlockTypeFilter] = useState(null);
 
-  const handleEdit = (record) => {
+  const {
+    data,
+    pagination,
+    isLoading,
+    searchTerm,
+    setSearchTerm,
+    currentPage,
+    setCurrentPage,
+    setFilterParams,
+  } = useSmartFetchHook(useGetBadgeReportQuery);
+
+  const handleView = (record) => {
     setSelectedBadge(record);
-    form.setFieldsValue({
-      name: record.name,
-      Criteria: record.Criteria,
-    });
-    setPreviewImage(record.icon);
-    setIsModalVisible(true);
+    setIsViewOpen(true);
   };
 
-  const handleCancel = () => {
-    setIsModalVisible(false);
-    form.resetFields();
-    setPreviewImage(null);
-  };
+  const statusTag = (isActive) => (
+    <Tag color={isActive ? "green" : "red"}>{isActive ? "Active" : "Inactive"}</Tag>
+  );
 
-  const handleSave = (values) => {
-    const updatedData = data.map((item) =>
-      item.key === selectedBadge.key
-        ? { ...item, ...values, icon: previewImage || item.icon }
-        : item
-    );
-    setData(updatedData);
-    setIsModalVisible(false);
-  };
+  const featuredTag = (featured) => (
+    <Tag color={featured ? "blue" : "default"}>{featured ? "Featured" : "Normal"}</Tag>
+  );
 
-  const handleDelete = (key) => {
-    setData(data.filter((item) => item.key !== key));
-  };
+  const normalizedData = useMemo(() => {
+    if (!Array.isArray(data)) return [];
+    return data.map((b) => ({
+      ...b,
+      iconUrl: getImageUrl(b?.icon),
+    }));
+  }, [data]);
 
   const columns = [
     {
@@ -90,56 +57,127 @@ const BadgeTable = () => {
     },
     {
       title: "Badge Icon",
-      dataIndex: "icon",
+      dataIndex: "iconUrl",
       key: "icon",
-      render: (icon) => (
-        <img src={icon} alt="badge" className="h-12 w-12 object-contain" />
+      render: (iconUrl, record) => (
+        <img src={getImageUrl(iconUrl) || ""} alt={record?.name || "badge"} className="object-contain w-12 h-12" />
       ),
     },
     {
-      title: "Criteria",
-      dataIndex: "Criteria",
-      key: "Criteria",
+      title: "Unlock Type",
+      dataIndex: "unlockType",
+      key: "unlockType",
+      render: (t) => <span className="capitalize">{t || "-"}</span>,
+    },
+    {
+      title: "Status",
+      dataIndex: "isActive",
+      key: "isActive",
+      render: (v) => statusTag(v),
+    },
+    {
+      title: "Featured",
+      dataIndex: "featured",
+      key: "featured",
+      render: (v) => featuredTag(v),
     },
     {
       title: "Action",
+      align: "center",
       key: "action",
       render: (_, record) => (
-        <div className="flex gap-3 text-lg">
+        <div className="flex items-center justify-center gap-3 text-lg">
           <div
-            onClick={() => handleEdit(record)}
-            className="bg-neutral-100 h-8 w-8 rounded-full p-1 flex justify-center items-center cursor-pointer"
+            onClick={() => handleView(record)}
+            className="flex items-center justify-center w-8 h-8 p-1 text-blue-600 bg-blue-100 rounded-full cursor-pointer hover:bg-blue-200"
+            title="View Details"
           >
-            <FaPencilAlt />
+            <VscEye size={16} />
           </div>
           <div
-            onClick={() => handleDelete(record.key)}
-            className="bg-neutral-100 h-8 w-8 rounded-full p-1 flex justify-center items-center cursor-pointer text-red-500"
+            className="flex items-center justify-center w-8 h-8 p-1 text-yellow-600 bg-yellow-100 rounded-full cursor-pointer hover:bg-yellow-200"
+            title="Edit Badge"
+            onClick={() => console.log('Edit badge:', record._id)}
           >
-            <RxCrossCircled />
+            <FaPencilAlt size={14} />
+          </div>
+          <div
+            className="flex items-center justify-center w-8 h-8 p-1 text-red-600 bg-red-100 rounded-full cursor-pointer hover:bg-red-200"
+            title="Delete Badge"
+            onClick={() => console.log('Delete badge:', record._id)}
+          >
+            <RxCrossCircled size={16} />
           </div>
         </div>
       ),
     },
   ];
+
   const menu = (
     <Menu>
-      <Menu.Item>Sort A - Z</Menu.Item>
-      <Menu.Item>Sort Z - A</Menu.Item>
-      <Menu.Item>Recent First</Menu.Item>
-      <Menu.Item>Oldest First</Menu.Item>
+      <Menu.Item
+        onClick={() => {
+          setIsActiveFilter(true);
+          setFilterParams({ isActive: true });
+        }}
+      >
+        Active
+      </Menu.Item>
+      <Menu.Item
+        onClick={() => {
+          setIsActiveFilter(false);
+          setFilterParams({ isActive: false });
+        }}
+      >
+        Inactive
+      </Menu.Item>
+      <Menu.Item
+        onClick={() => {
+          setFeaturedFilter(true);
+          setFilterParams({ featured: true });
+        }}
+      >
+        Featured
+      </Menu.Item>
+      <Menu.Item
+        onClick={() => {
+          setFeaturedFilter(false);
+          setFilterParams({ featured: false });
+        }}
+      >
+        Not Featured
+      </Menu.Item>
+      <Menu.Item
+        onClick={() => {
+          setUnlockTypeFilter("seasonal");
+          setFilterParams({ unlockType: "seasonal" });
+        }}
+      >
+        Seasonal
+      </Menu.Item>
+      <Menu.Item
+        onClick={() => {
+          setUnlockTypeFilter(null);
+          setFeaturedFilter(null);
+          setIsActiveFilter(null);
+          setFilterParams({});
+        }}
+      >
+        Clear Filters
+      </Menu.Item>
     </Menu>
   );
 
   return (
-    <div className="bg-white p-6 rounded-xl shadow-sm mb-10">
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-lg font-semibold">🎖️ Badges Management</h2>
+    <div className="p-6 mb-10 bg-white shadow-sm rounded-xl">
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="text-lg font-semibold">Badges Management</h2>
         <div className="flex items-center gap-2">
           <Input
             prefix={<SearchOutlined />}
             placeholder="Search..."
-            onChange={(e) => setSearchText(e.target.value)}
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
             className="w-60"
           />
           <Dropdown overlay={menu} trigger={["click"]}>
@@ -147,130 +185,102 @@ const BadgeTable = () => {
               Filter <DownOutlined />
             </Button>
           </Dropdown>
-          <button className="flex justify-center items-center gap-2 bg-white px-4 py-2 rounded-3xl border">
-            <FaPlus></FaPlus> Add
-          </button>
+          <div className="px-2 text-xs text-gray-500">
+            {isActiveFilter !== null || featuredFilter !== null || unlockTypeFilter
+              ? "Filters applied"
+              : "All"}
+          </div>
         </div>
       </div>
 
       <Table
         columns={columns}
-        dataSource={data}
-        pagination={{ pageSize: 5 }}
-        rowKey="key"
+        dataSource={normalizedData}
+        loading={isLoading}
+        pagination={{
+          current: pagination?.page || currentPage,
+          pageSize: pagination?.limit || 10,
+          total: pagination?.total || 0,
+          onChange: (page) => setCurrentPage(page),
+        }}
+        rowKey="_id"
       />
 
-      {/* ✨ Add Badge Modal */}
       <Modal
-        title="Edit Badge"
-        open={isModalVisible}
-        onCancel={handleCancel}
+        title="Badge Details"
+        open={isViewOpen}
+        onCancel={() => setIsViewOpen(false)}
         footer={null}
         centered
+        width={600}
       >
-        <Form layout="vertical" form={form} onFinish={handleSave}>
-          <div className="flex justify-center mb-4">
-            <Upload
-              showUploadList={false}
-              beforeUpload={handleBeforeUpload}
-              accept="image/*"
-            >
-              <div className="border border-dashed border-gray-300 p-4 rounded-full cursor-pointer flex flex-col items-center">
-                {previewImage ? (
-                  <img
-                    src={previewImage}
-                    alt="Preview"
-                    className="h-24 w-24 rounded-full object-cover"
-                  />
+        {selectedBadge ? (
+          <div className="space-y-6">
+            <div className="flex items-start justify-between">
+              <div className="flex items-center gap-4">
+                <img
+                  src={getImageUrl(selectedBadge.iconUrl) || ""}
+                  alt={selectedBadge.name}
+                  className="object-contain w-16 h-16 p-2 rounded-xl bg-gray-50"
+                />
+                <div>
+                  <h3 className="text-xl font-semibold text-gray-900">
+                    {selectedBadge.name}
+                  </h3>
+                  <p className="text-sm text-gray-600 capitalize">
+                    {selectedBadge.unlockType || "-"}
+                  </p>
+                </div>
+              </div>
+              <div className="flex flex-col items-end gap-2">
+                {statusTag(selectedBadge.isActive)}
+                {featuredTag(selectedBadge.featured)}
+              </div>
+            </div>
+
+            <div className="p-4 rounded-lg bg-gray-50">
+              <p className="mb-2 text-sm font-medium text-gray-700">Description</p>
+              <p className="text-sm leading-relaxed text-gray-600">
+                {selectedBadge.description || "No description provided"}
+              </p>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="p-4 border border-blue-100 rounded-lg bg-blue-50">
+                <p className="text-xs font-medium tracking-wide text-blue-700 uppercase">Priority</p>
+                <p className="text-lg font-bold text-gray-900">{selectedBadge.priority ?? 0}</p>
+              </div>
+              <div className="p-4 border border-purple-100 rounded-lg bg-purple-50">
+                <p className="text-xs font-medium tracking-wide text-purple-700 uppercase">Logic</p>
+                <p className="text-sm font-semibold text-gray-900 capitalize">
+                  {selectedBadge.conditionLogic || "-"}
+                </p>
+              </div>
+            </div>
+
+            <div className="pt-4 border-t">
+              <h4 className="mb-3 text-sm font-medium text-gray-700">Tiers</h4>
+              <div className="space-y-2">
+                {Array.isArray(selectedBadge.tiers) && selectedBadge.tiers.length ? (
+                  selectedBadge.tiers.map((t, idx) => (
+                    <div key={`${t.tier}-${idx}`} className="flex items-center justify-between px-3 py-2 rounded-lg bg-gray-50">
+                      <div>
+                        <p className="text-sm font-medium text-gray-900">{t.name}</p>
+                        <p className="text-xs text-gray-500 capitalize">{t.tier}</p>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-sm font-medium text-gray-900">Count: {t.requiredCount}</p>
+                        <p className="text-sm font-medium text-gray-900">Amount: {t.requiredAmount}</p>
+                      </div>
+                    </div>
+                  ))
                 ) : (
-                  <>
-                    <FaImage className="text-gray-400 h-8 w-8" />
-                    <p className="text-gray-400 text-sm mt-2">Upload Icon</p>
-                  </>
+                  <div className="text-sm text-gray-500">No tiers</div>
                 )}
               </div>
-            </Upload>
+            </div>
           </div>
-
-          <Form.Item
-            name="name"
-            label="Badge Name"
-            rules={[{ required: true }]}
-          >
-            <Input placeholder="Enter badge name" />
-          </Form.Item>
-
-          <Form.Item
-            name="Criteria"
-            label="Criteria"
-            rules={[{ required: true }]}
-          >
-            <Input placeholder="Enter badge criteria" />
-          </Form.Item>
-
-          <div className="flex justify-end gap-3 mt-4">
-            <Button onClick={handleCancel}>Cancel</Button>
-            <Button type="primary" htmlType="submit">
-              Save Changes
-            </Button>
-          </div>
-        </Form>
-      </Modal>
-      {/* edit */}
-      <Modal
-        title="Edit Badge"
-        open={isModalVisible}
-        onCancel={handleCancel}
-        footer={null}
-        centered
-      >
-        <Form layout="vertical" form={form} onFinish={handleSave}>
-          <div className="flex justify-center mb-4">
-            <Upload
-              showUploadList={false}
-              beforeUpload={handleBeforeUpload}
-              accept="image/*"
-            >
-              <div className="border border-dashed border-gray-300 p-4 rounded-full cursor-pointer flex flex-col items-center">
-                {previewImage ? (
-                  <img
-                    src={previewImage}
-                    alt="Preview"
-                    className="h-24 w-24 rounded-full object-cover"
-                  />
-                ) : (
-                  <>
-                    <FaImage className="text-gray-400 h-8 w-8" />
-                    <p className="text-gray-400 text-sm mt-2">Upload Icon</p>
-                  </>
-                )}
-              </div>
-            </Upload>
-          </div>
-
-          <Form.Item
-            name="name"
-            label="Badge Name"
-            rules={[{ required: true }]}
-          >
-            <Input placeholder="Enter badge name" />
-          </Form.Item>
-
-          <Form.Item
-            name="Criteria"
-            label="Criteria"
-            rules={[{ required: true }]}
-          >
-            <Input placeholder="Enter badge criteria" />
-          </Form.Item>
-
-          <div className="flex justify-end gap-3 mt-4">
-            <Button onClick={handleCancel}>Cancel</Button>
-            <Button type="primary" htmlType="submit">
-              Save Changes
-            </Button>
-          </div>
-        </Form>
+        ) : null}
       </Modal>
     </div>
   );

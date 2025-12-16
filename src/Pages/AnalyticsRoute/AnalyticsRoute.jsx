@@ -16,14 +16,24 @@ import {
   YAxis,
   Cell,
 } from "recharts";
-import { Button, Checkbox, Divider, Modal, Select, Space } from "antd";
-import { FaArrowDown, FaFilter } from "react-icons/fa";
+import { Button, Select } from "antd";
+import { FaArrowDown } from "react-icons/fa";
 import { useGetUserEngagementQuery, useGetDonationChartQuery } from "../../redux/feature/user/userApis";
 const { Option } = Select;
 const AnalyticsRoute = () => {
   const [active, setActive] = useState("Today");
 
-  const { data: userEngagementData, isLoading: userEngagementLoading } = useGetUserEngagementQuery();
+  const userEngagementTimeFilter = useMemo(() => {
+    if (active === "Today") return "today";
+    if (active === "This Week") return "week";
+    if (active === "This Month") return "month";
+    return "month";
+  }, [active]);
+
+  const { data: userEngagementData, isLoading: userEngagementLoading } = useGetUserEngagementQuery({
+    timeFilter: userEngagementTimeFilter,
+    role: "CLIENT",
+  });
 
   const [donationType, setDonationType] = useState("all");
   const [year, setYear] = useState(new Date().getFullYear());
@@ -109,39 +119,18 @@ const AnalyticsRoute = () => {
     },
   ];
   const dataChartStaticRemoved = null;
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  const [userTypes, setUserTypes] = useState(["Organizations"]);
-  const [causeCategory, setCauseCategory] = useState("Emergency Relief");
-  const [donationTypes, setDonationTypes] = useState(["Recurring"]);
-
-  const userOptions = ["Donors", "Organizations", "Businesses"];
-  const donationOptions = ["Round-up", "Recurring", "One-time"];
-  const causeOptions = ["Emergency Relief", "Education", "Refugee Support"];
-
-  const handleClear = () => {
-    setUserTypes([]);
-    setCauseCategory("Emergency Relief");
-    setDonationTypes([]);
-  };
 
   return (
     <div>
-      <div className="flex justify-between items-center gap-5">
+      <div className="flex items-center justify-between gap-5">
         <div className="w-full md:w-[70%]">
-          <h1 className="text-xl md:text-3xl font-semibold my-3">Analytics</h1>
-          <p className="text-gray-500 mb-10">
+          <h1 className="my-3 text-xl font-semibold md:text-3xl">Analytics</h1>
+          <p className="mb-10 text-gray-500">
             Track donor trends, popular causes, and user activity across the
             platform.
           </p>
         </div>
-        <div className="w-full md:w-[40%] flex justify-start items-center gap-5">
-          <button
-            onClick={() => setIsModalVisible(true)}
-            className="bg-white px-6 py-2 rounded-3xl flex items-center gap-2"
-          >
-            <FaFilter />
-            Filter
-          </button>
+        <div className="w-full md:w-[40%] flex justify-end items-center gap-5">
           <button
             className={btnClass("Today")} 
             onClick={() => setActive("Today")}
@@ -162,7 +151,7 @@ const AnalyticsRoute = () => {
           </button>
         </div>
       </div>
-      <div className="bg-white p-6 rounded-3xl my-10 border">
+      <div className="p-6 my-10 bg-white border rounded-3xl">
         <div>
           <div className="mb-12">
             <h1 className="text-2xl font-semibold ">User Engagement</h1>
@@ -173,10 +162,10 @@ const AnalyticsRoute = () => {
           </div>
         </div>
         <div className="grid grid-cols-3 gap-4 mb-8 ">
-          <div className="bg-gray-100 p-6 rounded-3xl">
-            <div className="flex justify-between items-center gap-2 mb-8">
+          <div className="p-6 bg-gray-100 rounded-3xl">
+            <div className="flex items-center justify-between gap-2 mb-8">
               <div>
-                <p className="tetx-xl font-semibold">Active Users</p>
+                <p className="font-semibold tetx-xl">Active Users</p>
                 <p className="text-neutral-400 ">
                   {userEngagementData?.data?.activeUsersChangeText ? (
                     <span className={userEngagementData.data.activeUsersChangeText.includes('+') ? "text-green-500" : "text-red-500"}>
@@ -191,13 +180,13 @@ const AnalyticsRoute = () => {
 
             <h2 className="text-2xl font-semibold">
               {userEngagementLoading ? "Loading..." : userEngagementData?.data?.totalActiveUsers || 0}{" "}
-              <span className="text-sm text-gray-400 ml-2">active Users</span>
+              <span className="ml-2 text-sm text-gray-400">active Users</span>
             </h2>
           </div>
-          <div className="bg-gray-100 p-6 rounded-3xl">
-            <div className="flex justify-between items-center gap-2 mb-8">
+          <div className="p-6 bg-gray-100 rounded-3xl">
+            <div className="flex items-center justify-between gap-2 mb-8">
               <div>
-                <p className="tetx-xl font-semibold">New Sign-ups</p>
+                <p className="font-semibold tetx-xl">New Sign-ups</p>
                 <p className="text-neutral-400 ">
                   {userEngagementData?.data?.newUsersChangeText ? (
                     <span className={userEngagementData.data.newUsersChangeText.includes('+') ? "text-green-500" : "text-red-500"}>
@@ -212,13 +201,13 @@ const AnalyticsRoute = () => {
 
             <h2 className="text-2xl font-semibold">
               {userEngagementLoading ? "Loading..." : userEngagementData?.data?.totalNewUsers || 0}{" "}
-              <span className="text-sm text-gray-400 ml-2">New Sign-ups</span>
+              <span className="ml-2 text-sm text-gray-400">New Sign-ups</span>
             </h2>
           </div>
-          <div className="bg-gray-100 p-6 rounded-3xl">
-            <div className="flex justify-between items-center gap-2 mb-8">
+          <div className="p-6 bg-gray-100 rounded-3xl">
+            <div className="flex items-center justify-between gap-2 mb-8">
               <div>
-                <p className="tetx-xl font-semibold">Returning Users</p>
+                <p className="font-semibold tetx-xl">Returning Users</p>
                 <p className="text-neutral-400 ">
                   {userEngagementData?.data?.returningUsersChangeText ? (
                     <span className={userEngagementData.data.returningUsersChangeText.includes('+') ? "text-green-500" : "text-red-500"}>
@@ -233,7 +222,7 @@ const AnalyticsRoute = () => {
 
             <h2 className="text-2xl font-semibold">
               {userEngagementLoading ? "Loading..." : userEngagementData?.data?.totalReturningUsers || 0}{" "}
-              <span className="text-sm text-gray-400 ml-2">
+              <span className="ml-2 text-sm text-gray-400">
                 Returning Users
               </span>
             </h2>
@@ -242,7 +231,7 @@ const AnalyticsRoute = () => {
       </div>
 
       {/* Donations Trend */}
-      <div className="bg-white p-6 rounded-3xl border ">
+      <div className="p-6 bg-white border rounded-3xl ">
         <div className="h-[460px] w-full py-6">
           <div className="flex items-center justify-between mb-6">
             <h1 className="text-2xl font-medium">Donation Trend</h1>
@@ -282,13 +271,13 @@ const AnalyticsRoute = () => {
             </BarChart>
           </ResponsiveContainer>
 
-          {donationLoading && <div className="text-gray-500 mt-2">Loading donation data...</div>}
+          {donationLoading && <div className="mt-2 text-gray-500">Loading donation data...</div>}
         </div>
       </div>
 
       {/* Top Causes + Pie */}
-      <div className="bg-white p-6 rounded-3xl my-6 border">
-        <div className="grid grid-cols-1 md:grid-cols-2 justify-center items-center gap-5">
+      <div className="p-6 my-6 bg-white border rounded-3xl">
+        <div className="grid items-center justify-center grid-cols-1 gap-5 md:grid-cols-2">
           <div className="">
             <div className="flex items-center justify-between mb-6">
               <div>
@@ -308,7 +297,7 @@ const AnalyticsRoute = () => {
                 <div key={c.id} className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <span
-                      className="inline-block h-3 w-3 rounded-full"
+                      className="inline-block w-3 h-3 rounded-full"
                       style={{ backgroundColor: c.color }}
                     />
                     <div>
@@ -316,14 +305,14 @@ const AnalyticsRoute = () => {
                       <div className="text-xs text-gray-500">{c.since}</div>
                     </div>
                   </div>
-                  <div className="text-right font-semibold">{c.percent}%</div>
+                  <div className="font-semibold text-right">{c.percent}%</div>
                 </div>
               ))}
             </div>
           </div>
 
           {/* Right Section: Pie Chart */}
-          <div className="h-full w-full">
+          <div className="w-full h-full">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <RechartsTooltip />
@@ -348,69 +337,17 @@ const AnalyticsRoute = () => {
         </div>
       </div>
 
-      <div className="bg-white p-6 rounded-3xl my-6 border flex justify-between items-center gap-5">
+      <div className="flex items-center justify-between gap-5 p-6 my-6 bg-white border rounded-3xl">
         <div>
           <h1 className="text-2xl font-medium">Export Analytics Data</h1>
           <p className="text-gray-400">
             Download a full report of filtered analytics.
           </p>
         </div>
-        <button className="px-6 py-3 rounded-3xl bg-black text-white flex justify-center items-center gap-2">
+        <button className="flex items-center justify-center gap-2 px-6 py-3 text-white bg-black rounded-3xl">
           Export <FaArrowDown />
         </button>
       </div>
-
-      <Modal
-        title="Filter"
-        open={isModalVisible}
-        onCancel={() => setIsModalVisible(false)}
-        footer={
-          <Space>
-            <Button onClick={handleClear}>Clear All</Button>
-            <Button type="primary" onClick={() => setIsModalVisible(false)}>
-              Apply Filter
-            </Button>
-          </Space>
-        }
-        centered
-        width={560}
-      >
-        <p className="text-gray-400 mb-6">
-          Filter insights by time, user type, or cause.
-        </p>
-        <div className="mb-4">
-          <label className="block mb-2 font-medium">User Type</label>
-          <Checkbox.Group
-            options={userOptions}
-            value={userTypes}
-            onChange={(checkedValues) => setUserTypes(checkedValues)}
-          />
-        </div>
-
-        <div className="mb-4">
-          <label className="block mb-2 font-medium">Cause Categories</label>
-          <Select
-            value={causeCategory}
-            onChange={(value) => setCauseCategory(value)}
-            style={{ width: "100%" }}
-          >
-            {causeOptions.map((cause) => (
-              <Option key={cause} value={cause}>
-                {cause}
-              </Option>
-            ))}
-          </Select>
-        </div>
-
-        <div className="mb-4">
-          <label className="block mb-2 font-medium">Donation Type</label>
-          <Checkbox.Group
-            options={donationOptions}
-            value={donationTypes}
-            onChange={(checkedValues) => setDonationTypes(checkedValues)}
-          />
-        </div>
-      </Modal>
     </div>
   );
 };

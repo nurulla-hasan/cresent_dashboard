@@ -39,8 +39,16 @@ const CauseManagement = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [editingRecord, setEditingRecord] = useState(null);
   const [form] = Form.useForm();
+  const [isViewModalOpen, setIsViewModalOpen] = useState(false);
+  const [viewRecord, setViewRecord] = useState(null);
 
 
+
+  /** Open View Modal */
+  const handleView = (record) => {
+    setViewRecord(record);
+    setIsViewModalOpen(true);
+  };
 
   /** Open Edit Modal */
   const handleEdit = (record) => {
@@ -181,12 +189,17 @@ const CauseManagement = () => {
       align: "center",
       render: (_, record) => (
         <div className="flex items-center justify-center gap-3 text-lg">
-          <div className="flex items-center justify-center w-8 h-8 p-1 rounded-full cursor-pointer bg-neutral-100">
+          <div 
+            onClick={() => handleView(record)}
+            className="flex items-center justify-center w-8 h-8 p-1 bg-blue-100 rounded-full cursor-pointer hover:bg-blue-200"
+            title="View Details"
+          >
             <VscEye />
           </div>
           <div
             onClick={() => handleEdit(record)}
-            className="flex items-center justify-center w-8 h-8 p-1 rounded-full cursor-pointer bg-neutral-100"
+            className="flex items-center justify-center w-8 h-8 p-1 rounded-full cursor-pointer bg-neutral-100 hover:bg-neutral-200"
+            title="Edit Cause"
           >
             <FaPencilAlt />
           </div>
@@ -290,6 +303,147 @@ const CauseManagement = () => {
             </Button>
           </div>
         </Form>
+      </Modal>
+
+      {/* Cause Details Modal */}
+      <Modal
+        title="Cause Details"
+        open={isViewModalOpen}
+        onCancel={() => setIsViewModalOpen(false)}
+        footer={null}
+        centered
+        width={600}
+      >
+        {viewRecord && (
+          <div className="space-y-6">
+            {/* Header Section */}
+            <div className="flex items-start justify-between">
+              <div className="flex-1">
+                <h3 className="mb-2 text-xl font-semibold text-gray-900">
+                  {viewRecord.name}
+                </h3>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm text-gray-500">by</span>
+                  <span className="text-sm font-medium text-gray-700">
+                    {viewRecord.organization?.name || "No Organization"}
+                  </span>
+                </div>
+              </div>
+              <div className="flex-shrink-0">
+                <div className={`px-3 py-1 rounded-full text-sm font-medium ${
+                  viewRecord.status === "verified" ? "bg-green-100 text-green-700" :
+                  viewRecord.status === "pending" ? "bg-yellow-100 text-yellow-700" :
+                  viewRecord.status === "suspended" ? "bg-red-100 text-red-700" :
+                  "bg-gray-100 text-gray-700"
+                }`}>
+                  {viewRecord.status?.charAt(0)?.toUpperCase() + viewRecord.status?.slice(1)}
+                </div>
+              </div>
+            </div>
+
+            {/* Description */}
+            <div className="p-4 rounded-lg bg-gray-50">
+              <p className="mb-2 text-sm font-medium text-gray-700">Description</p>
+              <p className="text-sm leading-relaxed text-gray-600">
+                {viewRecord.description || "No description provided"}
+              </p>
+            </div>
+
+            {/* Key Details Grid */}
+            <div className="grid grid-cols-2 gap-4">
+              <div className="p-4 border border-blue-100 rounded-lg bg-blue-50">
+                <div className="flex items-center gap-2 mb-1">
+                  <div className="flex items-center justify-center w-8 h-8 bg-blue-100 rounded-full">
+                    <span className="text-xs font-semibold text-blue-600">C</span>
+                  </div>
+                  <p className="text-xs font-medium tracking-wide text-blue-700 uppercase">Category</p>
+                </div>
+                <p className="text-sm font-semibold text-gray-900 capitalize">{viewRecord.category}</p>
+              </div>
+
+              <div className="p-4 border border-green-100 rounded-lg bg-green-50">
+                <div className="flex items-center gap-2 mb-1">
+                  <div className="flex items-center justify-center w-8 h-8 bg-green-100 rounded-full">
+                    <span className="text-xs font-semibold text-green-600">S</span>
+                  </div>
+                  <p className="text-xs font-medium tracking-wide text-green-700 uppercase">Status</p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className={`w-2 h-2 rounded-full ${
+                    viewRecord.status === "verified" ? "bg-green-500" :
+                    viewRecord.status === "pending" ? "bg-yellow-500" :
+                    viewRecord.status === "suspended" ? "bg-red-500" : "bg-gray-400"
+                  }`}></div>
+                  <p className="text-sm font-semibold text-gray-900 capitalize">
+                    {viewRecord.status || "Unknown"}
+                  </p>
+                </div>
+              </div>
+
+              <div className="p-4 border border-purple-100 rounded-lg bg-purple-50">
+                <div className="flex items-center gap-2 mb-1">
+                  <div className="flex items-center justify-center w-8 h-8 bg-purple-100 rounded-full">
+                    <span className="text-xs font-semibold text-purple-600">O</span>
+                  </div>
+                  <p className="text-xs font-medium tracking-wide text-purple-700 uppercase">Organization</p>
+                </div>
+                <p className="text-sm font-semibold text-gray-900">
+                  {viewRecord.organization?.name || "No Organization"}
+                </p>
+              </div>
+
+              <div className="p-4 border border-orange-100 rounded-lg bg-orange-50">
+                <div className="flex items-center gap-2 mb-1">
+                  <div className="flex items-center justify-center w-8 h-8 bg-orange-100 rounded-full">
+                    <span className="text-xs font-semibold text-orange-600">D</span>
+                  </div>
+                  <p className="text-xs font-medium tracking-wide text-orange-700 uppercase">Created</p>
+                </div>
+                <p className="text-sm font-semibold text-gray-900">
+                  {viewRecord.createdAt ? new Date(viewRecord.createdAt).toLocaleDateString() : "-"}
+                </p>
+              </div>
+            </div>
+
+            {/* Stats Section */}
+            <div className="p-4 rounded-lg bg-gray-50">
+              <h4 className="mb-3 text-sm font-medium text-gray-700">Donation Statistics</h4>
+              <div className="grid grid-cols-3 gap-4">
+                <div className="text-center">
+                  <p className="text-2xl font-bold text-gray-900">{viewRecord.totalDonationAmount || 0}</p>
+                  <p className="text-xs text-gray-600">Total Amount</p>
+                </div>
+                <div className="text-center">
+                  <p className="text-2xl font-bold text-gray-900">{viewRecord.totalDonors || 0}</p>
+                  <p className="text-xs text-gray-600">Total Donors</p>
+                </div>
+                <div className="text-center">
+                  <p className="text-2xl font-bold text-gray-900">{viewRecord.totalDonations || 0}</p>
+                  <p className="text-xs text-gray-600">Total Donations</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Timeline Section */}
+            <div className="pt-4 border-t">
+              <h4 className="mb-3 text-sm font-medium text-gray-700">Timeline</h4>
+              <div className="space-y-2">
+                <div className="flex items-center justify-between px-3 py-2 rounded-lg bg-gray-50">
+                  <span className="text-sm text-gray-600">Created Date</span>
+                  <span className="text-sm font-medium text-gray-900">
+                    {viewRecord.createdAt ? new Date(viewRecord.createdAt).toLocaleString() : "-"}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between px-3 py-2 rounded-lg bg-gray-50">
+                  <span className="text-sm text-gray-600">Last Updated</span>
+                  <span className="text-sm font-medium text-gray-900">
+                    {viewRecord.updatedAt ? new Date(viewRecord.updatedAt).toLocaleString() : "-"}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </Modal>
     </div>
   );

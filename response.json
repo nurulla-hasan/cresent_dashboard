@@ -1,84 +1,23 @@
 {
     "success": true,
-    "message": "Businesses report fetched successfully!",
+    "message": "Business reward retrived successfully!",
     "meta": {
-        "limit": 10,
+        "total": 1,
         "page": 1,
-        "total": 6,
+        "limit": 10,
         "totalPage": 1
     },
     "data": [
         {
-            "_id": "693804a6d1a53418b083b1af",
-            "auth": {
-                "id": "693804a6d1a53418b083b1ad",
-                "email": "azmir.azamkhan@gmail.com",
-                "status": "verified",
-                "isActive": true
-            },
-            "name": "jdjdkwka",
-            "createdAt": "2025-12-09T11:14:46.666Z",
-            "updatedAt": "2025-12-09T11:14:46.666Z"
-        },
-        {
-            "_id": "6938025f1b365e1ec585e508",
-            "auth": {
-                "id": "6938025e1b365e1ec585e506",
-                "email": "azmirdroid@gmail.com",
-                "status": "verified",
-                "isActive": true
-            },
-            "name": "kdjjskz",
-            "createdAt": "2025-12-09T11:05:03.292Z",
-            "updatedAt": "2025-12-09T11:05:03.292Z"
-        },
-        {
-            "_id": "6937ff33af002a593cccd7df",
-            "auth": {
-                "id": "6937ff32af002a593cccd7dd",
-                "email": "business3@yopmail.com",
-                "status": "verified",
-                "isActive": true
-            },
+            "_id": "69413330eaa7c8a7c9ca05ea",
             "name": "TechMart BD",
-            "createdAt": "2025-12-09T10:51:31.390Z",
-            "updatedAt": "2025-12-09T10:51:31.390Z"
-        },
-        {
-            "_id": "6937fab8712dc774a7d346ef",
-            "auth": {
-                "id": "6937fab7712dc774a7d346ed",
-                "email": "business2@yopmail.com",
-                "status": "verified",
-                "isActive": true
-            },
-            "name": "TechMart BD",
-            "createdAt": "2025-12-09T10:32:24.446Z",
-            "updatedAt": "2025-12-09T10:32:24.446Z"
-        },
-        {
-            "_id": "6937faab712dc774a7d346ea",
-            "auth": {
-                "id": "6937faaa712dc774a7d346e8",
-                "email": "xirexo5864@badfist.com",
-                "status": "verified",
-                "isActive": true
-            },
-            "name": "TechMart BD",
-            "createdAt": "2025-12-09T10:32:11.518Z",
-            "updatedAt": "2025-12-09T10:32:11.518Z"
-        },
-        {
-            "_id": "6936d5e943232039a271a5ea",
-            "auth": {
-                "id": "6936d43943232039a271a5dc",
-                "email": "business1@yopmail.com",
-                "status": "verified",
-                "isActive": true
-            },
-            "name": "TechMart BD",
-            "createdAt": "2025-12-08T13:43:05.575Z",
-            "updatedAt": "2025-12-11T06:28:13.143Z"
+            "tagLine": "Quality products guaranteed",
+            "description": "We sell high-quality electronic gadgets and accessories.",
+            "createdAt": "2025-12-16T10:23:44.614Z",
+            "rewardTotal": 0,
+            "totalRedemption": 0,
+            "topReward": null,
+            "email": "business3@yopmail.com"
         }
     ]
 }

@@ -347,15 +347,101 @@ const OrganizationTable = () => {
         onCancel={() => setIsViewOpen(false)}
         footer={null}
         centered
+        width={600}
       >
         {viewRecord && (
-          <div className="space-y-2">
-            <div className="font-medium">{viewRecord.name}</div>
-            <div className="text-sm text-gray-600">{viewRecord.email}</div>
-            <div className="text-sm"><span className="font-medium">Service Type:</span> {viewRecord.serviceType || "-"}</div>
-            <div className="text-sm"><span className="font-medium">Status:</span> {viewRecord?.auth?.status || "-"}</div>
-            <div className="text-sm"><span className="font-medium">Created:</span> {viewRecord.createdAt ? new Date(viewRecord.createdAt).toLocaleString() : "-"}</div>
-            <div className="text-sm"><span className="font-medium">Cause Name:</span> {Array.isArray(viewRecord.causes) && viewRecord.causes[0]?.name ? viewRecord.causes[0].name : "No cause"}</div>
+          <div className="space-y-6">
+            {/* Header Section */}
+            <div className="flex items-center gap-4">
+              <div className="flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl">
+                <span className="text-xl font-bold text-white">
+                  {viewRecord.name?.charAt(0)?.toUpperCase() || "O"}
+                </span>
+              </div>
+              <div className="flex-1">
+                <h3 className="mb-1 text-xl font-semibold text-gray-900">
+                  {viewRecord.name}
+                </h3>
+                <p className="text-sm text-gray-600">{viewRecord.email}</p>
+              </div>
+            </div>
+
+            {/* Key Details Grid */}
+            <div className="grid grid-cols-2 gap-4">
+              <div className="p-4 border border-blue-100 rounded-lg bg-blue-50">
+                <div className="flex items-center gap-2 mb-1">
+                  <div className="flex items-center justify-center w-8 h-8 bg-blue-100 rounded-full">
+                    <span className="text-xs font-semibold text-blue-600">ST</span>
+                  </div>
+                  <p className="text-xs font-medium tracking-wide text-blue-700 uppercase">Service Type</p>
+                </div>
+                <p className="text-sm font-semibold text-gray-900">{viewRecord.serviceType || "Not specified"}</p>
+              </div>
+
+              <div className="p-4 border border-green-100 rounded-lg bg-green-50">
+                <div className="flex items-center gap-2 mb-1">
+                  <div className="flex items-center justify-center w-8 h-8 bg-green-100 rounded-full">
+                    <span className="text-xs font-semibold text-green-600">S</span>
+                  </div>
+                  <p className="text-xs font-medium tracking-wide text-green-700 uppercase">Status</p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className={`w-2 h-2 rounded-full ${
+                    viewRecord?.auth?.status === "verified" ? "bg-green-500" :
+                    viewRecord?.auth?.status === "pending" ? "bg-yellow-500" :
+                    viewRecord?.auth?.status === "suspended" ? "bg-red-500" : "bg-gray-400"
+                  }`}></div>
+                  <p className="text-sm font-semibold text-gray-900 capitalize">
+                    {viewRecord?.auth?.status || "Unknown"}
+                  </p>
+                </div>
+              </div>
+
+              <div className="p-4 border border-purple-100 rounded-lg bg-purple-50">
+                <div className="flex items-center gap-2 mb-1">
+                  <div className="flex items-center justify-center w-8 h-8 bg-purple-100 rounded-full">
+                    <span className="text-xs font-semibold text-purple-600">C</span>
+                  </div>
+                  <p className="text-xs font-medium tracking-wide text-purple-700 uppercase">Cause</p>
+                </div>
+                <p className="text-sm font-semibold text-gray-900">
+                  {Array.isArray(viewRecord.causes) && viewRecord.causes[0]?.name 
+                    ? viewRecord.causes[0].name 
+                    : "No cause assigned"}
+                </p>
+              </div>
+
+              <div className="p-4 border border-orange-100 rounded-lg bg-orange-50">
+                <div className="flex items-center gap-2 mb-1">
+                  <div className="flex items-center justify-center w-8 h-8 bg-orange-100 rounded-full">
+                    <span className="text-xs font-semibold text-orange-600">D</span>
+                  </div>
+                  <p className="text-xs font-medium tracking-wide text-orange-700 uppercase">Created</p>
+                </div>
+                <p className="text-sm font-semibold text-gray-900">
+                  {viewRecord.createdAt ? new Date(viewRecord.createdAt).toLocaleDateString() : "-"}
+                </p>
+              </div>
+            </div>
+
+            {/* Additional Info */}
+            <div className="p-4 rounded-lg bg-gray-50">
+              <h4 className="mb-3 text-sm font-medium text-gray-700">Additional Information</h4>
+              <div className="space-y-2">
+                <div className="flex items-center justify-between px-3 py-2 bg-white rounded-lg">
+                  <span className="text-sm text-gray-600">Full Created Date</span>
+                  <span className="text-sm font-medium text-gray-900">
+                    {viewRecord.createdAt ? new Date(viewRecord.createdAt).toLocaleString() : "-"}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between px-3 py-2 bg-white rounded-lg">
+                  <span className="text-sm text-gray-600">Organization ID</span>
+                  <span className="text-sm font-medium text-gray-900">
+                    {viewRecord._id?.slice(-8) || "-"}
+                  </span>
+                </div>
+              </div>
+            </div>
           </div>
         )}
       </Modal>

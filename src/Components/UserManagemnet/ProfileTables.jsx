@@ -2,17 +2,14 @@ import { useState } from "react";
 import { useDispatch } from "react-redux";
 import {
   DatePicker,
-  Form,
   Input,
   Modal,
   Table,
-  Upload,
 } from "antd";
 import { SearchOutlined, LoadingOutlined } from "@ant-design/icons";
 import { VscEye } from "react-icons/vsc";
 import { RxCross2 } from "react-icons/rx";
 import user from "../../assets/image/user.png";
-import { FaImage } from "react-icons/fa";
 import { Check, Trash2 } from "lucide-react";
 import useSmartFetchHook from "../hooks/useSmartFetchHook.ts";
 import { useGetUserReportQuery } from "../../redux/feature/user/userApis.js";
@@ -38,27 +35,6 @@ const ProfileTables = () => {
 
   // Extract users array from API response
   const data = apiResponse || [];
-  // Hide pending users from this table view
-  // const filteredData = Array.isArray(data) ? data.filter((u) => u?.status !== "pending") : [];
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  const [previewImage, setPreviewImage] = useState(null);
-  const [form] = Form.useForm();
-
-  const handleBeforeUpload = (file) => {
-    setPreviewImage(URL.createObjectURL(file));
-    form.setFieldsValue({ profileImage: file });
-    return false;
-  };
-
-  const handleCancel = () => {
-    setIsModalVisible(false);
-    form.resetFields();
-    setPreviewImage(null);
-  };
-
-  const handleSave = (_values) => {
-    setIsModalVisible(false);
-  };
 
   const handleView = (record) => {
     setSelectedUser(record);
@@ -319,91 +295,6 @@ const ProfileTables = () => {
         rowKey="_id"
       />
 
-      <Modal
-        title="Edit Profile"
-        open={isModalVisible}
-        onCancel={handleCancel}
-        footer={null}
-        centered
-      >
-        <Form layout="vertical" form={form} onFinish={handleSave}>
-          <p className="mb-3 text-gray-400">
-            Update profile information of the user.{" "}
-          </p>
-          <div className="flex justify-center mb-4">
-            <Upload
-              showUploadList={false}
-              beforeUpload={handleBeforeUpload}
-              accept="image/*"
-            >
-              <div className="flex flex-col items-center p-4 border border-gray-300 border-dashed rounded-full cursor-pointer">
-                {previewImage ? (
-                  <img
-                    src={previewImage}
-                    alt="Preview"
-                    className="object-cover w-24 h-24 rounded-full"
-                  />
-                ) : (
-                  <>
-                    <FaImage className="w-8 h-8 text-gray-400" />
-                    <p className="mt-2 text-sm text-gray-400">Upload Image</p>
-                  </>
-                )}
-              </div>
-            </Upload>
-          </div>
-          <div className="flex items-center justify-between gap-2">
-            <div className="w-[50%]">
-              <Form.Item
-                name="firstName"
-                label="First Name"
-                rules={[{ required: true }]}
-              >
-                <Input placeholder="Enter first name" />
-              </Form.Item>
-            </div>
-            <div className="w-[50%]">
-              <Form.Item
-                name="lastName"
-                label="Last Name"
-                rules={[{ required: true }]}
-              >
-                <Input placeholder="Enter last name" />
-              </Form.Item>
-            </div>
-          </div>
-
-          <Form.Item
-            name="email"
-            label="Email"
-            rules={[{ required: true, type: "email" }]}
-          >
-            <Input placeholder="Enter email" />
-          </Form.Item>
-          <Form.Item name="mobile" label="Mobile" rules={[{ required: true }]}>
-            <Input placeholder="Enter phone number" />
-          </Form.Item>
-          <Form.Item name="password" label="Update Password">
-            <Input.Password placeholder="Enter new password" />
-          </Form.Item>
-
-          <div className="flex justify-end gap-3 mt-4">
-            <button
-              onClick={handleCancel}
-              className="px-4 py-2 bg-white border rounded-3xl"
-            >
-              Discard Changes
-            </button>
-            <button
-              type="submit"
-              className="px-4 py-2 text-white bg-black border rounded-3xl"
-            >
-              Apply Changes
-            </button>
-          </div>
-        </Form>
-      </Modal>
-
       {/* View User Modal */}
       <Modal
         title="User Details"
@@ -411,32 +302,125 @@ const ProfileTables = () => {
         onCancel={() => setIsViewOpen(false)}
         footer={null}
         centered
+        width={600}
       >
         {selectedUser ? (
-          <div className="space-y-4">
-            <div className="flex items-center gap-3">
-              <img src={user} alt="avatar" className="w-12 h-12 rounded-full" />
-              <div>
-                <p className="text-sm text-gray-500">Email</p>
-                <p className="font-medium">{selectedUser.email}</p>
+          <div className="space-y-6">
+            {/* Header Section */}
+            <div className="flex items-center gap-4">
+              <div className="flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl">
+                <span className="text-xl font-bold text-white">
+                  {selectedUser.firstName?.charAt(0)?.toUpperCase() || selectedUser.email?.charAt(0)?.toUpperCase() || "U"}
+                </span>
+              </div>
+              <div className="flex-1">
+                <h3 className="mb-1 text-xl font-semibold text-gray-900">
+                  {selectedUser.firstName && selectedUser.lastName 
+                    ? `${selectedUser.firstName} ${selectedUser.lastName}` 
+                    : selectedUser.email?.split('@')[0] || 'Unknown User'}
+                </h3>
+                <p className="text-sm text-gray-600">{selectedUser.email}</p>
               </div>
             </div>
+
+            {/* Key Details Grid */}
             <div className="grid grid-cols-2 gap-4">
-              <div>
-                <p className="text-sm text-gray-500">Status</p>
-                <p className="font-medium capitalize">{selectedUser.status}</p>
+              <div className="p-4 border border-blue-100 rounded-lg bg-blue-50">
+                <div className="flex items-center gap-2 mb-1">
+                  <div className="flex items-center justify-center w-8 h-8 bg-blue-100 rounded-full">
+                    <span className="text-xs font-semibold text-blue-600">S</span>
+                  </div>
+                  <p className="text-xs font-medium tracking-wide text-blue-700 uppercase">Status</p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className={`w-2 h-2 rounded-full ${
+                    selectedUser.status === "verified" ? "bg-green-500" :
+                    selectedUser.status === "pending" ? "bg-yellow-500" :
+                    selectedUser.status === "suspended" ? "bg-red-500" : "bg-gray-400"
+                  }`}></div>
+                  <p className="text-sm font-semibold text-gray-900 capitalize">
+                    {selectedUser.status || "Unknown"}
+                  </p>
+                </div>
               </div>
-              <div>
-                <p className="text-sm text-gray-500">Verified by OTP</p>
-                <p className="font-medium">{selectedUser.isVerifiedByOTP ? "Yes" : "No"}</p>
+
+              <div className="p-4 border border-green-100 rounded-lg bg-green-50">
+                <div className="flex items-center gap-2 mb-1">
+                  <div className="flex items-center justify-center w-8 h-8 bg-green-100 rounded-full">
+                    <span className="text-xs font-semibold text-green-600">A</span>
+                  </div>
+                  <p className="text-xs font-medium tracking-wide text-green-700 uppercase">Active</p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className={`w-2 h-2 rounded-full ${
+                    selectedUser.isActive ? "bg-green-500" : "bg-red-500"
+                  }`}></div>
+                  <p className="text-sm font-semibold text-gray-900">
+                    {selectedUser.isActive ? "Active" : "Inactive"}
+                  </p>
+                </div>
               </div>
-              <div>
-                <p className="text-sm text-gray-500">Active</p>
-                <p className="font-medium">{selectedUser.isActive ? "Active" : "Inactive"}</p>
+
+              <div className="p-4 border border-purple-100 rounded-lg bg-purple-50">
+                <div className="flex items-center gap-2 mb-1">
+                  <div className="flex items-center justify-center w-8 h-8 bg-purple-100 rounded-full">
+                    <span className="text-xs font-semibold text-purple-600">V</span>
+                  </div>
+                  <p className="text-xs font-medium tracking-wide text-purple-700 uppercase">OTP Verified</p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className={`w-2 h-2 rounded-full ${
+                    selectedUser.isVerifiedByOTP ? "bg-green-500" : "bg-gray-400"
+                  }`}></div>
+                  <p className="text-sm font-semibold text-gray-900">
+                    {selectedUser.isVerifiedByOTP ? "Verified" : "Not Verified"}
+                  </p>
+                </div>
               </div>
-              <div>
-                <p className="text-sm text-gray-500">Created At</p>
-                <p className="font-medium">{selectedUser.createdAt ? new Date(selectedUser.createdAt).toLocaleString() : "-"}</p>
+
+              <div className="p-4 border border-orange-100 rounded-lg bg-orange-50">
+                <div className="flex items-center gap-2 mb-1">
+                  <div className="flex items-center justify-center w-8 h-8 bg-orange-100 rounded-full">
+                    <span className="text-xs font-semibold text-orange-600">D</span>
+                  </div>
+                  <p className="text-xs font-medium tracking-wide text-orange-700 uppercase">Joined</p>
+                </div>
+                <p className="text-sm font-semibold text-gray-900">
+                  {selectedUser.createdAt ? new Date(selectedUser.createdAt).toLocaleDateString() : "-"}
+                </p>
+              </div>
+            </div>
+
+            {/* Additional Info */}
+            <div className="p-4 rounded-lg bg-gray-50">
+              <h4 className="mb-3 text-sm font-medium text-gray-700">Additional Information</h4>
+              <div className="space-y-2">
+                <div className="flex items-center justify-between px-3 py-2 bg-white rounded-lg">
+                  <span className="text-sm text-gray-600">Full Name</span>
+                  <span className="text-sm font-medium text-gray-900">
+                    {selectedUser.firstName && selectedUser.lastName 
+                      ? `${selectedUser.firstName} ${selectedUser.lastName}` 
+                      : "Not specified"}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between px-3 py-2 bg-white rounded-lg">
+                  <span className="text-sm text-gray-600">Mobile</span>
+                  <span className="text-sm font-medium text-gray-900">
+                    {selectedUser.mobile || "Not specified"}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between px-3 py-2 bg-white rounded-lg">
+                  <span className="text-sm text-gray-600">User ID</span>
+                  <span className="text-sm font-medium text-gray-900">
+                    {selectedUser._id?.slice(-8) || "-"}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between px-3 py-2 bg-white rounded-lg">
+                  <span className="text-sm text-gray-600">Full Created Date</span>
+                  <span className="text-sm font-medium text-gray-900">
+                    {selectedUser.createdAt ? new Date(selectedUser.createdAt).toLocaleString() : "-"}
+                  </span>
+                </div>
               </div>
             </div>
           </div>
