@@ -1,6 +1,8 @@
 import { lazy, Suspense } from 'react';
 import { createBrowserRouter } from "react-router-dom";
 import MainLayout from "../Layout/Main/Main";
+import PrivateRoute from "../tools/private-route";
+import PublicRoute from "../tools/public-route";
 
 // Loading component
 const Loading = () => (
@@ -42,27 +44,51 @@ const ContactUs = lazyLoad(() => import('../Pages/Settings/ContactUS/ContactUS')
 export const router = createBrowserRouter([
   {
     path: "/sign-in",
-    element: <SignIn />,
+    element: (
+      <PublicRoute>
+        <SignIn />
+      </PublicRoute>
+    ),
   },
   {
     path: "/forgot-password",
-    element: <ForgatePassword />,
+    element: (
+      <PublicRoute>
+        <ForgatePassword />
+      </PublicRoute>
+    ),
   },
   {
     path: "/varification",
-    element: <VerifyPass />,
+    element: (
+      <PublicRoute>
+        <VerifyPass />
+      </PublicRoute>
+    ),
   },
   {
     path: "/new-password",
-    element: <Newpass />,
+    element: (
+      <PublicRoute>
+        <Newpass />
+      </PublicRoute>
+    ),
   },
   {
     path: "/continue-page",
-    element: <ContinuePage />,
+    element: (
+      <PublicRoute>
+        <ContinuePage />
+      </PublicRoute>
+    ),
   },
   {
     path: "/",
-    element: <MainLayout />,
+    element: (
+      <PrivateRoute>
+        <MainLayout />
+      </PrivateRoute>
+    ),
     children: [
       {
         path: "/",
