@@ -1,10 +1,12 @@
-// import oneTime from "../../assets/images/one-time.png";
-// import recurring from "../../assets/images/recurring.png";
-// import rounup from "../../assets/images/roundup.png";
 
 import { BsArrowUpRight } from "react-icons/bs";
 
-const AnanlyticsCharts = () => {
+const AnanlyticsCharts = ({
+  totalDonation,
+  donationAmountChangeText,
+  totalActiveOrganizations,
+  organizationChangeText,
+}) => {
   return (
     <div className=" my-3">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -17,11 +19,15 @@ const AnanlyticsCharts = () => {
           </div>
           <div className="">
             <h1 className="text-3xl font-bold">
-              <span className="text-gray-400">$</span>40,000
+              <span className="text-gray-400">$</span>
+              {Number(totalDonation ?? 0).toLocaleString(undefined, {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 2,
+              })}
             </h1>
-            <p className="text-gray-400 mt-2">
-              <span className="text-green-500"> +8.2% </span>vs last month
-            </p>
+            {donationAmountChangeText ? (
+              <p className="text-gray-400 mt-2">{donationAmountChangeText}</p>
+            ) : null}
           </div>
         </div>
         <div className="bg-white border p-6 rounded-2xl relative">
@@ -34,11 +40,11 @@ const AnanlyticsCharts = () => {
           </div>
           <div className="">
             <h1 className="text-3xl font-bold">
-              <span className="text-gray-400">$</span>40,000
+              {Number(totalActiveOrganizations ?? 0).toLocaleString()}
             </h1>
-            <p className="text-gray-400 mt-2">
-              <span className="text-green-500"> +8.2% </span>vs last month
-            </p>
+            {organizationChangeText ? (
+              <p className="text-gray-400 mt-2">{organizationChangeText}</p>
+            ) : null}
           </div>
         </div>
       

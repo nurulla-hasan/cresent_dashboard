@@ -1,262 +1,161 @@
-/* eslint-disable no-unused-vars */
-import { useState, useMemo } from "react";
+
+import { useState } from "react";
 import {
   Button,
-  Dropdown,
   Form,
   Input,
-  Menu,
   Modal,
   Select,
   Table,
-  Upload,
 } from "antd";
-import { DownOutlined, SearchOutlined } from "@ant-design/icons";
+import { SearchOutlined } from "@ant-design/icons";
 import { VscEye } from "react-icons/vsc";
-import { FaImage, FaPencilAlt, FaPlus } from "react-icons/fa";
-import { RxCrossCircled } from "react-icons/rx";
-import { BsPatchCheckFill } from "react-icons/bs";
-import { ImHourGlass } from "react-icons/im";
-import { CiPause1 } from "react-icons/ci";
-
-import book from "../../assets/image/Book.png";
-import phone from "../../assets/image/Phone.png";
-import jacket from "../../assets/image/Jacket.png";
-
+import { FaPencilAlt, FaPlus } from "react-icons/fa";
 const { Option } = Select;
 
-const CauseManagement = () => {
-  const originalData = [
-    {
-      key: "1",
-      name: "Backpacks & Books",
-      email: "johnnb@gmail.com",
-      dateTime: "June 2025 - Ongoing",
-      category: "Education",
-      donationMessage: "-",
-      amount: 34.5,
-      status: "Pending",
-      img: book,
-    },
-    {
-      key: "2",
-      name: "Digital Dreams",
-      email: "kkkarim@gmail.com",
-      dateTime: "June 2025 - Ongoing",
-      category: "Refugees",
-      donationMessage: "Sending love & hope to everyone you’re helping",
-      amount: 62.75,
-      status: "Active",
-      img: phone,
-    },
-    {
-      key: "3",
-      name: "Warmth in Winter",
-      email: "jadddam@gmail.com",
-      dateTime: "June 2025 - Ongoing",
-      category: "Education",
-      donationMessage: "-",
-      amount: 15.2,
-      status: "Suspended",
-      img: jacket,
-    },
-  ];
+import useSmartFetchHook from "../../Components/hooks/useSmartFetchHook.ts";
+import { useGetAllCauseQuery, useUpdateCauseMutation, useGetCauseCategoriesQuery, useChangeCauseStatusMutation, useCreateCauseMutation } from "../../redux/feature/cause/causeApis";
+import { useGetOrganizationReportQuery } from "../../redux/feature/organization/organizationApis";
+import { getImageUrl, SuccessToast, ErrorToast } from "../../lib/utils.js";
 
-  const [data, setData] = useState(originalData);
-  const [searchText, setSearchText] = useState("");
+const CauseManagement = () => {
+  const {
+    data,
+    pagination,
+    isLoading,
+    searchTerm,
+    setSearchTerm,
+    currentPage,
+    setCurrentPage,
+  } = useSmartFetchHook(useGetAllCauseQuery);
+
+  const [updateCause, { isLoading: isUpdating }] = useUpdateCauseMutation();
+  const { data: categoriesRes, isLoading: isCatLoading } = useGetCauseCategoriesQuery();
+  const [changeStatus, { isLoading: isStatusUpdating }] = useChangeCauseStatusMutation();
+  const [createCause, { isLoading: isCreating }] = useCreateCauseMutation();
+  const { data: orgRes, isLoading: isOrgLoading } = useGetOrganizationReportQuery({ page: 1, limit: 50 });
+
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [previewImage, setPreviewImage] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [editingRecord, setEditingRecord] = useState(null);
   const [form] = Form.useForm();
+  const [isViewModalOpen, setIsViewModalOpen] = useState(false);
+  const [viewRecord, setViewRecord] = useState(null);
 
-  /** 📸 Image Upload Preview */
-  const handleBeforeUpload = (file) => {
-    setPreviewImage(URL.createObjectURL(file));
-    form.setFieldsValue({ image: file });
-    return false;
+
+
+  /** Open View Modal */
+  const handleView = (record) => {
+    setViewRecord(record);
+    setIsViewModalOpen(true);
   };
 
-  /** ➕ Add Cause */
-  const handleAddCause = () => {
-    form.resetFields();
-    setPreviewImage(null);
-    setIsEditing(false);
-    setEditingRecord(null);
-    setIsModalVisible(true);
-  };
-
-  /** ✏️ Edit Cause */
-  const handleEditCause = (record) => {
+  /** Open Edit Modal */
+  const handleEdit = (record) => {
     setIsEditing(true);
     setEditingRecord(record);
     form.setFieldsValue({
-      subject: record.name,
-      category: record.category,
-      note: record.donationMessage,
+      name: record?.name || "",
+      category: record?.category || undefined,
+      description: record?.description || "",
     });
-    setPreviewImage(record.img);
     setIsModalVisible(true);
   };
 
-  /** ❌ Close Modal */
+  /** Open Create Modal */
+  const handleAdd = () => {
+    setIsEditing(false);
+    setEditingRecord(null);
+    form.resetFields();
+    setIsModalVisible(true);
+  };
+
+  /** Change status to any of: pending | verified | suspended */
+  const handleChangeStatus = async (id, status) => {
+    try {
+      await changeStatus({ id, status }).unwrap();
+      SuccessToast("Status updated");
+    } catch (e) {
+      ErrorToast(e?.data?.message || "Failed to update status");
+    }
+  };
+
+  /** Close Modal */
   const handleCancel = () => {
     setIsModalVisible(false);
-    form.resetFields();
-    setPreviewImage(null);
+    setIsEditing(false);
     setEditingRecord(null);
+    form.resetFields();
   };
 
-  /** 💾 Save Cause */
-  const handleSave = (values) => {
-    const newCause = {
-      key: editingRecord ? editingRecord.key : Date.now(),
-      name: values.subject,
-      category: values.category,
-      donationMessage: values.note,
-      email: "demo@example.com",
-      dateTime: "Sep 2025 - Ongoing",
-      amount: 0,
-      status: "Pending",
-      img: previewImage || book,
-    };
+  /** Submit Update */
+  const handleSubmit = async (values) => {
+    try {
+      const payload = {
+        name: values.name,
+        category: values.category,
+        description: values.description,
+        organizationId: values.organizationId,
+      };
 
-    const updatedData = editingRecord
-      ? data.map((item) => (item.key === editingRecord.key ? newCause : item))
-      : [...data, newCause];
-
-    setData(updatedData);
-    handleCancel();
+      if (isEditing && editingRecord?._id) {
+        await updateCause({ id: editingRecord._id, payload }).unwrap();
+        SuccessToast("Cause updated successfully");
+      } else {
+        await createCause(payload).unwrap();
+        SuccessToast("Cause created successfully");
+      }
+      handleCancel();
+    } catch (e) {
+      ErrorToast(e?.data?.message || "Failed to update cause");
+    }
   };
 
-  /** 🔍 Sort Handler */
-  const handleSort = (key, order) => {
-    const sorted = [...data].sort((a, b) => {
-      if (key === "amount")
-        return order === "ascend" ? a.amount - b.amount : b.amount - a.amount;
-      if (key === "name")
-        return order === "ascend"
-          ? a.name.localeCompare(b.name)
-          : b.name.localeCompare(a.name);
-      if (key === "dateTime")
-        return order === "ascend"
-          ? new Date(a.dateTime) - new Date(b.dateTime)
-          : new Date(b.dateTime) - new Date(a.dateTime);
-      return 0;
-    });
-    setData(sorted);
-  };
-
-  /** 🪄 Category Filter */
-  const handleCategoryFilter = (category) => {
-    setData(
-      category === "All"
-        ? originalData
-        : originalData.filter((item) => item.category === category)
-    );
-  };
-
-  /** 🔎 Search Filter */
-  const filteredData = useMemo(
-    () =>
-      data.filter(
-        (item) =>
-          item.name.toLowerCase().includes(searchText.toLowerCase()) ||
-          item.email.toLowerCase().includes(searchText.toLowerCase())
-      ),
-    [searchText, data]
-  );
-
-  /** 🟢 Status Renderer */
-  const renderStatus = (status) => {
-    const map = {
-      Active: {
-        icon: <BsPatchCheckFill className="text-green-500" />,
-        className: "bg-green-100 text-green-600 ",
-      },
-      Pending: {
-        icon: <ImHourGlass className="text-yellow-500" />,
-        className: "bg-yellow-100 text-yellow-600",
-      },
-      Suspended: {
-        icon: <CiPause1 className="text-red-500" />,
-        className: "bg-red-200 text-red-600",
-      },
-    };
-
-    const { icon, className } = map[status] || map.Suspended;
-    return (
-      <span
-        className={`px-4 py-1 rounded-2xl text-sm font-medium flex items-center gap-2 ${className}`}
-      >
-        {icon} {status}
-      </span>
-    );
-  };
-
-  /** 📊 Table Columns */
+  /** � Table Columns */
   const columns = [
     {
-      title: (
-        <div className="flex items-center gap-2">
-          Cause Name
-          <Select
-            defaultValue="ascend"
-            style={{ width: 100 }}
-            onChange={(v) => handleSort("name", v)}
-            suffixIcon={<DownOutlined />}
-          >
-            <Option value="ascend">A-Z</Option>
-            <Option value="descend">Z-A</Option>
-          </Select>
-        </div>
-      ),
+      title: "Cause Name",
       dataIndex: "name",
       key: "name",
+      sorter: (a, b) => a.name.localeCompare(b.name),
       render: (_, record) => (
-        <div className="flex gap-2 items-center">
+        <div className="flex items-center gap-2">
           <img
-            src={record.img}
+            src={getImageUrl(record?.organization?.logoImage) || ""}
             alt={record.name}
-            className="h-10 w-10 rounded-full object-cover"
+            className="object-cover w-10 h-10 rounded-full"
           />
           <div>
             <p className="font-medium">{record.name}</p>
-            <p className="text-gray-400 text-sm">{record.dateTime}</p>
+            <p className="text-sm text-gray-400">
+              {record?.createdAt ? new Date(record.createdAt).toLocaleDateString() : ""}
+            </p>
           </div>
         </div>
       ),
     },
     {
-      title: (
-        <div className="flex items-center gap-2">
-          Category
-          <Select
-            defaultValue="All"
-            style={{ width: 130 }}
-            onChange={handleCategoryFilter}
-            suffixIcon={<DownOutlined />}
-          >
-            <Option value="All">All</Option>
-            <Option value="Education">Education</Option>
-            <Option value="Refugees">Refugees</Option>
-          </Select>
-        </div>
+      title: "Description",
+      dataIndex: "description",
+      key: "description",
+      ellipsis: true,
+      render: (description) => (
+        <span className="text-sm text-gray-600">
+          {description || "-"}
+        </span>
       ),
+    },
+    {
+      title: "Category",
       dataIndex: "category",
       key: "category",
+      filters: (categoriesRes?.data || []).map((c) => ({ text: c.label, value: c.value })),
+      onFilter: (value, record) => record.category === value,
       render: (value) => (
-        <div className="px-4 py-2 rounded-3xl flex items-center gap-2">
-          {value === "Education" && (
-            <div className="flex items-center gap-1 bg-blue-100 text-blue-600 px-4 py-1 rounded-2xl">
-              📚 Education
-            </div>
-          )}
-          {value === "Refugees" && (
-            <div className="flex items-center gap-1 bg-green-100 text-green-600 px-4 py-1 rounded-2xl">
-              🧳 Refugees
-            </div>
-          )}
+        <div className="flex items-center gap-2 px-4 py-2 rounded-3xl">
+          <div className="flex items-center gap-1 px-4 py-1 text-slate-700 bg-slate-100 rounded-2xl">
+            {value}
+          </div>
         </div>
       ),
     },
@@ -264,75 +163,88 @@ const CauseManagement = () => {
       title: "Status",
       dataIndex: "status",
       key: "status",
-      render: renderStatus,
+      filters: [
+        { text: "Pending", value: "pending" },
+        { text: "Verified", value: "verified" },
+        { text: "Suspended", value: "suspended" },
+      ],
+      onFilter: (value, record) => record.status === value,
+      render: (_, record) => (
+        <Select
+          size="small"
+          value={record.status}
+          style={{ width: 140 }}
+          loading={isStatusUpdating}
+          onChange={(v) => handleChangeStatus(record._id, v)}
+        >
+          <Option value="pending">Pending</Option>
+          <Option value="verified">Verified</Option>
+          <Option value="suspended">Suspended</Option>
+        </Select>
+      ),
     },
     {
       title: "Action",
       key: "action",
+      align: "center",
       render: (_, record) => (
-        <div className="flex justify-center items-center gap-3 text-lg">
-          <div className="bg-neutral-100 h-8 w-8 rounded-full p-1 flex justify-center items-center cursor-pointer">
+        <div className="flex items-center justify-center gap-3 text-lg">
+          <div 
+            onClick={() => handleView(record)}
+            className="flex items-center justify-center w-8 h-8 p-1 bg-blue-100 rounded-full cursor-pointer hover:bg-blue-200"
+            title="View Details"
+          >
             <VscEye />
           </div>
           <div
-            onClick={() => handleEditCause(record)}
-            className="bg-neutral-100 h-8 w-8 rounded-full p-1 flex justify-center items-center cursor-pointer"
+            onClick={() => handleEdit(record)}
+            className="flex items-center justify-center w-8 h-8 p-1 rounded-full cursor-pointer bg-neutral-100 hover:bg-neutral-200"
+            title="Edit Cause"
           >
             <FaPencilAlt />
-          </div>
-          <div className="bg-neutral-100 h-8 w-8 rounded-full p-1 flex justify-center items-center cursor-pointer">
-            <RxCrossCircled />
           </div>
         </div>
       ),
     },
   ];
 
-  const menu = (
-    <Menu
-      items={[
-        { key: "1", label: "Sort A - Z" },
-        { key: "2", label: "Sort Z - A" },
-        { key: "3", label: "Recent First" },
-        { key: "4", label: "Oldest First" },
-      ]}
-    />
-  );
 
   return (
-    <div className="bg-white p-6 rounded-xl shadow-sm mb-10">
-      <div className="flex justify-between items-center mb-4">
+    <div className="p-6 mb-10 bg-white shadow-sm rounded-xl">
+      <div className="flex items-center justify-between mb-4">
         <h2 className="text-lg font-semibold">Cause Management</h2>
         <div className="flex items-center gap-2">
           <Input
             prefix={<SearchOutlined />}
-            placeholder="Search..."
-            onChange={(e) => setSearchText(e.target.value)}
+            placeholder="Search causes..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
             className="w-60"
           />
-          <Dropdown overlay={menu} trigger={["click"]}>
-            <Button>
-              Filter <DownOutlined />
-            </Button>
-          </Dropdown>
           <button
-            onClick={handleAddCause}
-            className="px-4 py-1 rounded-3xl border bg-white flex justify-center items-center gap-1"
+            onClick={handleAdd}
+            className="flex items-center justify-center gap-1 px-4 py-1 bg-white border rounded-3xl"
           >
             <FaPlus /> Add Cause
           </button>
         </div>
       </div>
 
-      {/* 📊 Table */}
+      {/* Table */}
       <Table
         columns={columns}
-        dataSource={filteredData}
-        pagination={{ pageSize: 5 }}
-        rowKey="key"
+        dataSource={data}
+        loading={isLoading}
+        pagination={{
+          current: pagination?.page || currentPage,
+          pageSize: pagination?.limit || 10,
+          total: pagination?.total || 0,
+          onChange: (page) => setCurrentPage(page),
+        }}
+        rowKey="_id"
       />
 
-      {/* 🛠️ Add/Edit Cause Modal */}
+      {/* Add/Edit Cause Modal */}
       <Modal
         title={isEditing ? "Edit Cause" : "Add Cause"}
         open={isModalVisible}
@@ -341,67 +253,197 @@ const CauseManagement = () => {
         centered
         width={600}
       >
-        <Form layout="vertical" form={form} onFinish={handleSave}>
+        <Form layout="vertical" form={form} onFinish={handleSubmit}>
           <Form.Item
-            label="Cause Subject & Category"
-            required
-            style={{ marginBottom: 16 }}
+            name="name"
+            label="Cause Name"
+            rules={[{ required: true, message: "Please enter cause name" }]}
           >
-            <Input.Group compact>
-              <Form.Item
-                name="subject"
-                noStyle
-                rules={[
-                  { required: true, message: "Please enter cause subject" },
-                ]}
-              >
-                <Input
-                  placeholder="Enter cause subject"
-                  style={{ width: "65%" }}
-                />
-              </Form.Item>
-
-              <Form.Item
-                name="category"
-                noStyle
-                rules={[
-                  { required: true, message: "Please select a category" },
-                ]}
-              >
-                <Select placeholder="Select category" style={{ width: "35%" }}>
-                  <Option value="Education">Education</Option>
-                  <Option value="Refugees">Refugees</Option>
-                </Select>
-              </Form.Item>
-            </Input.Group>
+            <Input placeholder="Enter cause name" />
           </Form.Item>
+
+          {!isEditing && (
+            <Form.Item
+              name="organizationId"
+              label="Organization"
+              rules={[{ required: true, message: "Please select an organization" }]}
+            >
+              <Select placeholder="Select organization" loading={isOrgLoading} showSearch optionFilterProp="children">
+                {(orgRes?.data || []).map((o) => (
+                  <Option key={o._id} value={o._id}>{o.name}</Option>
+                ))}
+              </Select>
+            </Form.Item>
+          )}
 
           <Form.Item
             name="category"
             label="Category"
             rules={[{ required: true, message: "Please select a category" }]}
           >
-            <Select placeholder="Select category">
-              <Option value="Education">Education</Option>
-              <Option value="Refugees">Refugees</Option>
+            <Select placeholder="Select category" loading={isCatLoading} showSearch optionFilterProp="children">
+              {(categoriesRes?.data || []).map((c) => (
+                <Option key={c.value} value={c.value}>{c.label}</Option>
+              ))}
             </Select>
           </Form.Item>
 
           <Form.Item
-            name="note"
-            label="Donation Note"
-            rules={[{ required: true, message: "Please enter donation note" }]}
+            name="description"
+            label="Description"
+            rules={[{ required: true, message: "Please enter description" }]}
           >
-            <Input.TextArea rows={4} placeholder="Enter donation note" />
+            <Input.TextArea rows={4} placeholder="Enter description" />
           </Form.Item>
 
           <div className="flex justify-end gap-3 mt-4">
             <Button onClick={handleCancel}>Discard Changes</Button>
-            <Button type="primary" htmlType="submit">
-              {isEditing ? "Update Cause" : "Add Cause"}
+            <Button type="primary" htmlType="submit" loading={isEditing ? isUpdating : isCreating}>
+              {isEditing ? "Update Cause" : "Create Cause"}
             </Button>
           </div>
         </Form>
+      </Modal>
+
+      {/* Cause Details Modal */}
+      <Modal
+        title="Cause Details"
+        open={isViewModalOpen}
+        onCancel={() => setIsViewModalOpen(false)}
+        footer={null}
+        centered
+        width={600}
+      >
+        {viewRecord && (
+          <div className="space-y-6">
+            {/* Header Section */}
+            <div className="flex items-start justify-between">
+              <div className="flex-1">
+                <h3 className="mb-2 text-xl font-semibold text-gray-900">
+                  {viewRecord.name}
+                </h3>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm text-gray-500">by</span>
+                  <span className="text-sm font-medium text-gray-700">
+                    {viewRecord.organization?.name || "No Organization"}
+                  </span>
+                </div>
+              </div>
+              <div className="flex-shrink-0">
+                <div className={`px-3 py-1 rounded-full text-sm font-medium ${
+                  viewRecord.status === "verified" ? "bg-green-100 text-green-700" :
+                  viewRecord.status === "pending" ? "bg-yellow-100 text-yellow-700" :
+                  viewRecord.status === "suspended" ? "bg-red-100 text-red-700" :
+                  "bg-gray-100 text-gray-700"
+                }`}>
+                  {viewRecord.status?.charAt(0)?.toUpperCase() + viewRecord.status?.slice(1)}
+                </div>
+              </div>
+            </div>
+
+            {/* Description */}
+            <div className="p-4 rounded-lg bg-gray-50">
+              <p className="mb-2 text-sm font-medium text-gray-700">Description</p>
+              <p className="text-sm leading-relaxed text-gray-600">
+                {viewRecord.description || "No description provided"}
+              </p>
+            </div>
+
+            {/* Key Details Grid */}
+            <div className="grid grid-cols-2 gap-4">
+              <div className="p-4 border border-blue-100 rounded-lg bg-blue-50">
+                <div className="flex items-center gap-2 mb-1">
+                  <div className="flex items-center justify-center w-8 h-8 bg-blue-100 rounded-full">
+                    <span className="text-xs font-semibold text-blue-600">C</span>
+                  </div>
+                  <p className="text-xs font-medium tracking-wide text-blue-700 uppercase">Category</p>
+                </div>
+                <p className="text-sm font-semibold text-gray-900 capitalize">{viewRecord.category}</p>
+              </div>
+
+              <div className="p-4 border border-green-100 rounded-lg bg-green-50">
+                <div className="flex items-center gap-2 mb-1">
+                  <div className="flex items-center justify-center w-8 h-8 bg-green-100 rounded-full">
+                    <span className="text-xs font-semibold text-green-600">S</span>
+                  </div>
+                  <p className="text-xs font-medium tracking-wide text-green-700 uppercase">Status</p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className={`w-2 h-2 rounded-full ${
+                    viewRecord.status === "verified" ? "bg-green-500" :
+                    viewRecord.status === "pending" ? "bg-yellow-500" :
+                    viewRecord.status === "suspended" ? "bg-red-500" : "bg-gray-400"
+                  }`}></div>
+                  <p className="text-sm font-semibold text-gray-900 capitalize">
+                    {viewRecord.status || "Unknown"}
+                  </p>
+                </div>
+              </div>
+
+              <div className="p-4 border border-purple-100 rounded-lg bg-purple-50">
+                <div className="flex items-center gap-2 mb-1">
+                  <div className="flex items-center justify-center w-8 h-8 bg-purple-100 rounded-full">
+                    <span className="text-xs font-semibold text-purple-600">O</span>
+                  </div>
+                  <p className="text-xs font-medium tracking-wide text-purple-700 uppercase">Organization</p>
+                </div>
+                <p className="text-sm font-semibold text-gray-900">
+                  {viewRecord.organization?.name || "No Organization"}
+                </p>
+              </div>
+
+              <div className="p-4 border border-orange-100 rounded-lg bg-orange-50">
+                <div className="flex items-center gap-2 mb-1">
+                  <div className="flex items-center justify-center w-8 h-8 bg-orange-100 rounded-full">
+                    <span className="text-xs font-semibold text-orange-600">D</span>
+                  </div>
+                  <p className="text-xs font-medium tracking-wide text-orange-700 uppercase">Created</p>
+                </div>
+                <p className="text-sm font-semibold text-gray-900">
+                  {viewRecord.createdAt ? new Date(viewRecord.createdAt).toLocaleDateString() : "-"}
+                </p>
+              </div>
+            </div>
+
+            {/* Stats Section */}
+            <div className="p-4 rounded-lg bg-gray-50">
+              <h4 className="mb-3 text-sm font-medium text-gray-700">Donation Statistics</h4>
+              <div className="grid grid-cols-3 gap-4">
+                <div className="text-center">
+                  <p className="text-2xl font-bold text-gray-900">{viewRecord.totalDonationAmount || 0}</p>
+                  <p className="text-xs text-gray-600">Total Amount</p>
+                </div>
+                <div className="text-center">
+                  <p className="text-2xl font-bold text-gray-900">{viewRecord.totalDonors || 0}</p>
+                  <p className="text-xs text-gray-600">Total Donors</p>
+                </div>
+                <div className="text-center">
+                  <p className="text-2xl font-bold text-gray-900">{viewRecord.totalDonations || 0}</p>
+                  <p className="text-xs text-gray-600">Total Donations</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Timeline Section */}
+            <div className="pt-4 border-t">
+              <h4 className="mb-3 text-sm font-medium text-gray-700">Timeline</h4>
+              <div className="space-y-2">
+                <div className="flex items-center justify-between px-3 py-2 rounded-lg bg-gray-50">
+                  <span className="text-sm text-gray-600">Created Date</span>
+                  <span className="text-sm font-medium text-gray-900">
+                    {viewRecord.createdAt ? new Date(viewRecord.createdAt).toLocaleString() : "-"}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between px-3 py-2 rounded-lg bg-gray-50">
+                  <span className="text-sm text-gray-600">Last Updated</span>
+                  <span className="text-sm font-medium text-gray-900">
+                    {viewRecord.updatedAt ? new Date(viewRecord.updatedAt).toLocaleString() : "-"}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </Modal>
     </div>
   );

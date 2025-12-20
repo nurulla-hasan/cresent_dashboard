@@ -1,134 +1,106 @@
-/* eslint-disable no-unused-vars */
-import { useMemo, useState } from "react";
+
+import { useState } from "react";
 import {
-  Button,
-  Form,
   Input,
-  Modal,
   Table,
-  Upload,
   Tag,
   Drawer,
   Divider,
   Descriptions,
   Space,
+  DatePicker,
+  Spin,
 } from "antd";
 import {
-  FaEye,
-  FaImage,
-  FaPencilAlt,
   FaCheckCircle,
-  FaPlus,
 } from "react-icons/fa";
-import { RxCrossCircled, RxDotsVertical } from "react-icons/rx";
+import { VscEye } from "react-icons/vsc";
+import { RxCross2, RxCrossCircled } from "react-icons/rx";
 import { BsExclamationCircle, BsShieldCheck } from "react-icons/bs";
+import { Check, Trash2 } from "lucide-react";
 import {
-  DownOutlined,
   SearchOutlined,
   LinkOutlined,
   PhoneOutlined,
   MailOutlined,
   EnvironmentOutlined,
+  LoadingOutlined,
 } from "@ant-design/icons";
 
 import icon from "../../assets/image/leaf.png";
-import icon1 from "../../assets/image/edu.png";
-import icon2 from "../../assets/image/health.png";
+
+import useSmartFetchHook from "../../Components/hooks/useSmartFetchHook.ts";
+import { useGetBusinessesReportQuery } from "../../redux/feature/business/businessApis";
+import {
+  useChangeUserStatusMutation,
+  useDeleteUserMutation,
+} from "../../redux/feature/user/userApis";
 
 const COVER =
   "https://images.unsplash.com/photo-1559339352-11d035aa65de?q=80&w=1200&auto=format&fit=crop";
 
 const BusinessPortfolio = () => {
-  const [searchText, setSearchText] = useState("");
-  const [data, setData] = useState([
-    {
-      key: "1",
-      name: "Green Bites",
-      email: "hello@greenbites.com",
-      icon: icon,
-      sector: "Food & Dining",
-      status: "Active",
-      phone: "+61 234 567 890",
-      website: "https://www.greenbites.com",
-      address: "45 Oxford St, Sydney, Australia",
-      overview:
-        "Trusted business offering food & dining rewards to the Crescent Change community.",
-      offeredRewards:
-        "Trusted business offering food & dining rewards to the Crescent Change community.",
-      verified: true,
-    },
-    {
-      key: "2",
-      name: "EduTech Hub",
-      email: "info@edutech.com",
-      icon: icon1,
-      sector: "Education",
-      status: "Pending",
-      phone: "+61 200 111 222",
-      website: "https://www.edutech.com",
-      address: "12 College Rd, Melbourne, Australia",
-      overview: "Turning hope into opportunity through education.",
-      offeredRewards: "Free Coding Course (Silver, 1x per donor)",
-      verified: false,
-    },
-    {
-      key: "3",
-      name: "HealthFirst Labs",
-      email: "support@hflabs.org",
-      icon: icon2,
-      sector: "Healthcare",
-      status: "Inactive",
-      phone: "+61 333 777 999",
-      website: "https://www.hflabs.org",
-      address: "88 Wellness Ave, Brisbane, Australia",
-      overview: "Affordable diagnostics for community health.",
-      offeredRewards: "10% off annual screening",
-      verified: false,
-    },
-  ]);
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  const [previewImage, setPreviewImage] = useState(null);
+  const { RangePicker } = DatePicker;
+  const [dateRange, setDateRange] = useState(null);
+  const {
+    searchTerm,
+    setSearchTerm,
+    setCurrentPage,
+    data,
+    pagination,
+    isLoading,
+    setFilterParams,
+  } = useSmartFetchHook(useGetBusinessesReportQuery, { limit: 10 });
+  
   const [selectedBusiness, setSelectedBusiness] = useState(null);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
-  const [form] = Form.useForm();
+  const [rowLoadingId, setRowLoadingId] = useState(null);
 
-  const handleBeforeUpload = (file) => {
-    setPreviewImage(URL.createObjectURL(file));
-    form.setFieldsValue({ icon: file });
-    return false;
+  const [changeUserStatus] = useChangeUserStatusMutation();
+  const [deleteUser] = useDeleteUserMutation();
+
+
+  const handleAccept = async (record) => {
+    if (!record?.authId) return;
+
+    try {
+      setRowLoadingId(record.authId);
+      await changeUserStatus({ id: record.authId, status: "verified" }).unwrap();
+    } finally {
+      setRowLoadingId(null);
+    }
   };
 
-  const handleEdit = (record) => {
-    setSelectedBusiness(record);
-    form.setFieldsValue({
-      name: record.name,
-      email: record.email,
-      sector: record.sector,
-      status: record.status,
-    });
-    setPreviewImage(record.icon);
-    setIsModalVisible(true);
+  const handleSuspend = async (record) => {
+    if (!record?.authId) return;
+
+    try {
+      setRowLoadingId(record.authId);
+      await changeUserStatus({ id: record.authId, status: "suspended" }).unwrap();
+    } finally {
+      setRowLoadingId(null);
+    }
   };
 
-  const handleCancel = () => {
-    setIsModalVisible(false);
-    form.resetFields();
-    setPreviewImage(null);
+  const handleDelete = async (record) => {
+    if (!record?.authId) return;
+
+    try {
+      setRowLoadingId(record.authId);
+      await deleteUser(record.authId).unwrap();
+    } finally {
+      setRowLoadingId(null);
+    }
   };
 
-  const handleSave = (values) => {
-    if (!selectedBusiness) return;
-    const updatedData = data.map((item) =>
-      item.key === selectedBusiness.key
-        ? { ...item, ...values, icon: previewImage || item.icon }
-        : item
-    );
-    setData(updatedData);
-    setIsModalVisible(false);
-  };
-
-  const handleDelete = (key) => {
-    setData(data.filter((item) => item.key !== key));
+  const handleDateRangeChange = (dates, dateStrings) => {
+    setDateRange(dates);
+    const newParams = {};
+    if (dates && dates[0] && dates[1]) {
+      newParams.startDate = dateStrings[0];
+      newParams.endDate = dateStrings[1];
+    }
+    setFilterParams(newParams);
   };
 
   const openProfile = (record) => {
@@ -136,40 +108,37 @@ const BusinessPortfolio = () => {
     setIsProfileOpen(true);
   };
 
-  const renderStatus = (status) => {
-    switch (status) {
-      case "Active":
-        return (
-          <Tag color="green" className="flex items-center gap-1 px-2 py-1 rounded-full w-fit">
-            <FaCheckCircle /> Active
-          </Tag>
-        );
-      case "Pending":
-        return (
-          <Tag color="gold" className="flex items-center gap-1 px-2 py-1 rounded-full w-fit">
-            <BsExclamationCircle /> Pending
-          </Tag>
-        );
-      default:
-        return (
-          <Tag color="red" className="flex items-center gap-1 px-2 py-1 rounded-full w-fit">
-            <RxCrossCircled /> Inactive
-          </Tag>
-        );
+  const renderStatus = (status, isActive) => {
+    if (!isActive) {
+      return (
+        <Tag color="red" className="flex items-center gap-1 px-2 py-1 rounded-full w-fit">
+          <RxCrossCircled /> Inactive
+        </Tag>
+      );
     }
-  };
 
-  const filteredData = useMemo(() => {
-    const q = searchText.trim().toLowerCase();
-    if (!q) return data;
-    return data.filter(
-      (d) =>
-        d.name.toLowerCase().includes(q) ||
-        d.email.toLowerCase().includes(q) ||
-        d.sector.toLowerCase().includes(q) ||
-        d.status.toLowerCase().includes(q)
+    if (status === "pending") {
+      return (
+        <Tag color="gold" className="flex items-center gap-1 px-2 py-1 rounded-full w-fit">
+          <BsExclamationCircle /> Pending
+        </Tag>
+      );
+    }
+
+    if (status === "suspended") {
+      return (
+        <Tag color="red" className="flex items-center gap-1 px-2 py-1 rounded-full w-fit">
+          <RxCrossCircled /> Suspended
+        </Tag>
+      );
+    }
+
+    return (
+      <Tag color="green" className="flex items-center gap-1 px-2 py-1 rounded-full w-fit">
+        <FaCheckCircle /> Verified
+      </Tag>
     );
-  }, [searchText, data]);
+  };
 
   const columns = [
     {
@@ -179,145 +148,213 @@ const BusinessPortfolio = () => {
       render: (_, record) => (
         <div className="flex items-center gap-3">
           <img
-            src={record.icon}
+            src={record.icon || icon}
             alt={record.name}
-            className="h-10 w-10 object-contain rounded-full"
+            className="object-contain w-10 h-10 rounded-full"
           />
           <div className="flex flex-col">
             <span className="font-semibold">{record.name}</span>
-            <span className="text-gray-500 text-sm">{record.email}</span>
+            <span className="text-sm text-gray-500">{record.email || "—"}</span>
           </div>
         </div>
       ),
     },
-    { title: "Sector", dataIndex: "sector", key: "sector" },
+    {
+      title: "Created At",
+      dataIndex: "createdAt",
+      key: "createdAt",
+      sorter: true,
+      render: (createdAt) => (
+        <span className="text-sm">
+          {createdAt ? new Date(createdAt).toLocaleDateString() : "—"}
+        </span>
+      ),
+    },
     {
       title: "Status",
       dataIndex: "status",
       key: "status",
-      render: (status) => renderStatus(status),
+      render: (_status, record) => renderStatus(record.status, record.isActive),
     },
     {
       title: "Action",
+      align:'center',
       key: "action",
-      render: (_, record) => (
-        <div className="flex items-center gap-2 text-lg">
-          <div
-            onClick={() => openProfile(record)}
-            className="bg-neutral-100 h-8 w-8 rounded-full p-1 flex justify-center items-center cursor-pointer"
-            title="View profile"
-          >
-            <FaEye />
+      render: (_, record) => {
+        const isRowLoading = rowLoadingId === record?.authId;
+        const hasAuthId = Boolean(record?.authId);
+        const isPending = record?.status === "pending";
+        const isSuspended = record?.status === "suspended";
+
+        return (
+          <div className="flex items-center justify-center gap-3 text-lg">
+            <div
+              onClick={() => openProfile(record)}
+              className="flex items-center justify-center w-8 h-8 p-1 rounded-full cursor-pointer bg-neutral-100"
+              title="View"
+            >
+              <VscEye />
+            </div>
+
+            {isPending ? (
+              <>
+                <div
+                  onClick={() => {
+                    if (!isRowLoading && hasAuthId) handleSuspend(record);
+                  }}
+                  className={`flex items-center justify-center w-8 h-8 p-1 rounded-full ${
+                    !isRowLoading && hasAuthId
+                      ? "cursor-pointer bg-neutral-100"
+                      : "cursor-not-allowed bg-neutral-50 opacity-50"
+                  }`}
+                  title={
+                    !hasAuthId
+                      ? "Missing user id"
+                      : isRowLoading
+                      ? "Processing..."
+                      : "Suspend"
+                  }
+                >
+                  {isRowLoading ? <LoadingOutlined /> : <RxCross2 />}
+                </div>
+                <div
+                  onClick={() => {
+                    if (!isRowLoading && hasAuthId) handleAccept(record);
+                  }}
+                  className={`flex items-center justify-center w-8 h-8 p-1 rounded-full ${
+                    !isRowLoading && hasAuthId
+                      ? "cursor-pointer bg-neutral-100"
+                      : "cursor-not-allowed bg-neutral-50 opacity-50"
+                  }`}
+                  title={
+                    !hasAuthId
+                      ? "Missing user id"
+                      : isRowLoading
+                      ? "Processing..."
+                      : "Accept"
+                  }
+                >
+                  {isRowLoading ? <LoadingOutlined /> : <Check size={18} />}
+                </div>
+              </>
+            ) : (
+              <div
+                onClick={() => {
+                  if (!isRowLoading && hasAuthId) {
+                    if (isSuspended) handleAccept(record);
+                    else handleSuspend(record);
+                  }
+                }}
+                className={`flex items-center justify-center w-8 h-8 p-1 rounded-full ${
+                  !isRowLoading && hasAuthId
+                    ? "cursor-pointer bg-neutral-100"
+                    : "cursor-not-allowed bg-neutral-50 opacity-50"
+                }`}
+                title={
+                  !hasAuthId
+                    ? "Missing user id"
+                    : isRowLoading
+                    ? "Processing..."
+                    : isSuspended
+                    ? "Unblock"
+                    : "Block"
+                }
+              >
+                {isRowLoading ? (
+                  <LoadingOutlined />
+                ) : isSuspended ? (
+                  <Check size={18} />
+                ) : (
+                  <RxCross2 />
+                )}
+              </div>
+            )}
+
+            <div
+              onClick={() => {
+                if (!isRowLoading && hasAuthId) handleDelete(record);
+              }}
+              className={`flex items-center justify-center w-8 h-8 p-1 rounded-full ${
+                !isRowLoading && hasAuthId
+                  ? "cursor-pointer bg-neutral-100"
+                  : "cursor-not-allowed bg-neutral-50 opacity-50"
+              }`}
+              title={
+                !hasAuthId
+                  ? "Missing user id"
+                  : isRowLoading
+                  ? "Processing..."
+                  : "Delete"
+              }
+            >
+              {isRowLoading ? <LoadingOutlined /> : <Trash2 size={16} />}
+            </div>
           </div>
-          <div
-            onClick={() => handleEdit(record)}
-            className="bg-neutral-100 h-8 w-8 rounded-full p-1 flex justify-center items-center cursor-pointer"
-            title="Edit"
-          >
-            <FaPencilAlt />
-          </div>
-          <div
-            onClick={() => handleDelete(record.key)}
-            className="bg-neutral-100 h-8 w-8 rounded-full p-1 flex justify-center items-center cursor-pointer text-red-500"
-            title="Delete"
-          >
-            <RxCrossCircled />
-          </div>
-        </div>
-      ),
+        );
+      },
     },
   ];
 
   return (
-    <div className="bg-white p-6 rounded-xl shadow-sm mb-10">
-      <div className="flex justify-between items-center mb-4">
+    <div className="p-6 mb-10 bg-white shadow-sm rounded-xl">
+      <div className="flex items-center justify-between mb-4">
         <h2 className="text-lg font-semibold">Business Portfolio</h2>
         <div className="flex items-center gap-2">
           <Input
             prefix={<SearchOutlined />}
             placeholder="Search..."
-            onChange={(e) => setSearchText(e.target.value)}
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
             className="w-60"
             allowClear
+            disabled={isLoading}
           />
-          <Button>
-            Filter <DownOutlined />
-          </Button>
-          <button className="flex justify-center items-center gap-2 bg-white px-6 py-2 rounded-3xl border">
-            <FaPlus /> Add
-          </button>
-          <RxDotsVertical />
+          <RangePicker
+            placeholder={["Start date", "End date"]}
+            onChange={handleDateRangeChange}
+            value={dateRange}
+            disabled={isLoading}
+          />
         </div>
       </div>
 
-      <Table
-        columns={columns}
-        dataSource={filteredData}
-        pagination={{ pageSize: 5 }}
-        rowKey="key"
-      />
+      <Spin spinning={isLoading} indicator={<LoadingOutlined spin />}>
+        <Table
+          columns={columns}
+          dataSource={Array.isArray(data)
+            ? data.map((b) => ({
+                key: b?._id,
+                authId: b?.auth?._id || b?.auth?.id,
+                name: b?.name,
+                email: b?.auth?.email,
+                status: b?.auth?.status,
+                isActive: b?.auth?.isActive,
+                createdAt: b?.createdAt,
+                updatedAt: b?.updatedAt,
+                icon,
+              }))
+            : []}
+          rowKey="key"
+          onChange={(tablePagination, _filters, sorter) => {
+            setCurrentPage(tablePagination.current);
 
-      {/* Edit Modal */}
-      <Modal
-        title="Edit Business"
-        open={isModalVisible}
-        onCancel={handleCancel}
-        footer={null}
-        centered
-        destroyOnClose
-      >
-          <Form layout="vertical" form={form} onFinish={handleSave} >
-          <div className="flex justify-center mb-4">
-            <Upload
-              showUploadList={false}
-              beforeUpload={handleBeforeUpload}
-              accept="image/*"
-            >
-              <div className="border border-dashed border-gray-300 p-4 rounded-full cursor-pointer flex flex-col items-center">
-                {previewImage ? (
-                  <img
-                    src={previewImage}
-                    alt="Preview"
-                    className="h-24 w-24 rounded-full object-cover"
-                  />
-                ) : (
-                  <>
-                    <FaImage className="text-gray-400 h-8 w-8" />
-                    <p className="text-gray-400 text-sm mt-2">Upload Icon</p>
-                  </>
-                )}
-              </div>
-            </Upload>
-          </div>
-
-          <Form.Item name="name" label="Business Name" rules={[{ required: true }]}>
-            <Input placeholder="Enter business name" />
-          </Form.Item>
-
-          <Form.Item
-            name="email"
-            label="Email"
-            rules={[{ required: true, type: "email" }]}
-          >
-            <Input placeholder="Enter email address" />
-          </Form.Item>
-
-          <Form.Item name="sector" label="Sector" rules={[{ required: true }]}>
-            <Input placeholder="Enter sector" />
-          </Form.Item>
-
-          <Form.Item name="status" label="Status" rules={[{ required: true }]}>
-            <Input placeholder="Active / Pending / Inactive" />
-          </Form.Item>
-
-          <div className="flex justify-end gap-3 mt-4">
-            <Button onClick={handleCancel}>Cancel</Button>
-            <Button type="primary" htmlType="submit">
-              Save Changes
-            </Button>
-          </div>
-        </Form>
-      </Modal>
+            const newParams = {};
+            if (sorter?.field) {
+              newParams.sortBy = sorter.field;
+              newParams.sortOrder = sorter.order === "ascend" ? "asc" : "desc";
+            }
+            setFilterParams(newParams);
+          }}
+          pagination={{
+            current: pagination.page || 1,
+            pageSize: pagination.limit || 10,
+            total: pagination.total || 0,
+            showTotal: (total) => `Total ${total} items`,
+            showSizeChanger: false,
+            position: ["bottomRight"],
+          }}
+        />
+      </Spin>
 
       {/* Right-side Profile Drawer */}
       <Drawer
@@ -331,33 +368,33 @@ const BusinessPortfolio = () => {
       >
         {selectedBusiness && (
           <div className="p-4">
-            <div className="rounded-xl overflow-hidden mb-4">
-              <img src={COVER} alt="cover" className="w-full h-40 object-cover" />
+            <div className="mb-4 overflow-hidden rounded-xl">
+              <img src={COVER} alt="cover" className="object-cover w-full h-40" />
             </div>
 
             <div className="flex items-center gap-3 mb-2">
               <img
                 src={selectedBusiness.icon}
                 alt={selectedBusiness.name}
-                className="h-12 w-12 rounded-full object-cover ring-1 ring-gray-200"
+                className="object-cover w-12 h-12 rounded-full ring-1 ring-gray-200"
               />
               <div className="flex flex-col">
                 <div className="flex items-center gap-2">
-                  <span className="font-semibold text-base">{selectedBusiness.name}</span>
+                  <span className="text-base font-semibold">{selectedBusiness.name}</span>
                   {selectedBusiness.verified && (
                     <span
                       title="Verified"
-                      className="inline-flex items-center gap-1 text-green-600 text-xs font-medium"
+                      className="inline-flex items-center gap-1 text-xs font-medium text-green-600"
                     >
                       <BsShieldCheck /> Verified
                     </span>
                   )}
                 </div>
-                <span className="text-gray-500 text-xs">Sydney, Australia</span>
+                <span className="text-xs text-gray-500">Sydney, Australia</span>
               </div>
             </div>
 
-            <p className="text-gray-600 text-sm mb-3">
+            <p className="mb-3 text-sm text-gray-600">
               {selectedBusiness.overview || "No overview provided."}
             </p>
 
@@ -407,7 +444,7 @@ const BusinessPortfolio = () => {
             <Divider />
 
             <div className="mb-2 font-semibold">Offered Rewards</div>
-            <p className="text-gray-600 text-sm">
+            <p className="text-sm text-gray-600">
               {selectedBusiness.offeredRewards || "No rewards listed."}
             </p>
           </div>

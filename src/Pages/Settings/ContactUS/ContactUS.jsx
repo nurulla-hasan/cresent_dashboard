@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import { useState } from "react";
 import { CgMoreVertical } from "react-icons/cg";
 import { FaEdit, FaTrash } from "react-icons/fa";
@@ -9,6 +8,7 @@ import {
 } from "react-icons/ai";
 import { Modal, Input, Select, Button } from "antd";
 import Swal from "sweetalert2";
+import { Link } from "react-router-dom";
 
 const teamMembers = [
   {
@@ -257,9 +257,9 @@ export default function ContactUs() {
           <h3 className="font-medium">Update your password</h3>
           <p className="text-sm text-gray-500">
             Change or update your password. Forgot your password?{" "}
-            <a href="#" className="text-blue-600 underline">
+            <Link to="/forgate-password" className="text-blue-600 underline">
               Click here
-            </a>{" "}
+            </Link>{" "}
             to reset it.
           </p>
         </div>

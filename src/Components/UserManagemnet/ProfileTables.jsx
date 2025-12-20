@@ -1,236 +1,115 @@
-/* eslint-disable no-unused-vars */
 import { useState } from "react";
+import { useDispatch } from "react-redux";
 import {
-  Button,
   DatePicker,
-  Dropdown,
-  Form,
   Input,
-  Menu,
   Modal,
-  Select,
   Table,
-  Upload,
 } from "antd";
-import { DownOutlined, SearchOutlined } from "@ant-design/icons";
+import { SearchOutlined, LoadingOutlined } from "@ant-design/icons";
 import { VscEye } from "react-icons/vsc";
+import { RxCross2 } from "react-icons/rx";
 import user from "../../assets/image/user.png";
-import { MdOtherHouses } from "react-icons/md";
-import { FaImage, FaPencilAlt, FaUsers } from "react-icons/fa";
-import { GoOrganization } from "react-icons/go";
-import { RxCrossCircled } from "react-icons/rx";
+import { Check, Trash2 } from "lucide-react";
+import useSmartFetchHook from "../hooks/useSmartFetchHook.ts";
+import { useGetUserReportQuery } from "../../redux/feature/user/userApis.js";
+import { baseApi } from "../../redux/feature/baseApi";
 
 const ProfileTables = () => {
-  const { Option } = Select;
+  const { RangePicker } = DatePicker;
+  const [dateRange, setDateRange] = useState(null);
+  const dispatch = useDispatch();
+  const [rowLoadingId, setRowLoadingId] = useState(null);
+  const [isViewOpen, setIsViewOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
 
-  const originalData = [
-    {
-      key: "1",
-      name: "Josh Bill",
-      email: "johnnb@gmail.com",
-      dateTime: "12 Dec 2023 03:00 PM",
-      donationType: "Business",
-      donationMessage: "-",
-      amount: 34.5,
-      status: "Pending",
-    },
-    {
-      key: "2",
-      name: "M Karim",
-      email: "kkkarim@gmail.com",
-      dateTime: "10 Dec 2023 02:00 PM",
-      donationType: "Donor",
-      donationMessage: "Sending love & hope to everyone you’re helping",
-      amount: 62.75,
-      status: "Active",
-    },
-    {
-      key: "3",
-      name: "Josh Adam",
-      email: "jadddam@gmail.com",
-      dateTime: "08 Dec 2023 05:30 PM",
-      donationType: "Organization",
-      donationMessage: "-",
-      amount: 15.2,
-      status: "Suspended",
-    },
-    {
-      key: "4",
-      name: "Fajar Surya",
-      email: "fjsurya@gmail.com",
-      dateTime: "15 Dec 2023 09:00 AM",
-      donationType: "Donor",
-      donationMessage: "Sending love & hope to everyone you’re helping",
-      amount: 47.3,
-      status: "Active",
-    },
-    {
-      key: "5",
-      name: "Linda Blair",
-      email: "lindablair98@gmail.com",
-      dateTime: "18 Dec 2023 01:00 PM",
-      donationType: "Business",
-      donationMessage: "Sending love & hope to everyone you’re helping",
-      amount: 23.9,
-      status: "Pending",
-    },
-  ];
+  const { 
+    searchTerm,
+    setSearchTerm,
+    setCurrentPage,
+    data: apiResponse,
+    pagination,
+    isLoading,
+    setFilterParams,
+  } = useSmartFetchHook(useGetUserReportQuery);
 
-  const [data, setData] = useState(originalData);
-  const [searchText, setSearchText] = useState("");
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  const [previewImage, setPreviewImage] = useState(null);
-  const [selectedProfile, setSelectedProfile] = useState(null);
-  const [form] = Form.useForm();
+  // Extract users array from API response
+  const data = apiResponse || [];
 
-  const handleBeforeUpload = (file) => {
-    setPreviewImage(URL.createObjectURL(file));
-    form.setFieldsValue({ profileImage: file });
-    return false;
+  const handleView = (record) => {
+    setSelectedUser(record);
+    setIsViewOpen(true);
   };
 
-  const handleEdit = (record) => {
-    setSelectedProfile(record);
-    form.setFieldsValue({
-      firstName: record.name.split(" ")[0],
-      lastName: record.name.split(" ")[1],
-      email: record.email,
-      mobile: "+61 470 292 023",
-      password: "********",
-    });
-    setPreviewImage(user);
-    setIsModalVisible(true);
-  };
-
-  const handleCancel = () => {
-    setIsModalVisible(false);
-    form.resetFields();
-    setPreviewImage(null);
-  };
-
-  const handleSave = (values) => {
-    console.log("Updated values:", values);
-    setIsModalVisible(false);
-  };
-
-  const handleSort = (key, order) => {
-    const sorted = [...data].sort((a, b) => {
-      if (key === "amount") {
-        return order === "ascend" ? a.amount - b.amount : b.amount - a.amount;
-      } else if (key === "name") {
-        return order === "ascend"
-          ? a.name.localeCompare(b.name)
-          : b.name.localeCompare(a.name);
-      } else if (key === "dateTime") {
-        return order === "ascend"
-          ? new Date(a.dateTime) - new Date(b.dateTime)
-          : new Date(b.dateTime) - new Date(a.dateTime);
-      }
-      return 0;
-    });
-    setData(sorted);
-  };
-
-  const handleRoleFilter = (role) => {
-    if (role === "All") {
-      setData(originalData);
-    } else {
-      setData(originalData.filter((item) => item.donationType === role));
+  const handleAccept = async (record) => {
+    try {
+      setRowLoadingId(record._id);
+      await dispatch(
+        baseApi.endpoints.changeUserStatus.initiate({ id: record._id, status: "verified" })
+      ).unwrap();
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setRowLoadingId(null);
     }
   };
 
-  const filteredData = data.filter(
-    (item) =>
-      item.name.toLowerCase().includes(searchText.toLowerCase()) ||
-      item.email.toLowerCase().includes(searchText.toLowerCase())
-  );
+  const handleSuspend = async (record) => {
+    try {
+      setRowLoadingId(record._id);
+      await dispatch(
+        baseApi.endpoints.changeUserStatus.initiate({ id: record._id, status: "suspended" })
+      ).unwrap();
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setRowLoadingId(null);
+    }
+  };
+
+  const handleDelete = async (record) => {
+    try {
+      setRowLoadingId(record._id);
+      await dispatch(
+        baseApi.endpoints.deleteUser.initiate(record._id)
+      ).unwrap();
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setRowLoadingId(null);
+    }
+  };
+
+  const handleDateRangeChange = (dates, dateStrings) => {
+    setDateRange(dates);
+
+    // Update filter params with date range
+    const newFilterParams = {};
+
+    if (dates && dates[0] && dates[1]) {
+      newFilterParams.startDate = dateStrings[0];
+      newFilterParams.endDate = dateStrings[1];
+    }
+
+    setFilterParams(newFilterParams);
+  };
 
   const columns = [
     {
-      title: (
-        <div className="flex items-center gap-2">
-          Name/Email
-          <Select
-            defaultValue="ascend"
-            style={{ width: 90 }}
-            onChange={(value) => handleSort("name", value)}
-            suffixIcon={<DownOutlined />}
-          >
-            <Option value="ascend">Ascend</Option>
-            <Option value="descend">Descend</Option>
-          </Select>
-        </div>
-      ),
+      title: "Email",
       dataIndex: "email",
       key: "email",
-      render: (text, record) => (
-        <div className="flex gap-2 items-center">
+      render: (email) => (
+        <div className="flex items-center gap-2">
           <img
             src={user}
-            alt={record.name}
-            className="h-10 w-10 rounded-full"
+            alt={email}
+            className="w-10 h-10 rounded-full"
           />
           <div>
-            <p className="font-medium">{record.name}</p>
-            <p className="text-gray-400 text-sm">{record.email}</p>
+            <p className="font-medium">{email}</p>
+            <p className="text-sm text-gray-400">{email}</p>
           </div>
-        </div>
-      ),
-    },
-    {
-      title: (
-        <div className="flex items-center gap-2">
-          Last Active
-          <Select
-            defaultValue="descend"
-            style={{ width: 100 }}
-            onChange={(value) => handleSort("dateTime", value)}
-            suffixIcon={<DownOutlined />}
-          >
-            <Option value="ascend">Oldest</Option>
-            <Option value="descend">Recent</Option>
-          </Select>
-        </div>
-      ),
-      dataIndex: "dateTime",
-      key: "dateTime",
-    },
-    {
-      title: (
-        <div className="flex items-center gap-2">
-          Role
-          <Select
-            defaultValue="All"
-            style={{ width: 130 }}
-            onChange={handleRoleFilter}
-            suffixIcon={<DownOutlined />}
-          >
-            <Option value="All">All</Option>
-            <Option value="Business">Business</Option>
-            <Option value="Organization">Organization</Option>
-            <Option value="Donor">Donor</Option>
-          </Select>
-        </div>
-      ),
-      dataIndex: "donationType",
-      key: "donationType",
-      render: (value) => (
-        <div className="px-4 py-2 rounded-3xl flex items-center gap-2">
-          {value === "Business" && (
-            <div className="flex items-center gap-1 bg-blue-100 text-blue-600 px-4 py-1 rounded-2xl">
-              <MdOtherHouses className="h-5 w-5" /> Business
-            </div>
-          )}
-          {value === "Organization" && (
-            <div className="flex items-center gap-1 bg-green-100 text-green-600 px-4 py-1 rounded-2xl">
-              <GoOrganization className="h-5 w-5" /> Organization
-            </div>
-          )}
-          {value === "Donor" && (
-            <div className="flex items-center gap-1 bg-pink-100 text-pink-600 px-4 py-1 rounded-2xl">
-              <FaUsers className="h-5 w-5" /> Donor
-            </div>
-          )}
         </div>
       ),
     },
@@ -238,161 +117,314 @@ const ProfileTables = () => {
       title: "Status",
       dataIndex: "status",
       key: "status",
+      filters: [
+        { text: "Verified", value: "verified" },
+        { text: "Pending", value: "pending" },
+        { text: "Suspended", value: "suspended" },
+      ],
+      onFilter: (value, record) => record.status === value,
       render: (status) => (
         <span
-          className={`px-4 py-1 rounded-2xl text-sm font-medium ${
-            status === "Active"
+          className={`px-4 py-1 rounded-2xl text-sm font-medium ${status === "verified"
               ? "bg-green-100 text-green-600"
-              : status === "Pending"
-              ? "bg-yellow-100 text-yellow-600"
-              : "bg-gray-200 text-gray-600"
-          }`}
+              : status === "pending"
+                ? "bg-yellow-100 text-yellow-600"
+                : "bg-gray-200 text-gray-600"
+            }`}
         >
           {status}
         </span>
       ),
     },
     {
+      title: "Verified by OTP",
+      dataIndex: "isVerifiedByOTP",
+      key: "isVerifiedByOTP",
+      filters: [
+        { text: "Yes", value: true },
+        { text: "No", value: false },
+      ],
+      onFilter: (value, record) => record.isVerifiedByOTP === value,
+      render: (isVerified) => (
+        <span
+          className={`px-4 py-1 rounded-2xl text-sm font-medium ${isVerified
+              ? "bg-green-100 text-green-600"
+              : "bg-red-100 text-red-600"
+            }`}
+        >
+          {isVerified ? "Yes" : "No"}
+        </span>
+      ),
+    },
+    {
+      title: "Active",
+      dataIndex: "isActive",
+      key: "isActive",
+      filters: [
+        { text: "Active", value: true },
+        { text: "Inactive", value: false },
+      ],
+      onFilter: (value, record) => record.isActive === value,
+      render: (isActive) => (
+        <span
+          className={`px-4 py-1 rounded-2xl text-sm font-medium ${isActive
+              ? "bg-green-100 text-green-600"
+              : "bg-red-100 text-red-600"
+            }`}
+        >
+          {isActive ? "Active" : "Inactive"}
+        </span>
+      ),
+    },
+    {
+      title: "Created At",
+      dataIndex: "createdAt",
+      key: "createdAt",
+      render: (createdAt) => (
+        <p className="font-medium">
+          {createdAt ? new Date(createdAt).toLocaleString() : "-"}
+        </p>
+      ),
+    },
+    {
       title: "Action",
       key: "action",
-      render: (_, record) => (
-        <div className="flex justify-center items-center gap-3 text-lg">
-          <div className="bg-neutral-100 h-8 w-8 rounded-full p-1 flex justify-center items-center cursor-pointer">
-            <VscEye />
+      align: "center",
+      render: (_, record) => {
+        const isRowLoading = rowLoadingId === record?._id;
+        const isPending = record?.status === "pending";
+        const isSuspended = record?.status === "suspended";
+        return (
+          <div className="flex items-center justify-center gap-3 text-lg">
+            <div
+              onClick={() => handleView(record)}
+              className="flex items-center justify-center w-8 h-8 p-1 rounded-full cursor-pointer bg-neutral-100"
+              title="View"
+            >
+              <VscEye />
+            </div>
+            {isPending ? (
+              <>
+                <div
+                  onClick={() => { if (!isRowLoading) handleSuspend(record); }}
+                  className={`flex items-center justify-center w-8 h-8 p-1 rounded-full ${!isRowLoading ? "cursor-pointer bg-neutral-100" : "cursor-not-allowed bg-neutral-50 opacity-50"}`}
+                  title={isRowLoading ? "Processing..." : "Suspend"}
+                >
+                  {isRowLoading ? <LoadingOutlined /> : <RxCross2 />}
+                </div>
+                <div
+                  onClick={() => { if (!isRowLoading) handleAccept(record); }}
+                  className={`flex items-center justify-center w-8 h-8 p-1 rounded-full ${!isRowLoading ? "cursor-pointer bg-neutral-100" : "cursor-not-allowed bg-neutral-50 opacity-50"}`}
+                  title={isRowLoading ? "Processing..." : "Accept"}
+                >
+                  {isRowLoading ? <LoadingOutlined /> : <Check size={18} />}
+                </div>
+              </>
+            ) : (
+              <div
+                onClick={() => { if (!isRowLoading) (isSuspended ? handleAccept(record) : handleSuspend(record)); }}
+                className={`flex items-center justify-center w-8 h-8 p-1 rounded-full ${!isRowLoading ? "cursor-pointer bg-neutral-100" : "cursor-not-allowed bg-neutral-50 opacity-50"}`}
+                title={isRowLoading ? "Processing..." : (isSuspended ? "Unblock" : "Block")}
+              >
+                {isRowLoading ? <LoadingOutlined /> : (isSuspended ? <Check size={18} /> : <RxCross2 />)}
+              </div>
+            )}
+            <div
+              onClick={() => { if (!isRowLoading) handleDelete(record); }}
+              className={`flex items-center justify-center w-8 h-8 p-1 rounded-full ${!isRowLoading ? "cursor-pointer bg-neutral-100" : "cursor-not-allowed bg-neutral-50 opacity-50"}`}
+              title={isRowLoading ? "Processing..." : "Delete"}
+            >
+              {isRowLoading ? <LoadingOutlined /> : <Trash2 size={16} />}
+            </div>
           </div>
-          <div
-            onClick={() => handleEdit(record)}
-            className="bg-neutral-100 h-8 w-8 rounded-full p-1 flex justify-center items-center cursor-pointer"
-          >
-            <FaPencilAlt />
-          </div>
-          <div className="bg-neutral-100 h-8 w-8 rounded-full p-1 flex justify-center items-center cursor-pointer">
-            <RxCrossCircled />
-          </div>
-        </div>
-      ),
+        );
+      },
     },
   ];
 
-  const menu = (
-    <Menu>
-      <Menu.Item>Sort A - Z</Menu.Item>
-      <Menu.Item>Sort Z - A</Menu.Item>
-      <Menu.Item>Recent First</Menu.Item>
-      <Menu.Item>Oldest First</Menu.Item>
-    </Menu>
-  );
-
   return (
-    <div className="bg-white p-6 rounded-xl shadow-sm mb-10">
-      <div className="flex justify-between items-center mb-4">
+    <div className="p-6 mb-10 bg-white shadow-sm rounded-xl">
+      <div className="flex items-center justify-between mb-4">
         <h2 className="text-lg font-semibold">Profiles</h2>
         <div className="flex items-center gap-2">
           <Input
             prefix={<SearchOutlined />}
             placeholder="Search..."
-            onChange={(e) => setSearchText(e.target.value)}
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
             className="w-60"
           />
-          <Dropdown overlay={menu} trigger={["click"]}>
-            <Button>
-              Filter <DownOutlined />
-            </Button>
-          </Dropdown>
-          <DatePicker placeholder="Select interval" />
+          <RangePicker
+            placeholder={["Start date", "End date"]}
+            onChange={handleDateRangeChange}
+            value={dateRange}
+          />
         </div>
       </div>
 
       <Table
         columns={columns}
-        dataSource={filteredData}
-        pagination={{ pageSize: 5 }}
-        rowKey="key"
+        dataSource={data}
+        loading={isLoading}
+        onChange={(pagination, filters, sorter) => {
+          setCurrentPage(pagination.current);
+
+          const newFilterParams = {};
+
+          if (sorter?.field) {
+            newFilterParams.sortBy = sorter.field;
+            newFilterParams.sortOrder = sorter.order === "ascend" ? "asc" : "desc";
+          }
+
+          Object.keys(filters).forEach((key) => {
+            if (filters[key]) {
+              newFilterParams[key] = filters[key][0];
+            }
+          });
+
+          setFilterParams(newFilterParams);
+        }}
+        pagination={{
+          current: pagination.page || 1,
+          pageSize: pagination.limit || 5,
+          total: pagination.total || 0,
+          showTotal: (total) => `Total ${total} items`,
+          showSizeChanger: false,
+          position: ['bottomRight'],
+        }}
+        rowKey="_id"
       />
 
+      {/* View User Modal */}
       <Modal
-        title="Edit Profile"
-        open={isModalVisible}
-        onCancel={handleCancel}
+        title="User Details"
+        open={isViewOpen}
+        onCancel={() => setIsViewOpen(false)}
         footer={null}
         centered
+        width={600}
       >
-        <Form layout="vertical" form={form} onFinish={handleSave}>
-          <p className="text-gray-400 mb-3">
-            Update profile information of the user.{" "}
-          </p>
-          <div className="flex justify-center mb-4">
-            <Upload
-              showUploadList={false}
-              beforeUpload={handleBeforeUpload}
-              accept="image/*"
-            >
-              <div className="border border-dashed border-gray-300 p-4 rounded-full cursor-pointer flex flex-col items-center">
-                {previewImage ? (
-                  <img
-                    src={previewImage}
-                    alt="Preview"
-                    className="h-24 w-24 rounded-full object-cover"
-                  />
-                ) : (
-                  <>
-                    <FaImage className="text-gray-400 h-8 w-8" />
-                    <p className="text-gray-400 text-sm mt-2">Upload Image</p>
-                  </>
-                )}
+        {selectedUser ? (
+          <div className="space-y-6">
+            {/* Header Section */}
+            <div className="flex items-center gap-4">
+              <div className="flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl">
+                <span className="text-xl font-bold text-white">
+                  {selectedUser.firstName?.charAt(0)?.toUpperCase() || selectedUser.email?.charAt(0)?.toUpperCase() || "U"}
+                </span>
               </div>
-            </Upload>
-          </div>
-          <div className="flex justify-between items-center gap-2">
-            <div className="w-[50%]">
-              <Form.Item
-                name="firstName"
-                label="First Name"
-                rules={[{ required: true }]}
-              >
-                <Input placeholder="Enter first name" />
-              </Form.Item>
+              <div className="flex-1">
+                <h3 className="mb-1 text-xl font-semibold text-gray-900">
+                  {selectedUser.firstName && selectedUser.lastName 
+                    ? `${selectedUser.firstName} ${selectedUser.lastName}` 
+                    : selectedUser.email?.split('@')[0] || 'Unknown User'}
+                </h3>
+                <p className="text-sm text-gray-600">{selectedUser.email}</p>
+              </div>
             </div>
-            <div className="w-[50%]">
-              <Form.Item
-                name="lastName"
-                label="Last Name"
-                rules={[{ required: true }]}
-              >
-                <Input placeholder="Enter last name" />
-              </Form.Item>
+
+            {/* Key Details Grid */}
+            <div className="grid grid-cols-2 gap-4">
+              <div className="p-4 border border-blue-100 rounded-lg bg-blue-50">
+                <div className="flex items-center gap-2 mb-1">
+                  <div className="flex items-center justify-center w-8 h-8 bg-blue-100 rounded-full">
+                    <span className="text-xs font-semibold text-blue-600">S</span>
+                  </div>
+                  <p className="text-xs font-medium tracking-wide text-blue-700 uppercase">Status</p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className={`w-2 h-2 rounded-full ${
+                    selectedUser.status === "verified" ? "bg-green-500" :
+                    selectedUser.status === "pending" ? "bg-yellow-500" :
+                    selectedUser.status === "suspended" ? "bg-red-500" : "bg-gray-400"
+                  }`}></div>
+                  <p className="text-sm font-semibold text-gray-900 capitalize">
+                    {selectedUser.status || "Unknown"}
+                  </p>
+                </div>
+              </div>
+
+              <div className="p-4 border border-green-100 rounded-lg bg-green-50">
+                <div className="flex items-center gap-2 mb-1">
+                  <div className="flex items-center justify-center w-8 h-8 bg-green-100 rounded-full">
+                    <span className="text-xs font-semibold text-green-600">A</span>
+                  </div>
+                  <p className="text-xs font-medium tracking-wide text-green-700 uppercase">Active</p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className={`w-2 h-2 rounded-full ${
+                    selectedUser.isActive ? "bg-green-500" : "bg-red-500"
+                  }`}></div>
+                  <p className="text-sm font-semibold text-gray-900">
+                    {selectedUser.isActive ? "Active" : "Inactive"}
+                  </p>
+                </div>
+              </div>
+
+              <div className="p-4 border border-purple-100 rounded-lg bg-purple-50">
+                <div className="flex items-center gap-2 mb-1">
+                  <div className="flex items-center justify-center w-8 h-8 bg-purple-100 rounded-full">
+                    <span className="text-xs font-semibold text-purple-600">V</span>
+                  </div>
+                  <p className="text-xs font-medium tracking-wide text-purple-700 uppercase">OTP Verified</p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className={`w-2 h-2 rounded-full ${
+                    selectedUser.isVerifiedByOTP ? "bg-green-500" : "bg-gray-400"
+                  }`}></div>
+                  <p className="text-sm font-semibold text-gray-900">
+                    {selectedUser.isVerifiedByOTP ? "Verified" : "Not Verified"}
+                  </p>
+                </div>
+              </div>
+
+              <div className="p-4 border border-orange-100 rounded-lg bg-orange-50">
+                <div className="flex items-center gap-2 mb-1">
+                  <div className="flex items-center justify-center w-8 h-8 bg-orange-100 rounded-full">
+                    <span className="text-xs font-semibold text-orange-600">D</span>
+                  </div>
+                  <p className="text-xs font-medium tracking-wide text-orange-700 uppercase">Joined</p>
+                </div>
+                <p className="text-sm font-semibold text-gray-900">
+                  {selectedUser.createdAt ? new Date(selectedUser.createdAt).toLocaleDateString() : "-"}
+                </p>
+              </div>
+            </div>
+
+            {/* Additional Info */}
+            <div className="p-4 rounded-lg bg-gray-50">
+              <h4 className="mb-3 text-sm font-medium text-gray-700">Additional Information</h4>
+              <div className="space-y-2">
+                <div className="flex items-center justify-between px-3 py-2 bg-white rounded-lg">
+                  <span className="text-sm text-gray-600">Full Name</span>
+                  <span className="text-sm font-medium text-gray-900">
+                    {selectedUser.firstName && selectedUser.lastName 
+                      ? `${selectedUser.firstName} ${selectedUser.lastName}` 
+                      : "Not specified"}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between px-3 py-2 bg-white rounded-lg">
+                  <span className="text-sm text-gray-600">Mobile</span>
+                  <span className="text-sm font-medium text-gray-900">
+                    {selectedUser.mobile || "Not specified"}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between px-3 py-2 bg-white rounded-lg">
+                  <span className="text-sm text-gray-600">User ID</span>
+                  <span className="text-sm font-medium text-gray-900">
+                    {selectedUser._id?.slice(-8) || "-"}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between px-3 py-2 bg-white rounded-lg">
+                  <span className="text-sm text-gray-600">Full Created Date</span>
+                  <span className="text-sm font-medium text-gray-900">
+                    {selectedUser.createdAt ? new Date(selectedUser.createdAt).toLocaleString() : "-"}
+                  </span>
+                </div>
+              </div>
             </div>
           </div>
-
-          <Form.Item
-            name="email"
-            label="Email"
-            rules={[{ required: true, type: "email" }]}
-          >
-            <Input placeholder="Enter email" />
-          </Form.Item>
-          <Form.Item name="mobile" label="Mobile" rules={[{ required: true }]}>
-            <Input placeholder="Enter phone number" />
-          </Form.Item>
-          <Form.Item name="password" label="Update Password">
-            <Input.Password placeholder="Enter new password" />
-          </Form.Item>
-
-          <div className="flex justify-end gap-3 mt-4">
-            <button
-              onClick={handleCancel}
-              className="bg-white px-4 py-2 rounded-3xl border"
-            >
-              Discard Changes
-            </button>
-            <button
-              type="submit"
-              className="bg-black text-white px-4 py-2 rounded-3xl border"
-            >
-              Apply Changes
-            </button>
-          </div>
-        </Form>
+        ) : null}
       </Modal>
     </div>
   );

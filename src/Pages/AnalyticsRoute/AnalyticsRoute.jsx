@@ -16,11 +16,47 @@ import {
   YAxis,
   Cell,
 } from "recharts";
-import { Button, Checkbox, Divider, Modal, Select, Space } from "antd";
-import { FaArrowDown, FaFilter } from "react-icons/fa";
+import { Button, Select } from "antd";
+import { FaArrowDown } from "react-icons/fa";
+import { useGetUserEngagementQuery, useGetDonationChartQuery } from "../../redux/feature/user/userApis";
 const { Option } = Select;
 const AnalyticsRoute = () => {
   const [active, setActive] = useState("Today");
+
+  const userEngagementTimeFilter = useMemo(() => {
+    if (active === "Today") return "today";
+    if (active === "This Week") return "week";
+    if (active === "This Month") return "month";
+    return "month";
+  }, [active]);
+
+  const { data: userEngagementData, isLoading: userEngagementLoading } = useGetUserEngagementQuery({
+    timeFilter: userEngagementTimeFilter,
+    role: "CLIENT",
+  });
+
+  const [donationType, setDonationType] = useState("all");
+  const [year, setYear] = useState(new Date().getFullYear());
+
+  const { data: donationChart, isLoading: donationLoading } = useGetDonationChartQuery({ 
+    donationType: donationType === "all" ? undefined : donationType, 
+    year 
+  });
+
+  const monthNames = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  const dataChart = useMemo(() => {
+    const list = donationChart?.data?.monthlyDonations || [];
+    const byMonth = new Map(list.map((m) => [m.month, m]));
+    return Array.from({ length: 12 }, (_, i) => {
+      const month = i + 1;
+      const item = byMonth.get(month);
+      return {
+        name: monthNames[i],
+        totalAmount: item?.totalAmount || 0,
+        count: item?.count || 0,
+      };
+    });
+  }, [donationChart]);
 
   const getFilteredData = () => {
     switch (active) {
@@ -40,9 +76,9 @@ const AnalyticsRoute = () => {
       active === label ? "bg-black text-white" : "bg-white text-black"
     }`;
   const PALETTE = {
-    org: "#6ee7b7", // green-300
-    biz: "#93c5fd", // blue-300
-    donor: "#fbcfe8", // pink-200
+    org: "#6ee7b7", 
+    biz: "#93c5fd", 
+    donor: "#fbcfe8",
     pie: ["#c7d2fe", "#bae6fd", "#fde68a", "#fecaca", "#e9d5ff", "#d1fae5"],
   };
   const causes = [
@@ -82,55 +118,21 @@ const AnalyticsRoute = () => {
       color: PALETTE.pie[5],
     },
   ];
-  const dataChart = [
-    { name: "Jan", Organization: 10, Business: 10, Donor: 10 },
-    { name: "Feb", Organization: 20, Business: 15, Donor: 15 },
-    { name: "Mar", Organization: 15, Business: 10, Donor: 15 },
-    { name: "Apr", Organization: 25, Business: 20, Donor: 25 },
-    { name: "May", Organization: 30, Business: 30, Donor: 30 },
-    { name: "Jun", Organization: 20, Business: 20, Donor: 20 },
-    { name: "Jul", Organization: 25, Business: 25, Donor: 30 },
-    { name: "Aug", Organization: 40, Business: 30, Donor: 30 },
-    { name: "Sep", Organization: 25, Business: 25, Donor: 25 },
-    { name: "Oct", Organization: 30, Business: 25, Donor: 30 },
-    { name: "Nov", Organization: 35, Business: 30, Donor: 30 },
-    { name: "Dec", Organization: 40, Business: 30, Donor: 30 },
-  ];
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  const [userTypes, setUserTypes] = useState(["Organizations"]);
-  const [causeCategory, setCauseCategory] = useState("Emergency Relief");
-  const [donationTypes, setDonationTypes] = useState(["Recurring"]);
-
-  const userOptions = ["Donors", "Organizations", "Businesses"];
-  const donationOptions = ["Round-up", "Recurring", "One-time"];
-  const causeOptions = ["Emergency Relief", "Education", "Refugee Support"];
-
-  const handleClear = () => {
-    setUserTypes([]);
-    setCauseCategory("Emergency Relief");
-    setDonationTypes([]);
-  };
+  const dataChartStaticRemoved = null;
 
   return (
     <div>
-      <div className="flex justify-between items-center gap-5">
+      <div className="flex items-center justify-between gap-5">
         <div className="w-full md:w-[70%]">
-          <h1 className="text-xl md:text-3xl font-semibold my-3">Analytics</h1>
-          <p className="text-gray-500 mb-10">
+          <h1 className="my-3 text-xl font-semibold md:text-3xl">Analytics</h1>
+          <p className="mb-10 text-gray-500">
             Track donor trends, popular causes, and user activity across the
             platform.
           </p>
         </div>
-        <div className="w-full md:w-[40%] flex justify-start items-center gap-5">
+        <div className="w-full md:w-[40%] flex justify-end items-center gap-5">
           <button
-            onClick={() => setIsModalVisible(true)}
-            className="bg-white px-6 py-2 rounded-3xl flex items-center gap-2"
-          >
-            <FaFilter />
-            Filter
-          </button>
-          <button
-            className={btnClass("Today")}
+            className={btnClass("Today")} 
             onClick={() => setActive("Today")}
           >
             Today
@@ -149,7 +151,7 @@ const AnalyticsRoute = () => {
           </button>
         </div>
       </div>
-      <div className="bg-white p-6 rounded-3xl my-10 border">
+      <div className="p-6 my-10 bg-white border rounded-3xl">
         <div>
           <div className="mb-12">
             <h1 className="text-2xl font-semibold ">User Engagement</h1>
@@ -160,92 +162,122 @@ const AnalyticsRoute = () => {
           </div>
         </div>
         <div className="grid grid-cols-3 gap-4 mb-8 ">
-          <div className="bg-gray-100 p-6 rounded-3xl">
-            <div className="flex justify-between items-center gap-2 mb-8">
+          <div className="p-6 bg-gray-100 rounded-3xl">
+            <div className="flex items-center justify-between gap-2 mb-8">
               <div>
-                <p className="tetx-xl font-semibold">Active Users</p>
+                <p className="font-semibold tetx-xl">Active Users</p>
                 <p className="text-neutral-400 ">
-                  {" "}
-                  <span className="text-green-500">+5.2%</span> vs last month
+                  {userEngagementData?.data?.activeUsersChangeText ? (
+                    <span className={userEngagementData.data.activeUsersChangeText.includes('+') ? "text-green-500" : "text-red-500"}>
+                      {userEngagementData.data.activeUsersChangeText} vs last month
+                    </span>
+                  ) : (
+                    <span className="text-gray-500">No change data</span>
+                  )}
                 </p>
               </div>
             </div>
 
             <h2 className="text-2xl font-semibold">
-              120,340{" "}
-              <span className="text-sm text-gray-400 ml-2">active Users</span>
+              {userEngagementLoading ? "Loading..." : userEngagementData?.data?.totalActiveUsers || 0}{" "}
+              <span className="ml-2 text-sm text-gray-400">active Users</span>
             </h2>
           </div>
-          <div className="bg-gray-100 p-6 rounded-3xl">
-            <div className="flex justify-between items-center gap-2 mb-8">
+          <div className="p-6 bg-gray-100 rounded-3xl">
+            <div className="flex items-center justify-between gap-2 mb-8">
               <div>
-                <p className="tetx-xl font-semibold">New Sign-ups</p>
+                <p className="font-semibold tetx-xl">New Sign-ups</p>
                 <p className="text-neutral-400 ">
-                  {" "}
-                  <span className="text-green-500">+5.2%</span> vs last month
+                  {userEngagementData?.data?.newUsersChangeText ? (
+                    <span className={userEngagementData.data.newUsersChangeText.includes('+') ? "text-green-500" : "text-red-500"}>
+                      {userEngagementData.data.newUsersChangeText} vs last month
+                    </span>
+                  ) : (
+                    <span className="text-gray-500">No change data</span>
+                  )}
                 </p>
               </div>
             </div>
 
             <h2 className="text-2xl font-semibold">
-              120,340{" "}
-              <span className="text-sm text-gray-400 ml-2">New Sign-ups</span>
+              {userEngagementLoading ? "Loading..." : userEngagementData?.data?.totalNewUsers || 0}{" "}
+              <span className="ml-2 text-sm text-gray-400">New Sign-ups</span>
             </h2>
           </div>
-          <div className="bg-gray-100 p-6 rounded-3xl">
-            <div className="flex justify-between items-center gap-2 mb-8">
+          <div className="p-6 bg-gray-100 rounded-3xl">
+            <div className="flex items-center justify-between gap-2 mb-8">
               <div>
-                <p className="tetx-xl font-semibold">Returning Users</p>
+                <p className="font-semibold tetx-xl">Returning Users</p>
                 <p className="text-neutral-400 ">
-                  {" "}
-                  <span className="text-green-500">+5.2%</span> vs last month
+                  {userEngagementData?.data?.returningUsersChangeText ? (
+                    <span className={userEngagementData.data.returningUsersChangeText.includes('+') ? "text-green-500" : "text-red-500"}>
+                      {userEngagementData.data.returningUsersChangeText} vs last month
+                    </span>
+                  ) : (
+                    <span className="text-gray-500">No change data</span>
+                  )}
                 </p>
               </div>
             </div>
 
             <h2 className="text-2xl font-semibold">
-              120,340{" "}
-              <span className="text-sm text-gray-400 ml-2">
+              {userEngagementLoading ? "Loading..." : userEngagementData?.data?.totalReturningUsers || 0}{" "}
+              <span className="ml-2 text-sm text-gray-400">
                 Returning Users
               </span>
             </h2>
           </div>
         </div>
-        {/* chart will be here  */}
       </div>
 
       {/* Donations Trend */}
-      <div className="bg-white p-6 rounded-3xl border ">
-        <div className="h-[400px] w-full py-6">
-          <h1 className="text-2xl font-medium mb-6">Donation Trend</h1>
+      <div className="p-6 bg-white border rounded-3xl ">
+        <div className="h-[460px] w-full py-6">
+          <div className="flex items-center justify-between mb-6">
+            <h1 className="text-2xl font-medium">Donation Trend</h1>
+            <div className="flex items-center gap-3">
+              <Select
+                size="middle"
+                value={donationType}
+                onChange={(v) => setDonationType(v)}
+                style={{ width: 150 }}
+              >
+                <Option value="all">All Types</Option>
+                <Option value="one-time">One-time</Option>
+                <Option value="recurring">Recurring</Option>
+                <Option value="round-up">Round-up</Option>
+              </Select>
+              <Select
+                size="middle"
+                value={year}
+                onChange={(v) => setYear(v)}
+                style={{ width: 120 }}
+              >
+                {Array.from({ length: 5 }, (_, idx) => new Date().getFullYear() - idx).map((y) => (
+                  <Option key={y} value={y}>{y}</Option>
+                ))}
+              </Select>
+            </div>
+          </div>
 
-          <ResponsiveContainer
-            width="100%"
-            height="100%"
-            Title="Donation Trend"
-          >
-            <BarChart data={dataChart} barSize={150}>
+          <ResponsiveContainer width="100%" height="100%" Title="Donation Trend">
+            <BarChart data={dataChart} barSize={35}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="name" tickLine={false} axisLine={false} />
               <YAxis tickLine={false} axisLine={false} />
               <RechartsTooltip />
               <Legend verticalAlign="bottom" height={36} />
-              <Bar
-                dataKey="Organization"
-                stackId="a"
-                fill={PALETTE.org}
-                radius={[6, 6, 0, 0]}
-              />
-              <Bar dataKey="Business" stackId="a" fill={PALETTE.biz} />
-              <Bar dataKey="Donor" stackId="a" fill={PALETTE.donor} />
+              <Bar dataKey="totalAmount" name="Total Amount" fill={PALETTE.org} radius={[6,6,0,0]} />
             </BarChart>
           </ResponsiveContainer>
+
+          {donationLoading && <div className="mt-2 text-gray-500">Loading donation data...</div>}
         </div>
       </div>
 
       {/* Top Causes + Pie */}
-      <div className="bg-white p-6 rounded-3xl my-6 border">
-        <div className="grid grid-cols-1 md:grid-cols-2 justify-center items-center gap-5">
+      <div className="p-6 my-6 bg-white border rounded-3xl">
+        <div className="grid items-center justify-center grid-cols-1 gap-5 md:grid-cols-2">
           <div className="">
             <div className="flex items-center justify-between mb-6">
               <div>
@@ -265,7 +297,7 @@ const AnalyticsRoute = () => {
                 <div key={c.id} className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <span
-                      className="inline-block h-3 w-3 rounded-full"
+                      className="inline-block w-3 h-3 rounded-full"
                       style={{ backgroundColor: c.color }}
                     />
                     <div>
@@ -273,14 +305,14 @@ const AnalyticsRoute = () => {
                       <div className="text-xs text-gray-500">{c.since}</div>
                     </div>
                   </div>
-                  <div className="text-right font-semibold">{c.percent}%</div>
+                  <div className="font-semibold text-right">{c.percent}%</div>
                 </div>
               ))}
             </div>
           </div>
 
           {/* Right Section: Pie Chart */}
-          <div className="h-full w-full">
+          <div className="w-full h-full">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <RechartsTooltip />
@@ -305,69 +337,17 @@ const AnalyticsRoute = () => {
         </div>
       </div>
 
-      <div className="bg-white p-6 rounded-3xl my-6 border flex justify-between items-center gap-5">
+      <div className="flex items-center justify-between gap-5 p-6 my-6 bg-white border rounded-3xl">
         <div>
           <h1 className="text-2xl font-medium">Export Analytics Data</h1>
           <p className="text-gray-400">
             Download a full report of filtered analytics.
           </p>
         </div>
-        <button className="px-6 py-3 rounded-3xl bg-black text-white flex justify-center items-center gap-2">
+        <button className="flex items-center justify-center gap-2 px-6 py-3 text-white bg-black rounded-3xl">
           Export <FaArrowDown />
         </button>
       </div>
-
-      <Modal
-        title="Filter"
-        open={isModalVisible}
-        onCancel={() => setIsModalVisible(false)}
-        footer={
-          <Space>
-            <Button onClick={handleClear}>Clear All</Button>
-            <Button type="primary" onClick={() => setIsModalVisible(false)}>
-              Apply Filter
-            </Button>
-          </Space>
-        }
-        centered
-        width={560}
-      >
-        <p className="text-gray-400 mb-6">
-          Filter insights by time, user type, or cause.
-        </p>
-        <div className="mb-4">
-          <label className="block mb-2 font-medium">User Type</label>
-          <Checkbox.Group
-            options={userOptions}
-            value={userTypes}
-            onChange={(checkedValues) => setUserTypes(checkedValues)}
-          />
-        </div>
-
-        <div className="mb-4">
-          <label className="block mb-2 font-medium">Cause Categories</label>
-          <Select
-            value={causeCategory}
-            onChange={(value) => setCauseCategory(value)}
-            style={{ width: "100%" }}
-          >
-            {causeOptions.map((cause) => (
-              <Option key={cause} value={cause}>
-                {cause}
-              </Option>
-            ))}
-          </Select>
-        </div>
-
-        <div className="mb-4">
-          <label className="block mb-2 font-medium">Donation Type</label>
-          <Checkbox.Group
-            options={donationOptions}
-            value={donationTypes}
-            onChange={(checkedValues) => setDonationTypes(checkedValues)}
-          />
-        </div>
-      </Modal>
     </div>
   );
 };

@@ -3,17 +3,46 @@ import logo from "../../../assets/image/Logo.png";
 import OTPInput from "react-otp-input";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useVerifyOTPForResetPasswordMutation, useResendResetOTPMutation } from "../../../redux/feature/auth/authApi";
 
 const VerifyPass = () => {
   const [otp, setOtp] = useState("");
   const nevigate = useNavigate();
-  const handleVerifyOtp = () => {
-    console.log("Verifying OTP:", otp);
-    nevigate("/new-password");
+  const [verifyOTP, { isLoading }] = useVerifyOTPForResetPasswordMutation();
+  const [resendOTP, { isLoading: isResending }] = useResendResetOTPMutation();
+
+  const handleVerifyOtp = async () => {
+    const resetToken = localStorage.getItem("resetToken");
+
+    if (!resetToken) {
+      console.error("No reset token found");
+      return;
+    }
+
+    try {
+      await verifyOTP({
+        token: resetToken,
+        otp: otp
+      }).unwrap();
+      nevigate("/new-password");
+    } catch (error) {
+      console.error("OTP verification failed:", error);
+    }
   };
 
-  const handleResendOtp = () => {
-    console.log("Resend OTP clicked");
+  const handleResendOtp = async () => {
+    const resetToken = localStorage.getItem("resetToken");
+
+    if (!resetToken) {
+      console.error("No reset token found");
+      return;
+    }
+
+    try {
+      await resendOTP({ token: resetToken }).unwrap();
+    } catch (error) {
+      console.error("Resend OTP failed:", error);
+    }
   };
 
   return (
@@ -35,11 +64,16 @@ const VerifyPass = () => {
               value={otp}
               onChange={setOtp}
               numInputs={6}
-              renderSeparator={<span className="lg:w-10"> </span>}
+              renderSeparator={<span className="lg:w-4"> </span>}
               renderInput={(props) => (
                 <input
                   {...props}
-                  className="md:w-8 h-12 border border-gray-300 text-black text-xl focus:outline-none focus:border-blue-400 mx-1 rounded-md"
+                  className="border-2 border-gray-300 text-black text-2xl focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 mx-1 rounded-lg transition-all duration-200 hover:border-gray-400"
+                  style={{
+                    width: '40px',
+                    height: '40px',
+                    textAlign: 'center'
+                  }}
                 />
               )}
             />
@@ -47,18 +81,23 @@ const VerifyPass = () => {
 
           <button
             onClick={handleVerifyOtp}
-            className="text-center w-full p-3 font-bold text-xl bg-primary text-black rounded-md "
+            disabled={otp.length !== 6 || isLoading}
+            className={`text-center w-full p-3 font-bold text-xl rounded-md ${otp.length !== 6 || isLoading
+                ? 'bg-gray-300 cursor-not-allowed'
+                : 'bg-primary text-black'
+              }`}
           >
-            Verify
+            {isLoading ? 'Verifying...' : 'Verify'}
           </button>
 
           <p className="text-center pt-5">
-            Didn’t receive the code?
+            Didn't receive the code?
             <span
               onClick={handleResendOtp}
-              className="pl-2 underline cursor-pointer"
+              className={`pl-2 underline cursor-pointer ${isResending ? 'text-gray-400 cursor-not-allowed' : ''
+                }`}
             >
-              Resend
+              {isResending ? 'Sending...' : 'Resend'}
             </span>
           </p>
         </div>

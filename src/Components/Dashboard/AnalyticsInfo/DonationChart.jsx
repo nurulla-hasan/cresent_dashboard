@@ -1,3 +1,4 @@
+ 
 import {
   LineChart,
   Line,
@@ -9,28 +10,32 @@ import {
 } from "recharts";
 import { BsArrowUpRight } from "react-icons/bs";
 
-const DonationChart = () => {
-  const data = [
-    { name: "Jan", value: 30 },
-    { name: "Feb", value: 50 },
-    { name: "Mar", value: 40 },
-    { name: "Apr", value: 70 },
-    { name: "May", value: 90 },
-    { name: "Jun", value: 60 },
-    { name: "Jul", value: 80 },
-    { name: "Aug", value: 100 },
-    { name: "Sep", value: 75 },
-    { name: "Oct", value: 85 },
-    { name: "Nov", value: 95 },
-    { name: "Dec", value: 100 },
+const DonationChart = ({ monthlyData }) => {
+  const monthNames = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
   ];
-
+  const data = Array.isArray(monthlyData)
+    ? monthlyData.map((m) => ({
+        name: monthNames[m.month] ?? String(m.month),
+        value: m.count ?? 0,
+      }))
+    : [];
   return (
     <div style={{ width: "100%",height:400 }} className="p-6 my-10 bg-white border rounded-3xl">
       <div className="flex justify-between items-center mb-4">
         <div className="mb-6">
           <h3 className="font-bold text-xl">Donation</h3>
-          <p className="text-gray-400">+8.2% from last month</p>
         </div>
         <BsArrowUpRight className="h-5 w-5 cursor-pointer" />
       </div>

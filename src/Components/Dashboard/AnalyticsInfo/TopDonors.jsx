@@ -2,71 +2,30 @@ import { Link } from "react-router-dom";
 import user from "../../../assets/image/user.png";
 
 
-const TopDonors= () => {
-  const data = [
-    {
-      id: 1,
-      name: "Josh Bill",
-      img: user,
-      time: "Since: July, 2025",
-      money: "24,000",
-      percentage: "8.2%",
-    },
-    {
-      id: 2,
-      name: "Emily Carter",
-      img: user,
-      time: "Since: March, 2024",
-      money: "18,500",
-      percentage: "6.5%",
-    },
-    {
-      id: 3,
-      name: "Michael Brown",
-      img: user,
-      time: "Since: January, 2023",
-      money: "15,200",
-      percentage: "5.1%",
-    },
-    {
-      id: 4,
-      name: "Sophia Davis",
-      img: user,
-      time: "Since: October, 2022",
-      money: "12,700",
-      percentage: "4.2%",
-    },
-    {
-      id: 5,
-      name: "Daniel Wilson",
-      img: user,
-      time: "Since: May, 2021",
-      money: "10,300",
-      percentage: "3.7%",
-    },
-  ];
-
+const TopDonors= ({ topDonors = [], recentDonorDocs = [], donationsByCause = [], totalDonation = 0 }) => {
   return (
     <div>
       <div className="bg-white rounded-3xl p-6 border my-3">
         <h1 className="text-2xl font-medium mb-2">Top 05 Donors</h1>
         <p className="text-gray-400 mb-6">Sorted by total donations</p>
-        {data.map((item) => (
+        {topDonors.map((item, idx) => (
           <div
-            key={item.id}
+            key={`${item.donor}-${idx}`}
             className="flex justify-between items-center gap-2 mb-4"
           >
             <div className="flex justify-start items-center gap-2">
-              <p>{item.id}</p>
-              <img src={user} alt="" />
+              <p>{idx + 1}</p>
+              <img src={user} alt="avatar" />
               <div>
-                <h1>{item.name}</h1>
-                <p className="text-gray-400">{item.time} </p>
+                <h1>{item.donor || "Unknown"}</h1>
+                <p className="text-gray-400">{item.since ? `Since: ${new Date(item.since).toLocaleDateString()}` : ""} </p>
               </div>
             </div>
             <div>
-              <p>${item.money}</p>
-              <p className="text-green-500">+ {item.percentage}</p>
+              <p>${Number(item.totalAmount ?? 0).toLocaleString()}</p>
+              {item.changeText ? (
+                <p className="text-green-500">{item.changeText}</p>
+              ) : null}
             </div>
           </div>
         ))}
@@ -75,21 +34,21 @@ const TopDonors= () => {
       <div className="bg-white rounded-3xl p-6 border my-3">
         <div className="flex justify-between items-center ">
           <h1 className="text-2xl font-medium mb-2">Recent donors</h1>
-          <Link to="">
+          <Link to="/donor-app">
             <button className="text-purple-500 underline ">View All</button>
           </Link>
         </div>
 
-        {data.map((item) => (
+        {recentDonorDocs.map((item, idx) => (
           <div
-            key={item.id}
+            key={`${item?.donor?.email || 'unknown'}-${item?.createdAt || 'no-date'}-${idx}`}
             className="flex justify-between items-center gap-2 mb-4"
           >
             <div className="flex justify-start items-center gap-2">
-              <img src={user} alt="" />
+              <img src={user} alt="avatar" />
               <div>
-                <h1>{item.name}</h1>
-                <p className="text-gray-400">{item.time} </p>
+                <h1>{item?.donor?.name || "Unknown"}</h1>
+                <p className="text-gray-400">{item?.createdAt ? new Date(item.createdAt).toLocaleString() : ""} </p>
               </div>
             </div>
           </div>
@@ -102,43 +61,40 @@ const TopDonors= () => {
         <div className="my-6">
           <p className="text-gray-400">Total Donations</p>
           <h1 className="text-2xl font-medium">
-            <span className="text-gray-400">$</span> 12,0000
+            <span className="text-gray-400">$</span> {Number(totalDonation ?? 0).toLocaleString()}
           </h1>
         </div>
-        <div className="flex justify-between items-center gap-1">
-          <div className="bg-pink-200 h-12 w-[60%] rounded-2xl"></div>
-          <div className="bg-blue-200 h-12 w-[20%] rounded-2xl"></div>
-          <div className="bg-yellow-200 h-12 w-[20%] rounded-2xl"></div>
-        </div>
-        <div className="grid grid-cols-3 gap-5 mt-6">
-          <div>
-            <div className="flex justify-start items-center gap-1">
-              <div className="h-2 w-2 bg-pink-200"></div>
-              <p>Non-profit</p>
+        {Array.isArray(donationsByCause) && donationsByCause.length > 0 ? (
+          <>
+            <div className="flex justify-between items-center gap-1">
+              {donationsByCause.map((c, idx) => {
+                const widthPct = totalDonation > 0 ? Math.max(1, Math.round((c.totalAmount / totalDonation) * 100)) : 0;
+                const colors = ["bg-pink-200", "bg-blue-200", "bg-yellow-200", "bg-green-200", "bg-purple-200"]; 
+                const color = colors[idx % colors.length];
+                return (
+                  <div key={`${c.cause}-${idx}`} className={`${color} h-12 rounded-2xl`} style={{ width: `${widthPct}%` }}></div>
+                );
+              })}
             </div>
-            <h1 className="text-2xl font-medium">
-              <span className="text-gray-400">$</span> 40,0000
-            </h1>
-          </div>
-          <div>
-            <div className="flex justify-start items-center gap-1">
-              <div className="h-2 w-2 bg-blue-200"></div>
-              <p>Non-profit</p>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mt-6">
+              {donationsByCause.map((c, idx) => {
+                const colors = ["bg-pink-200", "bg-blue-200", "bg-yellow-200", "bg-green-200", "bg-purple-200"]; 
+                const dot = colors[idx % colors.length];
+                return (
+                  <div key={`${c.cause}-summary-${idx}`}>
+                    <div className="flex justify-start items-center gap-2">
+                      <div className={`h-2 w-2 ${dot}`}></div>
+                      <p>{c.cause}</p>
+                    </div>
+                    <h1 className="text-2xl font-medium">
+                      <span className="text-gray-400">$</span> {Number(c.totalAmount ?? 0).toLocaleString()}
+                    </h1>
+                  </div>
+                );
+              })}
             </div>
-            <h1 className="text-2xl font-medium">
-              <span className="text-gray-400">$</span> 40,0000
-            </h1>
-          </div>
-          <div>
-            <div className="flex justify-start items-center gap-1">
-              <div className="h-2 w-2 bg-yellow-200"></div>
-              <p>Non-profit</p>
-            </div>
-            <h1 className="text-2xl font-medium">
-              <span className="text-gray-400">$</span> 40,0000
-            </h1>
-          </div>
-        </div>
+          </>
+        ) : null}
       </div>
     </div>
   );

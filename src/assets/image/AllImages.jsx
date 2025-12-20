@@ -10,10 +10,6 @@ import orgimg from "./orgimg.png"
 import banner from "./banner.png"
 import orgicon from "./orgicon.png"
 
-
-
-
-
 export const AllImages = {
     brandlogo,
     user,

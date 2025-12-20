@@ -1,11 +1,32 @@
 import { ConfigProvider, Form, Input } from "antd";
 import img from "../../../assets/image/forgate.png";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import logo from "../../../assets/image/Logo.png";
 import { AiOutlineMail } from "react-icons/ai";
+import { useState } from "react";
+import { useForgetPasswordMutation } from "../../../redux/feature/auth/authApi";
 
 const ForgatePassword = () => {
-  const onFinish = () => {};
+  const [form] = Form.useForm();
+  const [email, setEmail] = useState("");
+  const [forgetPassword, { isLoading }] = useForgetPasswordMutation();
+  const navigate = useNavigate();
+
+  const onFinish = async (data) => {
+    try {
+      await forgetPassword({
+        email: data["email-address"]
+      }).unwrap();
+      navigate("/varification");
+    } catch {
+    }
+  };
+
+  const onValuesChange = (changedValues) => {
+    if (changedValues["email-address"]) {
+      setEmail(changedValues["email-address"]);
+    }
+  };
 
   return (
     <div className="h-screen flex p-2">
@@ -27,10 +48,11 @@ const ForgatePassword = () => {
             >
               <Form
                 name="contact"
+                form={form}
                 initialValues={{ remember: false }}
                 onFinish={onFinish}
+                onValuesChange={onValuesChange}
                 layout="vertical"
-           
               >
                 <div className="mb-4 text-center">
                   <h2 className="text-xl md:text-2xl lg:text-3xl font-bold mb-6">
@@ -61,14 +83,16 @@ const ForgatePassword = () => {
                 </Form.Item>
 
                 <Form.Item>
-                  <Link to="/varification">
-                    <button
-                      className="text-center text-lg p-2 font-bold bg-primary  w-full py-4 rounded-md hover:text-black"
-                      type="submit"
-                    >
-                      Send Code
-                    </button>
-                  </Link>
+                  <button
+                    className={`text-center text-lg p-2 font-bold w-full py-4 rounded-md ${!email.trim() || isLoading
+                        ? 'bg-gray-300 cursor-not-allowed'
+                        : 'bg-primary hover:text-black'
+                      }`}
+                    type="submit"
+                    disabled={!email.trim() || isLoading}
+                  >
+                    {isLoading ? 'Sending...' : 'Send Code'}
+                  </button>
                 </Form.Item>
                 <p className="text-xl font-medium text-center">
                   Back to{" "}

@@ -1,4 +1,4 @@
-import { act, useState } from "react";
+import { useState } from "react";
 import { AllImages } from "../../assets/image/AllImages";
 
 const ConsultationHistory = () => {

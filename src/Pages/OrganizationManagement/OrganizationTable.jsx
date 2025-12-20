@@ -3,105 +3,55 @@ import { useState } from "react";
 import {
   Button,
   DatePicker,
-  Dropdown,
   Form,
   Input,
-  Menu,
   Modal,
-  Select,
   Table,
   Upload,
 } from "antd";
-import { DownOutlined, SearchOutlined } from "@ant-design/icons";
+import { SearchOutlined } from "@ant-design/icons";
 import { VscEye } from "react-icons/vsc";
 import user from "../../assets/image/user.png";
 import { MdOtherHouses } from "react-icons/md";
 import { FaImage, FaPencilAlt, FaUsers } from "react-icons/fa";
 import { GoOrganization } from "react-icons/go";
-import { RxCrossCircled } from "react-icons/rx";
+import useSmartFetchHook from "../../Components/hooks/useSmartFetchHook.ts";
+import { useGetOrganizationReportQuery } from "../../redux/feature/organization/organizationApis.js";
 
 const OrganizationTable = () => {
-  const { Option } = Select;
+  const { RangePicker } = DatePicker;
+  const [dateRange, setDateRange] = useState(null);
 
-  const originalData = [
-    {
-      key: "1",
-      name: "Josh Bill",
-      email: "johnnb@gmail.com",
-      dateTime: "12 Dec 2023 03:00 PM",
-      donationType: "Business",
-      donationMessage: "-",
-      amount: 34.5,
-      status: "Pending",
-    },
-    {
-      key: "2",
-      name: "M Karim",
-      email: "kkkarim@gmail.com",
-      dateTime: "10 Dec 2023 02:00 PM",
-      donationType: "Donor",
-      donationMessage: "Sending love & hope to everyone you’re helping",
-      amount: 62.75,
-      status: "Active",
-    },
-    {
-      key: "3",
-      name: "Josh Adam",
-      email: "jadddam@gmail.com",
-      dateTime: "08 Dec 2023 05:30 PM",
-      donationType: "Organization",
-      donationMessage: "-",
-      amount: 15.2,
-      status: "Suspended",
-    },
-    {
-      key: "4",
-      name: "Fajar Surya",
-      email: "fjsurya@gmail.com",
-      dateTime: "15 Dec 2023 09:00 AM",
-      donationType: "Donor",
-      donationMessage: "Sending love & hope to everyone you’re helping",
-      amount: 47.3,
-      status: "Active",
-    },
-    {
-      key: "5",
-      name: "Linda Blair",
-      email: "lindablair98@gmail.com",
-      dateTime: "18 Dec 2023 01:00 PM",
-      donationType: "Business",
-      donationMessage: "Sending love & hope to everyone you’re helping",
-      amount: 23.9,
-      status: "Pending",
-    },
-  ];
+  const {
+    searchTerm,
+    setSearchTerm,
+    setCurrentPage,
+    data: apiResponse,
+    pagination,
+    isLoading,
+    setFilterParams,
+  } = useSmartFetchHook(useGetOrganizationReportQuery);
 
-  const [data, setData] = useState(originalData);
-  const [searchText, setSearchText] = useState("");
+  const data = (apiResponse || []).map((org) => ({
+    ...org,
+    email: org?.auth?.email,
+  }));
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [previewImage, setPreviewImage] = useState(null);
-  const [selectedProfile, setSelectedProfile] = useState(null);
   const [form] = Form.useForm();
+  const [isViewOpen, setIsViewOpen] = useState(false);
+  const [viewRecord, setViewRecord] = useState(null);
 
-  // 📸 Handle image upload
+  //  Handle image upload
   const handleBeforeUpload = (file) => {
     setPreviewImage(URL.createObjectURL(file));
     form.setFieldsValue({ profileImage: file });
     return false;
   };
 
-  // ✏️ Open edit modal
-  const handleEdit = (record) => {
-    setSelectedProfile(record);
-    form.setFieldsValue({
-      firstName: record.name.split(" ")[0],
-      lastName: record.name.split(" ")[1],
-      email: record.email,
-      mobile: "+61 470 292 023",
-      password: "********",
-    });
-    setPreviewImage(user);
-    setIsModalVisible(true);
+  //  Open edit modal
+  const handleEdit = () => {
+   
   };
 
   const handleCancel = () => {
@@ -111,210 +61,218 @@ const OrganizationTable = () => {
   };
 
   const handleSave = (values) => {
-    console.log("Updated values:", values);
     setIsModalVisible(false);
   };
 
-  // 🔁 Sorting function
-  const handleSort = (key, order) => {
-    const sorted = [...data].sort((a, b) => {
-      if (key === "amount") {
-        return order === "ascend" ? a.amount - b.amount : b.amount - a.amount;
-      } else if (key === "name") {
-        return order === "ascend"
-          ? a.name.localeCompare(b.name)
-          : b.name.localeCompare(a.name);
-      } else if (key === "dateTime") {
-        return order === "ascend"
-          ? new Date(a.dateTime) - new Date(b.dateTime)
-          : new Date(b.dateTime) - new Date(a.dateTime);
-      }
-      return 0;
-    });
-    setData(sorted);
-  };
-
-  // 🔎 Role filter
-  const handleRoleFilter = (role) => {
-    if (role === "All") {
-      setData(originalData);
-    } else {
-      setData(originalData.filter((item) => item.donationType === role));
+  const handleExport = () => {
+    const rowsHtml = (data || [])
+      .map((r) => {
+        const firstCause = Array.isArray(r.causes) && r.causes.length > 0 ? r.causes[0]?.name : "-";
+        const created = r.createdAt ? new Date(r.createdAt).toLocaleString() : "-";
+        const status = r?.auth?.status || "-";
+        return `<tr>
+                  <td style="padding:8px;border:1px solid #ddd;">${r.name || "-"}</td>
+                  <td style="padding:8px;border:1px solid #ddd;">${r.email || "-"}</td>
+                  <td style="padding:8px;border:1px solid #ddd;">${firstCause}</td>
+                  <td style="padding:8px;border:1px solid #ddd;">${r.serviceType || "-"}</td>
+                  <td style="padding:8px;border:1px solid #ddd;">${created}</td>
+                  <td style="padding:8px;border:1px solid #ddd;">${status}</td>
+                </tr>`;
+      })
+      .join("");
+    const html = `<!doctype html>
+      <html><head><meta charset='utf-8'><title>Organizations</title>
+      <style>table{border-collapse:collapse;width:100%;font:14px system-ui} th,td{border:1px solid #ddd;padding:8px} th{background:#f3f4f6;text-align:left}</style>
+      </head><body>
+      <h2>Organizations</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th><th>Email</th><th>Cause Name</th><th>Service Type</th><th>Created At</th><th>Status</th>
+          </tr>
+        </thead>
+        <tbody>${rowsHtml}</tbody>
+      </table>
+      <script>window.onload=()=>window.print()</script>
+      </body></html>`;
+    const w = window.open("", "_blank");
+    if (w) {
+      w.document.open();
+      w.document.write(html);
+      w.document.close();
     }
   };
 
-  const filteredData = data.filter(
-    (item) =>
-      item.name.toLowerCase().includes(searchText.toLowerCase()) ||
-      item.email.toLowerCase().includes(searchText.toLowerCase())
-  );
+  const handleView = (record) => {
+    setViewRecord(record);
+    setIsViewOpen(true);
+  };
+
+  const handleDateRangeChange = (dates, dateStrings) => {
+    setDateRange(dates);
+    const newFilterParams = {};
+    if (dates && dates[0] && dates[1]) {
+      newFilterParams.startDate = dateStrings[0];
+      newFilterParams.endDate = dateStrings[1];
+    }
+    setFilterParams(newFilterParams);
+  };
 
   const columns = [
     {
-      title: (
-        <div className="flex items-center gap-2">
-          Name/Email
-          <Select
-            defaultValue="ascend"
-            style={{ width: 90 }}
-            onChange={(value) => handleSort("name", value)}
-            suffixIcon={<DownOutlined />}
-          >
-            <Option value="ascend">Ascend</Option>
-            <Option value="descend">Descend</Option>
-          </Select>
-        </div>
-      ),
+      title: "Name/Email",
       dataIndex: "email",
       key: "email",
       render: (text, record) => (
-        <div className="flex gap-2 items-center">
+        <div className="flex items-center gap-2">
           <img
             src={user}
             alt={record.name}
-            className="h-10 w-10 rounded-full"
+            className="w-10 h-10 rounded-full"
           />
           <div>
             <p className="font-medium">{record.name}</p>
-            <p className="text-gray-400 text-sm">{record.email}</p>
+            <p className="text-sm text-gray-400">{record.email}</p>
           </div>
         </div>
       ),
     },
     {
-      title: (
-        <div className="flex items-center gap-2">
-          Last Active
-          <Select
-            defaultValue="descend"
-            style={{ width: 100 }}
-            onChange={(value) => handleSort("dateTime", value)}
-            suffixIcon={<DownOutlined />}
-          >
-            <Option value="ascend">Oldest</Option>
-            <Option value="descend">Recent</Option>
-          </Select>
-        </div>
-      ),
-      dataIndex: "dateTime",
-      key: "dateTime",
+      title: "Cause Name",
+      dataIndex: "causes",
+      key: "causeName",
+      render: (causes) => {
+        const first = Array.isArray(causes) && causes.length > 0 ? causes[0] : null;
+        return first?.name || <span className="text-sm text-gray-400">No cause</span>;
+      },
     },
     {
-      title: (
-        <div className="flex items-center gap-2">
-          Role
-          <Select
-            defaultValue="All"
-            style={{ width: 130 }}
-            onChange={handleRoleFilter}
-            suffixIcon={<DownOutlined />}
-          >
-            <Option value="All">All</Option>
-            <Option value="Business">Business</Option>
-            <Option value="Organization">Organization</Option>
-            <Option value="Donor">Donor</Option>
-          </Select>
+      title: "Service Type",
+      dataIndex: "serviceType",
+      key: "serviceType",
+      render: (value) => (
+        <div className="flex items-center gap-2 px-4 py-2 rounded-3xl">
+          {value === "non-profit" && (
+            <div className="flex items-center gap-1 px-4 py-1 text-green-600 bg-green-100 rounded-2xl">
+              <GoOrganization className="w-5 h-5" /> Non-profit
+            </div>
+          )}
+          {value === "Charity" && (
+            <div className="flex items-center gap-1 px-4 py-1 text-purple-600 bg-purple-100 rounded-2xl">
+              <FaUsers className="w-5 h-5" /> Charity
+            </div>
+          )}
+          {value === "Mosque" && (
+            <div className="flex items-center gap-1 px-4 py-1 text-indigo-600 bg-indigo-100 rounded-2xl">
+              <GoOrganization className="w-5 h-5" /> Mosque
+            </div>
+          )}
+          {!["non-profit", "Charity", "Mosque"].includes(value) && (
+            <div className="flex items-center gap-1 px-4 py-1 text-gray-600 bg-gray-100 rounded-2xl">
+              {value}
+            </div>
+          )}
         </div>
       ),
-      dataIndex: "donationType",
-      key: "donationType",
-      render: (value) => (
-        <div className="px-4 py-2 rounded-3xl flex items-center gap-2">
-          {value === "Business" && (
-            <div className="flex items-center gap-1 bg-blue-100 text-blue-600 px-4 py-1 rounded-2xl">
-              <MdOtherHouses className="h-5 w-5" /> Business
-            </div>
-          )}
-          {value === "Organization" && (
-            <div className="flex items-center gap-1 bg-green-100 text-green-600 px-4 py-1 rounded-2xl">
-              <GoOrganization className="h-5 w-5" /> Organization
-            </div>
-          )}
-          {value === "Donor" && (
-            <div className="flex items-center gap-1 bg-pink-100 text-pink-600 px-4 py-1 rounded-2xl">
-              <FaUsers className="h-5 w-5" /> Donor
-            </div>
-          )}
-        </div>
+    },
+    {
+      title: "Created At",
+      dataIndex: "createdAt",
+      key: "createdAt",
+      render: (createdAt) => (
+        <span className="font-medium">{createdAt ? new Date(createdAt).toLocaleString() : "-"}</span>
       ),
     },
     {
       title: "Status",
-      dataIndex: "status",
+      dataIndex: ["auth", "status"],
       key: "status",
       render: (status) => (
         <span
-          className={`px-4 py-1 rounded-2xl text-sm font-medium ${
-            status === "Active"
-              ? "bg-green-100 text-green-600"
-              : status === "Pending"
+          className={`px-4 py-1 rounded-2xl text-sm font-medium ${status === "Active"
+            ? "bg-green-100 text-green-600"
+            : status === "verified"
               ? "bg-yellow-100 text-yellow-600"
               : "bg-gray-200 text-gray-600"
-          }`}
+            }`}
         >
           {status}
         </span>
       ),
     },
     {
-      title: "Action",
+      title: () => <div className="text-center">Action</div>,
       key: "action",
       render: (_, record) => (
-        <div className="flex justify-center items-center gap-3 text-lg">
-          <div className="bg-neutral-100 h-8 w-8 rounded-full p-1 flex justify-center items-center cursor-pointer">
+        <div className="flex items-center justify-center gap-3 text-lg">
+          <div className="flex items-center justify-center w-8 h-8 p-1 rounded-full cursor-pointer bg-neutral-100" onClick={() => handleView(record)}>
             <VscEye />
           </div>
-          <div
+          {/* <div
             onClick={() => handleEdit(record)}
-            className="bg-neutral-100 h-8 w-8 rounded-full p-1 flex justify-center items-center cursor-pointer"
+            className="flex items-center justify-center w-8 h-8 p-1 rounded-full cursor-pointer bg-neutral-100"
           >
             <FaPencilAlt />
-          </div>
-          <div className="bg-neutral-100 h-8 w-8 rounded-full p-1 flex justify-center items-center cursor-pointer">
+          </div> */}
+          {/* <div className="flex items-center justify-center w-8 h-8 p-1 rounded-full cursor-pointer bg-neutral-100">
             <RxCrossCircled />
-          </div>
+          </div> */}
         </div>
       ),
     },
   ];
 
-  const menu = (
-    <Menu>
-      <Menu.Item>Sort A - Z</Menu.Item>
-      <Menu.Item>Sort Z - A</Menu.Item>
-      <Menu.Item>Recent First</Menu.Item>
-      <Menu.Item>Oldest First</Menu.Item>
-    </Menu>
-  );
-
   return (
-    <div className="bg-white p-6 rounded-xl shadow-sm mb-10">
-      <div className="flex justify-between items-center mb-4">
+    <div className="p-6 mb-10 bg-white shadow-sm rounded-xl">
+      <div className="flex items-center justify-between mb-4">
         <h2 className="text-lg font-semibold">Organization Table</h2>
         <div className="flex items-center gap-2">
           <Input
             prefix={<SearchOutlined />}
             placeholder="Search..."
-            onChange={(e) => setSearchText(e.target.value)}
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
             className="w-60"
           />
-          <Dropdown overlay={menu} trigger={["click"]}>
-            <Button>
-              Filter <DownOutlined />
-            </Button>
-          </Dropdown>
-          <DatePicker placeholder="Select interval" />
+          <RangePicker
+            placeholder={["Start date", "End date"]}
+            onChange={handleDateRangeChange}
+            value={dateRange}
+          />
+          <Button onClick={handleExport}>Export</Button>
         </div>
       </div>
 
       <Table
         columns={columns}
-        dataSource={filteredData}
-        pagination={{ pageSize: 5 }}
-        rowKey="key"
+        dataSource={data}
+        loading={isLoading}
+        onChange={(paginationConfig, filters, sorter) => {
+          setCurrentPage(paginationConfig.current);
+          const newFilterParams = {};
+          if (sorter?.field) {
+            newFilterParams.sortBy = sorter.field;
+            newFilterParams.sortOrder = sorter.order === "ascend" ? "asc" : "desc";
+          }
+          Object.keys(filters || {}).forEach((key) => {
+            if (filters[key]) {
+              newFilterParams[key] = filters[key][0];
+            }
+          });
+          setFilterParams(newFilterParams);
+        }}
+        pagination={{
+          current: pagination.page || 1,
+          pageSize: pagination.limit || 5,
+          total: pagination.total || 0,
+          showTotal: (total) => `Total ${total} items`,
+          showSizeChanger: false,
+          position: ["bottomRight"],
+        }}
+        rowKey={(row) => row._id}
       />
 
-      {/* ✨ Edit Profile Modal */}
+      {/* Edit Profile Modal */}
       <Modal
         title="Edit Profile"
         open={isModalVisible}
@@ -329,17 +287,17 @@ const OrganizationTable = () => {
               beforeUpload={handleBeforeUpload}
               accept="image/*"
             >
-              <div className="border border-dashed border-gray-300 p-4 rounded-full cursor-pointer flex flex-col items-center">
+              <div className="flex flex-col items-center p-4 border border-gray-300 border-dashed rounded-full cursor-pointer">
                 {previewImage ? (
                   <img
                     src={previewImage}
                     alt="Preview"
-                    className="h-24 w-24 rounded-full object-cover"
+                    className="object-cover w-24 h-24 rounded-full"
                   />
                 ) : (
                   <>
-                    <FaImage className="text-gray-400 h-8 w-8" />
-                    <p className="text-gray-400 text-sm mt-2">Upload Image</p>
+                    <FaImage className="w-8 h-8 text-gray-400" />
+                    <p className="mt-2 text-sm text-gray-400">Upload Image</p>
                   </>
                 )}
               </div>
@@ -381,6 +339,111 @@ const OrganizationTable = () => {
             </Button>
           </div>
         </Form>
+      </Modal>
+
+      <Modal
+        title="Organization Details"
+        open={isViewOpen}
+        onCancel={() => setIsViewOpen(false)}
+        footer={null}
+        centered
+        width={600}
+      >
+        {viewRecord && (
+          <div className="space-y-6">
+            {/* Header Section */}
+            <div className="flex items-center gap-4">
+              <div className="flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl">
+                <span className="text-xl font-bold text-white">
+                  {viewRecord.name?.charAt(0)?.toUpperCase() || "O"}
+                </span>
+              </div>
+              <div className="flex-1">
+                <h3 className="mb-1 text-xl font-semibold text-gray-900">
+                  {viewRecord.name}
+                </h3>
+                <p className="text-sm text-gray-600">{viewRecord.email}</p>
+              </div>
+            </div>
+
+            {/* Key Details Grid */}
+            <div className="grid grid-cols-2 gap-4">
+              <div className="p-4 border border-blue-100 rounded-lg bg-blue-50">
+                <div className="flex items-center gap-2 mb-1">
+                  <div className="flex items-center justify-center w-8 h-8 bg-blue-100 rounded-full">
+                    <span className="text-xs font-semibold text-blue-600">ST</span>
+                  </div>
+                  <p className="text-xs font-medium tracking-wide text-blue-700 uppercase">Service Type</p>
+                </div>
+                <p className="text-sm font-semibold text-gray-900">{viewRecord.serviceType || "Not specified"}</p>
+              </div>
+
+              <div className="p-4 border border-green-100 rounded-lg bg-green-50">
+                <div className="flex items-center gap-2 mb-1">
+                  <div className="flex items-center justify-center w-8 h-8 bg-green-100 rounded-full">
+                    <span className="text-xs font-semibold text-green-600">S</span>
+                  </div>
+                  <p className="text-xs font-medium tracking-wide text-green-700 uppercase">Status</p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className={`w-2 h-2 rounded-full ${
+                    viewRecord?.auth?.status === "verified" ? "bg-green-500" :
+                    viewRecord?.auth?.status === "pending" ? "bg-yellow-500" :
+                    viewRecord?.auth?.status === "suspended" ? "bg-red-500" : "bg-gray-400"
+                  }`}></div>
+                  <p className="text-sm font-semibold text-gray-900 capitalize">
+                    {viewRecord?.auth?.status || "Unknown"}
+                  </p>
+                </div>
+              </div>
+
+              <div className="p-4 border border-purple-100 rounded-lg bg-purple-50">
+                <div className="flex items-center gap-2 mb-1">
+                  <div className="flex items-center justify-center w-8 h-8 bg-purple-100 rounded-full">
+                    <span className="text-xs font-semibold text-purple-600">C</span>
+                  </div>
+                  <p className="text-xs font-medium tracking-wide text-purple-700 uppercase">Cause</p>
+                </div>
+                <p className="text-sm font-semibold text-gray-900">
+                  {Array.isArray(viewRecord.causes) && viewRecord.causes[0]?.name 
+                    ? viewRecord.causes[0].name 
+                    : "No cause assigned"}
+                </p>
+              </div>
+
+              <div className="p-4 border border-orange-100 rounded-lg bg-orange-50">
+                <div className="flex items-center gap-2 mb-1">
+                  <div className="flex items-center justify-center w-8 h-8 bg-orange-100 rounded-full">
+                    <span className="text-xs font-semibold text-orange-600">D</span>
+                  </div>
+                  <p className="text-xs font-medium tracking-wide text-orange-700 uppercase">Created</p>
+                </div>
+                <p className="text-sm font-semibold text-gray-900">
+                  {viewRecord.createdAt ? new Date(viewRecord.createdAt).toLocaleDateString() : "-"}
+                </p>
+              </div>
+            </div>
+
+            {/* Additional Info */}
+            <div className="p-4 rounded-lg bg-gray-50">
+              <h4 className="mb-3 text-sm font-medium text-gray-700">Additional Information</h4>
+              <div className="space-y-2">
+                <div className="flex items-center justify-between px-3 py-2 bg-white rounded-lg">
+                  <span className="text-sm text-gray-600">Full Created Date</span>
+                  <span className="text-sm font-medium text-gray-900">
+                    {viewRecord.createdAt ? new Date(viewRecord.createdAt).toLocaleString() : "-"}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between px-3 py-2 bg-white rounded-lg">
+                  <span className="text-sm text-gray-600">Organization ID</span>
+                  <span className="text-sm font-medium text-gray-900">
+                    {viewRecord._id?.slice(-8) || "-"}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </Modal>
     </div>
   );
