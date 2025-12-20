@@ -6,7 +6,6 @@ const badgeApis = baseApi.injectEndpoints({
     getBadgeReport: builder.query({
       query: (args) => {
         const params = new URLSearchParams();
-
         if (args) {
           Object.entries(args).forEach(([key, value]) => {
             if (value) {
@@ -44,7 +43,7 @@ const badgeApis = baseApi.injectEndpoints({
 
     // UPDATE BADGE
     updateBadge: builder.mutation({
-      query: ({ id, ...data }) => ({
+      query: ({ id, data }) => ({
         url: `/badges/${id}`,
         method: "PATCH",
         body: data,

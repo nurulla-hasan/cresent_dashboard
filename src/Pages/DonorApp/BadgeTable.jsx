@@ -1,16 +1,22 @@
 import { useMemo, useState } from "react";
-import { Button, Dropdown, Input, Menu, Modal, Table, Tag } from "antd";
-import { DownOutlined, SearchOutlined } from "@ant-design/icons";
+import { Button, Dropdown, Input, Menu, Modal, Table, Tag, message } from "antd";
+import { DownOutlined, PlusOutlined, SearchOutlined } from "@ant-design/icons";
 import { VscEye } from "react-icons/vsc";
 import { FaPencilAlt } from "react-icons/fa";
 import { RxCrossCircled } from "react-icons/rx";
 
 import useSmartFetchHook from "../../Components/hooks/useSmartFetchHook.ts";
-import { useGetBadgeReportQuery } from "../../redux/feature/badge/badgeApis";
+import { useDeleteBadgeMutation, useGetBadgeReportQuery } from "../../redux/feature/badge/badgeApis";
 import { getImageUrl } from "../../lib/utils";
+import CreateBadgeModal from "./CreateBadgeModal";
+import UpdateBadgeModal from "./UpdateBadgeModal";
 const BadgeTable = () => {
   const [isViewOpen, setIsViewOpen] = useState(false);
+  const [isCreateOpen, setIsCreateOpen] = useState(false);
+  const [isUpdateOpen, setIsUpdateOpen] = useState(false);
   const [selectedBadge, setSelectedBadge] = useState(null);
+
+  const [deleteBadge, { isLoading: isDeleteLoading }] = useDeleteBadgeMutation();
 
   const [isActiveFilter, setIsActiveFilter] = useState(null);
   const [featuredFilter, setFeaturedFilter] = useState(null);
@@ -30,6 +36,29 @@ const BadgeTable = () => {
   const handleView = (record) => {
     setSelectedBadge(record);
     setIsViewOpen(true);
+  };
+
+  const handleDelete = (record) => {
+    if (!record?._id) return;
+
+    Modal.confirm({
+      title: "Delete Badge",
+      content: `Are you sure you want to delete \"${record?.name || "this badge"}\"?`,
+      okText: "Delete",
+      okType: "danger",
+      cancelText: "Cancel",
+      centered: true,
+      okButtonProps: { loading: isDeleteLoading },
+      onOk: async () => {
+        try {
+          await deleteBadge(record._id).unwrap();
+          message.success("Badge deleted successfully");
+        } catch (e) {
+          const msg = e?.data?.message || "Failed to delete badge";
+          message.error(msg);
+        }
+      },
+    });
   };
 
   const statusTag = (isActive) => (
@@ -97,14 +126,17 @@ const BadgeTable = () => {
           <div
             className="flex items-center justify-center w-8 h-8 p-1 text-yellow-600 bg-yellow-100 rounded-full cursor-pointer hover:bg-yellow-200"
             title="Edit Badge"
-            onClick={() => console.log('Edit badge:', record._id)}
+            onClick={() => {
+              setSelectedBadge(record);
+              setIsUpdateOpen(true);
+            }}
           >
             <FaPencilAlt size={14} />
           </div>
           <div
             className="flex items-center justify-center w-8 h-8 p-1 text-red-600 bg-red-100 rounded-full cursor-pointer hover:bg-red-200"
             title="Delete Badge"
-            onClick={() => console.log('Delete badge:', record._id)}
+            onClick={() => handleDelete(record)}
           >
             <RxCrossCircled size={16} />
           </div>
@@ -173,6 +205,14 @@ const BadgeTable = () => {
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-lg font-semibold">Badges Management</h2>
         <div className="flex items-center gap-2">
+          <Button
+            type="primary"
+            icon={<PlusOutlined />}
+            onClick={() => setIsCreateOpen(true)}
+            className="bg-[#1890ff]"
+          >
+            Create Badge
+          </Button>
           <Input
             prefix={<SearchOutlined />}
             placeholder="Search..."
@@ -282,6 +322,17 @@ const BadgeTable = () => {
           </div>
         ) : null}
       </Modal>
+
+      <CreateBadgeModal
+        open={isCreateOpen}
+        onClose={() => setIsCreateOpen(false)}
+      />
+
+      <UpdateBadgeModal
+        open={isUpdateOpen}
+        badge={selectedBadge}
+        onClose={() => setIsUpdateOpen(false)}
+      />
     </div>
   );
 };
