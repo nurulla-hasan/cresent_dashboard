@@ -11,20 +11,11 @@ const profileApis = baseApi.injectEndpoints({
       providesTags: ["PROFILE"],
     }),
 
-    updateProfilePhoto: builder.mutation({
+    updateSuperAdminMe: builder.mutation({
       query: (formData) => ({
-        url: "/auth/update-photo",
-        method: "PUT",
-        body: formData,
-      }),
-      invalidatesTags: ["PROFILE"],
-    }),
-
-    updateAuthData: builder.mutation({
-      query: (data) => ({
-        url: "/auth/update-auth-data",
+        url: "/super-admin/update-me",
         method: "PATCH",
-        body: data,
+        body: formData,
       }),
       invalidatesTags: ["PROFILE"],
     }),
@@ -41,8 +32,7 @@ const profileApis = baseApi.injectEndpoints({
 
 export const {
   useGetAuthProfileQuery,
-  useUpdateProfilePhotoMutation,
-  useUpdateAuthDataMutation,
+  useUpdateSuperAdminMeMutation,
   useChangePasswordMutation,
 } = profileApis;
 

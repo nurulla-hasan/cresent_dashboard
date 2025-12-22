@@ -9,8 +9,7 @@ import { MdOutlineCancel } from "react-icons/md";
 import {
     useChangePasswordMutation,
     useGetAuthProfileQuery,
-    useUpdateAuthDataMutation,
-    useUpdateProfilePhotoMutation,
+    useUpdateSuperAdminMeMutation,
 } from "../../redux/feature/profile/profileApis";
 
 const AdminProfile = () => {
@@ -19,16 +18,17 @@ const AdminProfile = () => {
     const [activeTab, setActiveTab] = useState("edit");
     const [form] = Form.useForm();
 
-    const [updateAuthData, { isLoading: isUpdateAuthLoading }] = useUpdateAuthDataMutation();
+    const [updateSuperAdminMe, { isLoading: isUpdateMeLoading }] = useUpdateSuperAdminMeMutation();
     const [changePassword, { isLoading: isChangePasswordLoading }] = useChangePasswordMutation();
-    const [updateProfilePhoto, { isLoading: isUpdatePhotoLoading }] = useUpdateProfilePhotoMutation();
 
     const { data: profileRes, isLoading: isProfileLoading } = useGetAuthProfileQuery();
 
     const [userData, setUserData] = useState({
         name: "",
-        contact: "",
         address: "",
+        city: "",
+        state: "",
+        country: "",
     });
 
     const authProfile = profileRes?.data;
@@ -39,11 +39,23 @@ const AdminProfile = () => {
         setUserData((prev) => ({
             ...prev,
             name: authProfile?.name || prev.name || "",
+            address: authProfile?.address || prev.address || "",
+            city: authProfile?.city || prev.city || "",
+            state: authProfile?.state || prev.state || "",
+            country: authProfile?.country || prev.country || "",
         }));
+
+        if (authProfile?.profileImage) {
+            setProfilePic(authProfile.profileImage);
+        }
 
         if (isEditing) {
             form.setFieldsValue({
                 name: authProfile?.name || "",
+                address: authProfile?.address || "",
+                city: authProfile?.city || "",
+                state: authProfile?.state || "",
+                country: authProfile?.country || "",
             });
         }
     }, [authProfile, form, isEditing]);
@@ -68,16 +80,25 @@ const AdminProfile = () => {
 
     const onFinish = async (values) => {
         try {
-            await updateAuthData({
-                name: values?.name,
-                contact: values?.contact,
-                address: values?.address,
-            }).unwrap();
+            const fd = new FormData();
+            fd.append(
+                "data",
+                JSON.stringify({
+                    name: values?.name,
+                    address: values?.address,
+                    city: values?.city,
+                    state: values?.state,
+                    country: values?.country,
+                })
+            );
+            await updateSuperAdminMe(fd).unwrap();
 
             setUserData({
                 name: values.name,
-                contact: values.contact,
                 address: values.address,
+                city: values.city,
+                state: values.state,
+                country: values.country,
             });
 
             setIsEditing(false);
@@ -118,10 +139,11 @@ const AdminProfile = () => {
         }
 
         const fd = new FormData();
-        fd.append("profileImage", file);
+        fd.append("data", JSON.stringify({}));
+        fd.append("adminImage", file);
 
         try {
-            await updateProfilePhoto(fd).unwrap();
+            await updateSuperAdminMe(fd).unwrap();
             setProfilePic(URL.createObjectURL(file));
             message.success("Profile photo updated successfully!");
         } catch (err) {
@@ -150,17 +172,14 @@ const AdminProfile = () => {
                         </div>
                         <div className="flex-1">
                             <h1 className="text-2xl font-bold text-gray-900 sm:text-3xl">
-                                {isProfileLoading ? "Loading..." : userData.name || authProfile?.email || "Admin"}
+                                {isProfileLoading ? "Loading..." : userData.name || authProfile?.auth?.email || "Admin"}
                             </h1>
                             <div className="flex flex-wrap items-center gap-2 mt-2">
                                 <span className="px-2 py-1 text-xs font-medium text-gray-700 bg-gray-100 rounded-full">
-                                    {authProfile?.email || "-"}
+                                    {authProfile?.auth?.email || "-"}
                                 </span>
                                 <span className="px-2 py-1 text-xs font-medium text-blue-700 bg-blue-100 rounded-full">
-                                    {authProfile?.role || "-"}
-                                </span>
-                                <span className={`px-2 py-1 text-xs font-medium rounded-full ${authProfile?.status === "verified" ? "text-green-700 bg-green-100" : "text-orange-700 bg-orange-100"}`}>
-                                    {authProfile?.status || "-"}
+                                    {authProfile?.auth?.role || "-"}
                                 </span>
                             </div>
                         </div>
@@ -192,10 +211,18 @@ const AdminProfile = () => {
                                             <p className="text-sm font-semibold text-gray-900">{userData.name || "-"}</p>
                                         </div>
                                         <div className="p-4 border rounded-lg bg-gray-50">
-                                            <p className="text-xs text-gray-500">Contact</p>
-                                            <p className="text-sm font-semibold text-gray-900">{userData.contact || "-"}</p>
+                                            <p className="text-xs text-gray-500">City</p>
+                                            <p className="text-sm font-semibold text-gray-900">{userData.city || "-"}</p>
                                         </div>
                                         <div className="p-4 border rounded-lg bg-gray-50">
+                                            <p className="text-xs text-gray-500">Country</p>
+                                            <p className="text-sm font-semibold text-gray-900">{userData.country || "-"}</p>
+                                        </div>
+                                        <div className="p-4 border rounded-lg bg-gray-50">
+                                            <p className="text-xs text-gray-500">State</p>
+                                            <p className="text-sm font-semibold text-gray-900">{userData.state || "-"}</p>
+                                        </div>
+                                        <div className="p-4 border rounded-lg bg-gray-50 sm:col-span-2">
                                             <p className="text-xs text-gray-500">Address</p>
                                             <p className="text-sm font-semibold text-gray-900">{userData.address || "-"}</p>
                                         </div>
@@ -217,11 +244,25 @@ const AdminProfile = () => {
                                                 <Input placeholder="Your Name" />
                                             </Form.Item>
                                             <Form.Item
-                                                name="contact"
-                                                label={<p className="text-md">Contact Number</p>}
-                                                rules={[{ required: true, message: "Contact is required" }]}
+                                                name="country"
+                                                label={<p className="text-md">Country</p>}
+                                                rules={[{ required: true, message: "Country is required" }]}
                                             >
-                                                <Input placeholder="Contact Number" />
+                                                <Input placeholder="Country" />
+                                            </Form.Item>
+                                            <Form.Item
+                                                name="city"
+                                                label={<p className="text-md">City</p>}
+                                                rules={[{ required: true, message: "City is required" }]}
+                                            >
+                                                <Input placeholder="City" />
+                                            </Form.Item>
+                                            <Form.Item
+                                                name="state"
+                                                label={<p className="text-md">State</p>}
+                                                rules={[{ required: true, message: "State is required" }]}
+                                            >
+                                                <Input placeholder="State" />
                                             </Form.Item>
                                             <Form.Item
                                                 name="address"
@@ -238,8 +279,7 @@ const AdminProfile = () => {
                                                 <Button
                                                     type="primary"
                                                     htmlType="submit"
-                                                    loading={isUpdateAuthLoading}
-                                                    disabled={isUpdatePhotoLoading}
+                                                    loading={isUpdateMeLoading}
                                                     className="bg-black"
                                                 >
                                                     Save Changes
