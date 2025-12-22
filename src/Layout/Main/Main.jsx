@@ -8,11 +8,15 @@ import { IoIosNotificationsOutline } from "react-icons/io";
 import { Link } from "react-router-dom";
 import brandlogo from "../../assets/image/Logo.png";
 import user from "../../assets/image/p.png";
+import { useGetUnseenNotificationCountQuery } from "../../redux/feature/notification/notificationApis";
 // import Search from "antd/es/transfer/search";
 
 const MainLayout = () => {
   const [drawer, setDrawer] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+  const { data: unseenRes } = useGetUnseenNotificationCountQuery();
+  const unseenCount = unseenRes?.data;
 
   const toggleDrawer = () => setDrawer(!drawer);
   const closeDrawer = () => setDrawer(false);
@@ -81,9 +85,11 @@ const MainLayout = () => {
               <Link to="/notification">
                 <div className="relative">
                   <IoIosNotificationsOutline className="w-10 h-10 p-1 text-black bg-white border rounded-full" />
-                  <span className="absolute top-0 right-0 flex items-center justify-center w-5 h-5 text-xs text-white bg-red-500 rounded-full">
-                    1
-                  </span>
+                  {typeof unseenCount === "number" && unseenCount > 0 ? (
+                    <span className="absolute top-0 right-0 flex items-center justify-center w-5 h-5 text-xs text-white bg-red-500 rounded-full">
+                      {unseenCount}
+                    </span>
+                  ) : null}
                 </div>
               </Link>
               <Link to="/admin-profile">
