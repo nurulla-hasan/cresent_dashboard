@@ -3,6 +3,14 @@ import { baseApi } from "../baseApi";
 
 const profileApis = baseApi.injectEndpoints({
   endpoints: (builder) => ({
+    getAuthProfile: builder.query({
+      query: () => ({
+        url: "/auth/profile",
+        method: "GET",
+      }),
+      providesTags: ["PROFILE"],
+    }),
+
     updateProfilePhoto: builder.mutation({
       query: (formData) => ({
         url: "/auth/update-photo",
@@ -32,6 +40,7 @@ const profileApis = baseApi.injectEndpoints({
 });
 
 export const {
+  useGetAuthProfileQuery,
   useUpdateProfilePhotoMutation,
   useUpdateAuthDataMutation,
   useChangePasswordMutation,
