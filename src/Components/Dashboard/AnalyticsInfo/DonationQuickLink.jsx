@@ -1,4 +1,4 @@
-import { Table, Input } from "antd";
+import { Table, Input, Drawer } from "antd";
 import { MoreOutlined } from "@ant-design/icons";
 import { VscEye } from "react-icons/vsc";
 import user from "../../../assets/image/user.png";
@@ -8,8 +8,12 @@ import Calendar from "../../../assets/image/Calendar.png";
 import { SlArrowLeft } from "react-icons/sl";
 import { useGetDonationHistoryQuery } from "../../../redux/feature/donation/donationApis";
 import useSmartFetchHook from "../../hooks/useSmartFetchHook.ts";
+import { useState } from "react";
 const DonationQuickLink = () => {
   const { Search } = Input;
+
+  const [isViewOpen, setIsViewOpen] = useState(false);
+  const [selectedDonation, setSelectedDonation] = useState(null);
 
   const {
     searchTerm,
@@ -33,20 +37,54 @@ const DonationQuickLink = () => {
     return map[type] || type;
   };
 
+  const renderDonationTypeBadge = (value) => (
+    <div className="flex items-center gap-2">
+      {value === "Round Up" && (
+        <div className="flex items-center gap-1 px-4 py-1 text-blue-600 bg-blue-100 rounded-2xl">
+          <img src={Chnage} alt="" /> Round Up
+        </div>
+      )}
+      {value === "Recurring" && (
+        <div className="flex items-center gap-1 px-4 py-1 text-green-600 bg-green-100 rounded-2xl">
+          <img src={Calendar} alt="" />
+          Recurring
+        </div>
+      )}
+      {value === "One Time" && (
+        <div className="flex items-center gap-1 px-4 py-1 text-pink-600 bg-pink-100 rounded-2xl">
+          <img src={Gift} alt="" /> One Time
+        </div>
+      )}
+      {value !== "Round Up" && value !== "Recurring" && value !== "One Time" ? (
+        <div className="px-3 py-1 text-gray-700 bg-gray-100 rounded-2xl">{value || "-"}</div>
+      ) : null}
+    </div>
+  );
+
   const tableData = apiData.map((item, idx) => ({
     key: item?.createdAt || String(idx),
-    name: item?.donor?.name || "-",
-    email: item?.donor?.email || "-",
-    dateTime: item?.createdAt,
+    _id: item?._id,
+    donorName: item?.donor?.name || "-",
+    donorEmail: item?.donor?.email || "-",
+    organizationName: item?.organization?.name || "-",
+    organizationEmail: item?.organization?.email || "-",
+    causeId: item?.cause || "-",
+    donationTypeRaw: item?.donationType,
     donationType: toTitleDonationType(item?.donationType),
+    dateTime: item?.createdAt,
     donationMessage: item?.specialMessage || "-",
     amount: Number(item?.amount) || 0,
   })) || [];
 
+  const handleOpenView = (record) => {
+    setSelectedDonation(record);
+    setIsViewOpen(true);
+  };
+
   const columns = [
     {
       title: "Name/Email",
-      dataIndex: "name",
+      dataIndex: "donorName",
       key: "name",
       sorter: true,
       render: (text, record) => (
@@ -55,11 +93,11 @@ const DonationQuickLink = () => {
           <img
             src={user}
             alt={record.name}
-            className="h-10 w-10 rounded-full"
+            className="w-10 h-10 rounded-full"
           />
           <div>
-            <p className="font-medium">{record.name}</p>
-            <p className="text-gray-400">{record.email}</p>
+            <p className="font-medium">{record.donorName}</p>
+            <p className="text-gray-400">{record.donorEmail}</p>
           </div>
         </div>
       ),
@@ -90,23 +128,8 @@ const DonationQuickLink = () => {
         { text: "Round Up", value: "round-up" },
       ],
       render: (value) => (
-        <div className="px-4 py-2 rounded-3xl flex items-center gap-2">
-          {value === "Round Up" && (
-            <div className="flex items-center gap-1 bg-blue-100 text-blue-600 px-4 py-1 rounded-2xl">
-              <img src={Chnage} alt="" /> Round Up
-            </div>
-          )}
-          {value === "Recurring" && (
-            <div className="flex items-center gap-1 bg-green-100 text-green-600 px-4 py-1 rounded-2xl">
-              <img src={Calendar} alt="" />
-              Recurring
-            </div>
-          )}
-          {value === "One Time" && (
-            <div className="flex items-center gap-1 bg-pink-100 text-pink-600 px-4 py-1 rounded-2xl">
-              <img src={Gift} alt="" /> One Time
-            </div>
-          )}
+        <div className="flex items-center gap-2 px-4 py-2 rounded-3xl">
+          {renderDonationTypeBadge(value)}
         </div>
       ),
     },
@@ -122,9 +145,16 @@ const DonationQuickLink = () => {
     {
       title: "Action",
       key: "action",
-      render: () => (
-        <div className="flex justify-center items-center gap-2">
-          <VscEye className="h-5 w-5" />
+      render: (_, record) => (
+        <div className="flex items-center justify-center gap-2">
+          <button
+            type="button"
+            onClick={() => handleOpenView(record)}
+            className="flex items-center justify-center"
+            title="View Details"
+          >
+            <VscEye className="w-5 h-5" />
+          </button>
         </div>
       ),
     },
@@ -132,44 +162,44 @@ const DonationQuickLink = () => {
 
   return (
     <div>
-      <button onClick={() => window.history.back()} className="bg-white px-4 py-3 rounded-3xl flex justify-center items-center gap-2 mb-4">
+      <button onClick={() => window.history.back()} className="flex items-center justify-center gap-2 px-4 py-3 mb-4 bg-white rounded-3xl">
         <SlArrowLeft /> Back
       </button>
       <div className="flex flex-col gap-5">
         <div>
-          <h1 className="text-3xl font-bold mb-4">Donations Overview</h1>
-          <p className="text-lg text-gray-600 mb-4">
+          <h1 className="mb-4 text-3xl font-bold">Donations Overview</h1>
+          <p className="mb-4 text-lg text-gray-600">
             Filter, review, and manage receipts with ease.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 justify-center  items-center gap-3">
-          <div className="bg-white p-6 rounded-3xl border">
+        <div className="grid items-center justify-center grid-cols-1 gap-3 md:grid-cols-3">
+          <div className="p-6 bg-white border rounded-3xl">
             <p className="text-lg font-medium">Total Donations</p>
-            <h1 className="text-2xl font-medium mt-10">
+            <h1 className="mt-10 text-2xl font-medium">
               <span className="text-gray-400">$</span> {Number(donationRes?.totalDonation || 0).toFixed(2)}
               <span className="text-sm text-green-600"> {donationRes?.totalDonationChangeText || ""}</span>
             </h1>
           </div>
 
-          <div className="bg-white p-6 rounded-3xl border">
+          <div className="p-6 bg-white border rounded-3xl">
             <p className="text-lg font-medium">Avg. Donation</p>
-            <h1 className="text-2xl font-medium mt-10">
+            <h1 className="mt-10 text-2xl font-medium">
               <span className="text-gray-400">$</span> {Number(donationRes?.avgDonationAmount || 0).toFixed(2)}
               <span className="text-sm text-gray-400"> {donationRes?.avgDonationChangeText || ""}</span>
             </h1>
           </div>
-          <div className="bg-white p-6 rounded-3xl border">
+          <div className="p-6 bg-white border rounded-3xl">
             <p className="text-lg font-medium">Total Donors</p>
-            <h1 className="text-2xl font-medium mt-10">
+            <h1 className="mt-10 text-2xl font-medium">
               {donationRes?.totalDonors || 0}
               <span className="text-sm text-green-500"> {donationRes?.totalDonorsChangeText || ""}</span>
             </h1>
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-3xl border my-6">
-          <div className="flex justify-between items-center gap-5">
+        <div className="p-6 my-6 bg-white border rounded-3xl">
+          <div className="flex items-center justify-between gap-5">
             <h1 className="text-xl font-medium">Donation History</h1>
 
             <div className="flex items-center gap-3 mb-4">
@@ -195,9 +225,9 @@ const DonationQuickLink = () => {
                 </Button>
               </div> */}
 
-              <div className="relative group  inline-block">
+              <div className="relative inline-block group">
                 <MoreOutlined className="text-xl cursor-pointer" />
-                <button className="absolute -left-5 bottom-10 text-xs opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-gray-500 text-white px-4 py-2 rounded">
+                <button className="absolute px-4 py-2 text-xs text-white transition-opacity duration-200 bg-gray-500 rounded opacity-0 -left-5 bottom-10 group-hover:opacity-100">
                   Export
                 </button>
               </div>
@@ -236,10 +266,69 @@ const DonationQuickLink = () => {
             }}
           />
           {isError && (
-            <div className="text-red-500 mt-2">Failed to load donation history.</div>
+            <div className="mt-2 text-red-500">Failed to load donation history.</div>
           )}
         </div>
       </div>
+
+      <Drawer
+        title="Donation Details"
+        open={isViewOpen}
+        onClose={() => {
+          setIsViewOpen(false);
+          setSelectedDonation(null);
+        }}
+        placement="right"
+        width={420}
+      >
+        {selectedDonation ? (
+          <div className="space-y-4">
+            <div className="p-4 border rounded-xl bg-gray-50">
+              <p className="text-xs text-gray-500">Donor</p>
+              <p className="text-base font-semibold text-gray-900">{selectedDonation.donorName}</p>
+              <p className="text-sm text-gray-600">{selectedDonation.donorEmail}</p>
+            </div>
+
+            <div className="p-4 border rounded-xl bg-gray-50">
+              <p className="text-xs text-gray-500">Organization</p>
+              <p className="text-base font-semibold text-gray-900">{selectedDonation.organizationName}</p>
+              <p className="text-sm text-gray-600">{selectedDonation.organizationEmail}</p>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              <div className="p-4 border rounded-xl">
+                <p className="text-xs text-gray-500">Amount</p>
+                <p className="text-lg font-bold text-gray-900">${Number(selectedDonation.amount || 0).toFixed(2)}</p>
+              </div>
+              <div className="p-4 border rounded-xl">
+                <p className="text-xs text-gray-500">Type</p>
+                <div className="mt-1">{renderDonationTypeBadge(selectedDonation.donationType || "-")}</div>
+              </div>
+            </div>
+
+            <div className="p-4 border rounded-xl">
+              <p className="text-xs text-gray-500">Cause</p>
+              <p className="text-sm font-semibold text-gray-900 break-all">
+                {selectedDonation.causeId || "-"}
+              </p>
+            </div>
+
+            <div className="p-4 border rounded-xl">
+              <p className="text-xs text-gray-500">Date & Time</p>
+              <p className="text-sm font-semibold text-gray-900">
+                {selectedDonation.dateTime ? new Date(selectedDonation.dateTime).toLocaleString() : "-"}
+              </p>
+            </div>
+
+            <div className="p-4 border rounded-xl">
+              <p className="text-xs text-gray-500">Donation Message</p>
+              <p className="text-sm text-gray-800 whitespace-pre-wrap">
+                {selectedDonation.donationMessage || "-"}
+              </p>
+            </div>
+          </div>
+        ) : null}
+      </Drawer>
     </div>
   );
 };
