@@ -124,7 +124,7 @@ const AnalyticsRoute = () => {
     <div>
       <div className="flex items-center justify-between gap-5">
         <div className="w-full md:w-[70%]">
-          <h1 className="my-3 text-xl font-semibold md:text-3xl">Analytics</h1>
+          <h1 className="mb-3 text-xl font-semibold md:text-3xl">Analytics</h1>
           <p className="mb-10 text-gray-500">
             Track donor trends, popular causes, and user activity across the
             platform.

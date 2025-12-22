@@ -53,7 +53,7 @@ const Notifications = () => {
     };
 
   return (
-    <div className="p-6">
+    <div>
       {/* Page Header */}
       <h1 className="mb-4 text-2xl font-bold">Notifications</h1>
 

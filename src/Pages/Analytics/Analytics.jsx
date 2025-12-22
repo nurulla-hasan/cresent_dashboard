@@ -29,10 +29,10 @@ const Analytics = () => {
 
   return (
     <div className="">
-      <div className="flex justify-between items-center gap-5">
+      <div className="flex items-center justify-between gap-5">
         <div className="w-full md:w-[70%]">
-          <h1 className="text-xl md:text-3xl font-semibold my-3">Dashboard</h1>
-          <p className="text-gray-500 mb-10">
+          <h1 className="mb-2 text-xl font-semibold md:text-3xl">Dashboard</h1>
+          <p className="mb-10 text-gray-500">
             Track donation patterns, donor behavior, and how contributions are
             shaping results.
           </p>
@@ -59,14 +59,14 @@ const Analytics = () => {
         </div>
       </div>
 
-      <div className="flex justify-between items-start gap-5">
+      <div className="flex items-start justify-between gap-5">
         <div className=" w-full md:w-[70%]">
           {isLoading || isFetching ? (
-            <div className="p-10 bg-white border rounded-2xl flex justify-center items-center">
-              <div className="h-10 w-10 border-4 border-gray-200 border-t-black rounded-full animate-spin" />
+            <div className="flex items-center justify-center p-10 bg-white border rounded-2xl">
+              <div className="w-10 h-10 border-4 border-gray-200 rounded-full border-t-black animate-spin" />
             </div>
           ) : isError ? (
-            <div className="p-6 bg-white border rounded-2xl text-red-500">Failed to load dashboard data.</div>
+            <div className="p-6 text-red-500 bg-white border rounded-2xl">Failed to load dashboard data.</div>
           ) : (
             <>
               <AnanlyticsCharts

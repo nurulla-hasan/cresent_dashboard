@@ -23,7 +23,7 @@ const AllUsers = () => {
   };
 
   return (
-    <div className="min-h-screen p-6 bg-gray-50">
+    <div className="min-h-screen bg-gray-50">
 
       <div className="flex items-center justify-between mb-6">
         <div>
