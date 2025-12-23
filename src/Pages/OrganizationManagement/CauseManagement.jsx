@@ -16,7 +16,7 @@ const { Option } = Select;
 import useSmartFetchHook from "../../Components/hooks/useSmartFetchHook.ts";
 import { useGetAllCauseQuery, useUpdateCauseMutation, useGetCauseCategoriesQuery, useChangeCauseStatusMutation, useCreateCauseMutation } from "../../redux/feature/cause/causeApis";
 import { useGetOrganizationReportQuery } from "../../redux/feature/organization/organizationApis";
-import { getImageUrl, SuccessToast, ErrorToast } from "../../lib/utils.js";
+import { SuccessToast, ErrorToast } from "../../lib/utils.js";
 
 const CauseManagement = () => {
   const {
@@ -121,7 +121,7 @@ const CauseManagement = () => {
       render: (_, record) => (
         <div className="flex items-center gap-2">
           <img
-            src={getImageUrl(record?.organization?.logoImage) || ""}
+            src={record?.organization?.logoImage || ""}
             alt={record.name}
             className="object-cover w-10 h-10 rounded-full"
           />

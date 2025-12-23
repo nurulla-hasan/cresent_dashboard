@@ -7,7 +7,6 @@ import { RxCrossCircled } from "react-icons/rx";
 
 import useSmartFetchHook from "../../Components/hooks/useSmartFetchHook.ts";
 import { useDeleteBadgeMutation, useGetBadgeReportQuery } from "../../redux/feature/badge/badgeApis";
-import { getImageUrl } from "../../lib/utils";
 import CreateBadgeModal from "./CreateBadgeModal";
 import UpdateBadgeModal from "./UpdateBadgeModal";
 const BadgeTable = () => {
@@ -73,7 +72,7 @@ const BadgeTable = () => {
     if (!Array.isArray(data)) return [];
     return data.map((b) => ({
       ...b,
-      iconUrl: getImageUrl(b?.icon),
+      iconUrl: b?.icon || "",
     }));
   }, [data]);
 
@@ -89,7 +88,7 @@ const BadgeTable = () => {
       dataIndex: "iconUrl",
       key: "icon",
       render: (iconUrl, record) => (
-        <img src={getImageUrl(iconUrl) || ""} alt={record?.name || "badge"} className="object-contain w-12 h-12" />
+        <img src={iconUrl || ""} alt={record?.name || "badge"} className="object-contain w-12 h-12" />
       ),
     },
     {
@@ -259,7 +258,7 @@ const BadgeTable = () => {
             <div className="flex items-start justify-between">
               <div className="flex items-center gap-4">
                 <img
-                  src={getImageUrl(selectedBadge.iconUrl) || ""}
+                  src={selectedBadge.iconUrl || ""}
                   alt={selectedBadge.name}
                   className="object-contain w-16 h-16 p-2 rounded-xl bg-gray-50"
                 />

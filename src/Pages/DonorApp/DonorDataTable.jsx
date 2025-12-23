@@ -7,7 +7,6 @@ import user from "../../assets/image/user.png";
 
 import useSmartFetchHook from "../../Components/hooks/useSmartFetchHook.ts";
 import { useGetDonationReportQuery } from "../../redux/feature/donation/donationApis";
-import { getImageUrl } from "../../lib/utils.js";
 
 const DonorDataTable = () => {
   const { RangePicker } = DatePicker;
@@ -213,7 +212,7 @@ const DonorDataTable = () => {
             {/* Profile Section */}
             <div className="flex items-center gap-4">
               <img
-                src={getImageUrl(selectedDonor.image) || user}
+                src={selectedDonor.image || user}
                 alt={selectedDonor.name}
                 className="object-cover w-20 h-20 border-2 border-gray-200 rounded-full"
                 onError={(e) => { e.target.src = user; }}
