@@ -16,12 +16,14 @@ const authApi = baseApi.injectEndpoints({
       async onQueryStarted(arg, { dispatch, queryFulfilled }) {
         try {
           const { data } = await queryFulfilled;
+          const twoFactorRequired = data?.data?.twoFactorRequired;
           const accessToken = data?.data?.accessToken;
           // const user = data?.data;
-          if (!accessToken) {
-            ErrorToast("Invalid login response.");
+          if (twoFactorRequired) {
+            // UI will prompt for OTP and call /auth/2fa/verify-login.
             return;
           }
+          if (!accessToken) return;
           // if (user?.role !== "ADMIN" ) {
           //   ErrorToast("You are not authorized to login.");
           //   return;

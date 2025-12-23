@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   AiOutlineEye,
   AiOutlineEyeInvisible,
@@ -12,10 +12,15 @@ import {
   useTwoFaSetupMutation,
 } from "../../../redux/feature/auth/authApi";
 
-import { useChangePasswordMutation } from "../../../redux/feature/profile/profileApis";
+import {
+  useChangePasswordMutation,
+  useGetAuthProfileQuery,
+} from "../../../redux/feature/profile/profileApis";
 
 export default function ContactUs() {
   const [twoFA, setTwoFA] = useState(false);
+
+  const { data: profileData, isFetching: isProfileFetching, refetch: refetchProfile } = useGetAuthProfileQuery();
 
   const [twoFaSetup, { isLoading: isTwoFaSetupLoading }] = useTwoFaSetupMutation();
   const [twoFaEnable, { isLoading: isTwoFaEnableLoading }] = useTwoFaEnableMutation();
@@ -30,7 +35,11 @@ export default function ContactUs() {
   const [twoFaMode, setTwoFaMode] = useState("enable");
   const [twoFaToken, setTwoFaToken] = useState("");
   const [twoFaSetupData, setTwoFaSetupData] = useState(null);
-  const [backupCodes, setBackupCodes] = useState([]);
+
+  useEffect(() => {
+    const nextTwoFa = !!profileData?.data?.auth?.isTwoFactorEnabled;
+    setTwoFA(nextTwoFa);
+  }, [profileData?.data?.auth?.isTwoFactorEnabled]);
 
   // Password state
   const [passwords, setPasswords] = useState({
@@ -60,11 +69,18 @@ export default function ContactUs() {
   const resetTwoFaModalState = () => {
     setTwoFaToken("");
     setTwoFaSetupData(null);
-    setBackupCodes([]);
   };
 
   const handleToggleTwoFa = async (next) => {
-    if (next) {
+    if (isProfileFetching) return;
+
+    // Safety: if UI is out of sync, base action on backend flag
+    const currentEnabled = !!profileData?.data?.auth?.isTwoFactorEnabled;
+    const desiredEnabled = typeof next === "boolean" ? next : !currentEnabled;
+
+    if (desiredEnabled === currentEnabled) return;
+
+    if (desiredEnabled) {
       setTwoFaMode("enable");
       resetTwoFaModalState();
       try {
@@ -93,9 +109,10 @@ export default function ContactUs() {
     try {
       if (twoFaMode === "enable") {
         const res = await twoFaEnable({ token: twoFaToken }).unwrap();
-        const codes = res?.data?.backupCodes || [];
-        setBackupCodes(Array.isArray(codes) ? codes : []);
         setTwoFA(true);
+        setShowTwoFaModal(false);
+        resetTwoFaModalState();
+        refetchProfile();
         message.success(res?.message || "2FA enabled successfully");
         return;
       }
@@ -104,6 +121,7 @@ export default function ContactUs() {
       setTwoFA(false);
       setShowTwoFaModal(false);
       resetTwoFaModalState();
+      refetchProfile();
       message.success(res?.message || "2FA disabled successfully");
     } catch (err) {
       const msg = err?.data?.message || "Failed to submit 2FA token";
@@ -186,7 +204,7 @@ export default function ContactUs() {
             checked={twoFA}
             onChange={(e) => handleToggleTwoFa(e.target.checked)}
             className="sr-only peer"
-            disabled={isTwoFaSetupLoading || isTwoFaEnableLoading || isTwoFaDisableLoading}
+            disabled={isProfileFetching || isTwoFaSetupLoading || isTwoFaEnableLoading || isTwoFaDisableLoading}
           />
           <div className="w-11 h-6 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:bg-green-500 relative after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-full" />
         </label>
@@ -218,8 +236,10 @@ export default function ContactUs() {
 
             {twoFaSetupData?.secret ? (
               <div className="p-3 border rounded-lg">
-                <p className="text-xs text-gray-500">Secret</p>
-                <p className="text-sm font-medium break-all">{twoFaSetupData.secret}</p>
+                <p className="mb-1 text-xs text-gray-500">Secret</p>
+                <p className="font-mono text-sm break-all">
+                  {twoFaSetupData.secret}
+                </p>
               </div>
             ) : null}
 
@@ -232,29 +252,19 @@ export default function ContactUs() {
               />
             </div>
 
-            {backupCodes?.length ? (
-              <div className="p-3 border rounded-lg bg-gray-50">
-                <p className="text-sm font-medium text-gray-900">Backup codes</p>
-                <p className="text-xs text-gray-500">Save these codes somewhere safe.</p>
-                <div className="grid grid-cols-2 gap-2 mt-3">
-                  {backupCodes.map((code) => (
-                    <div key={code} className="px-2 py-1 font-mono text-sm bg-white border rounded">
-                      {code}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            ) : null}
-
-            <div className="flex justify-end gap-3">
-              <Button onClick={closeTwoFaModal}>Cancel</Button>
+            <div className="flex justify-end gap-2">
+              <Button
+                onClick={closeTwoFaModal}
+                disabled={isTwoFaSetupLoading || isTwoFaEnableLoading}
+              >
+                Cancel
+              </Button>
               <Button
                 type="primary"
                 onClick={handleSubmitTwoFa}
                 loading={isTwoFaSetupLoading || isTwoFaEnableLoading}
-                disabled={!!backupCodes?.length}
               >
-                {backupCodes?.length ? "Enabled" : "Enable"}
+                Enable
               </Button>
             </div>
           </div>
