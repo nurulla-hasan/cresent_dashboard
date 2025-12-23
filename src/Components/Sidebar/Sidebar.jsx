@@ -26,6 +26,7 @@ const Sidebar = ({ closeDrawer }) => {
     },
     { icon: donor, label: "Donor App", Link: "/donor-app" },
     { icon: business, label: "Business Admin", Link: "/business-admin" },
+    { icon: business, label: "Settings", Link: "/settings/contact-us" },
   ];
 
   // Find active menu item based on current path

@@ -1,47 +1,32 @@
 import { useState } from "react";
-import { CgMoreVertical } from "react-icons/cg";
-import { FaEdit, FaTrash } from "react-icons/fa";
 import {
   AiOutlineEye,
   AiOutlineEyeInvisible,
-  AiOutlineMail,
 } from "react-icons/ai";
-import { Modal, Input, Select, Button } from "antd";
-import Swal from "sweetalert2";
+import { Modal, Input, Button, message } from "antd";
 import { Link } from "react-router-dom";
 
-const teamMembers = [
-  {
-    name: "John Bills",
-    email: "billsjohn09@gmail.com",
-    status: "Active",
-    role: "Admin",
-  },
-  {
-    name: "Billy Clark",
-    email: "clark999@gmail.com",
-    status: "Pending",
-    role: "Editor",
-  },
-  {
-    name: "Anna K.",
-    email: "annakazama54@gmail.com",
-    status: "Active",
-    role: "Manager",
-  },
-];
+import {
+  useTwoFaDisableMutation,
+  useTwoFaEnableMutation,
+  useTwoFaSetupMutation,
+} from "../../../redux/feature/auth/authApi";
 
 export default function ContactUs() {
-  const [members, setMembers] = useState(teamMembers);
   const [twoFA, setTwoFA] = useState(false);
 
-  // Dropdown open state
-  const [openMenu, setOpenMenu] = useState(null);
+  const [twoFaSetup, { isLoading: isTwoFaSetupLoading }] = useTwoFaSetupMutation();
+  const [twoFaEnable, { isLoading: isTwoFaEnableLoading }] = useTwoFaEnableMutation();
+  const [twoFaDisable, { isLoading: isTwoFaDisableLoading }] = useTwoFaDisableMutation();
 
   // Modal states
   const [showPasswordModal, setShowPasswordModal] = useState(false);
-  const [showInviteModal, setShowInviteModal] = useState(false);
-  const [showEditModal, setShowEditModal] = useState(false);
+
+  const [showTwoFaModal, setShowTwoFaModal] = useState(false);
+  const [twoFaMode, setTwoFaMode] = useState("enable");
+  const [twoFaToken, setTwoFaToken] = useState("");
+  const [twoFaSetupData, setTwoFaSetupData] = useState(null);
+  const [backupCodes, setBackupCodes] = useState([]);
 
   // Password state
   const [passwords, setPasswords] = useState({
@@ -55,209 +40,87 @@ export default function ContactUs() {
     confirm: false,
   });
 
-  // Invite state
-  const [invite, setInvite] = useState({ email: "", role: "Manager" });
+  const resetTwoFaModalState = () => {
+    setTwoFaToken("");
+    setTwoFaSetupData(null);
+    setBackupCodes([]);
+  };
 
-  // Edit state
-  const [editingMember, setEditingMember] = useState(null);
-
-  const handleRemove = (email) => {
-    Swal.fire({
-      title: "Are you sure?",
-      text: "This member will be removed from the team.",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonText: "Yes, remove",
-      cancelButtonText: "Cancel",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        setMembers((prev) => prev.filter((m) => m.email !== email));
-        Swal.fire("Removed!", "The member has been removed.", "success");
+  const handleToggleTwoFa = async (next) => {
+    if (next) {
+      setTwoFaMode("enable");
+      resetTwoFaModalState();
+      try {
+        const res = await twoFaSetup().unwrap();
+        setTwoFaSetupData(res?.data || null);
+        setShowTwoFaModal(true);
+      } catch (err) {
+        const msg = err?.data?.message || "Failed to setup 2FA";
+        message.error(msg);
       }
-    });
+      return;
+    }
+
+    // disable
+    setTwoFaMode("disable");
+    resetTwoFaModalState();
+    setShowTwoFaModal(true);
+  };
+
+  const handleSubmitTwoFa = async () => {
+    if (!twoFaToken) {
+      message.error("Please enter the token");
+      return;
+    }
+
+    try {
+      if (twoFaMode === "enable") {
+        const res = await twoFaEnable({ token: twoFaToken }).unwrap();
+        const codes = res?.data?.backupCodes || [];
+        setBackupCodes(Array.isArray(codes) ? codes : []);
+        setTwoFA(true);
+        message.success(res?.message || "2FA enabled successfully");
+        return;
+      }
+
+      const res = await twoFaDisable({ token: twoFaToken }).unwrap();
+      setTwoFA(false);
+      setShowTwoFaModal(false);
+      resetTwoFaModalState();
+      message.success(res?.message || "2FA disabled successfully");
+    } catch (err) {
+      const msg = err?.data?.message || "Failed to submit 2FA token";
+      message.error(msg);
+    }
+  };
+
+  const closeTwoFaModal = () => {
+    setShowTwoFaModal(false);
+    resetTwoFaModalState();
   };
 
   const handlePasswordChange = () => {
     if (passwords.new !== passwords.confirm) {
-      alert("Passwords do not match!");
       return;
     }
-    console.log("Submit new password:", passwords);
     setShowPasswordModal(false);
   };
 
-  const handleInvite = () => {
-    console.log("Invite sent:", invite);
-    setShowInviteModal(false);
-  };
-
-  const handleEditSave = () => {
-    setMembers((prev) =>
-      prev.map((m) => (m.email === editingMember.email ? editingMember : m))
-    );
-    setShowEditModal(false);
-  };
 
   return (
     <div>
-      <h1 className="text-2xl md:text-3xl font-semibold mb-2">Settings</h1>
-      <p className="text-gray-500 mb-8">
+      <h1 className="mb-2 text-2xl font-semibold md:text-3xl">Settings</h1>
+      <p className="mb-8 text-gray-500">
         Manage team access and keep your organisation account secure.
       </p>
 
-      {/* Team Access */}
-      <div className="mb-10">
-        <div className="flex justify-between items-center">
-          <h2 className="text-2xl font-semibold mb-3">Team Access</h2>
-          <button
-            onClick={() => setShowInviteModal(true)}
-            className="bg-white px-3 py-1 rounded-3xl border"
-          >
-            Invite a new member
-          </button>
-        </div>
-        <p className="text-gray-500 mb-5">
-          Manage your team and assign roles to manage your organization.
-        </p>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-          {members.map((member) => (
-            <div
-              key={member.email}
-              className="bg-white p-6 rounded-3xl border relative"
-            >
-              <div className="flex justify-between items-center gap-2 border-b pb-6">
-                <div>
-                  <p className="font-semibold text-lg mb-2">{member.name}</p>
-                  <p className="text-gray-500 text-sm">{member.email}</p>
-                </div>
-                <div className="relative">
-                  <button
-                    onClick={() =>
-                      setOpenMenu(openMenu === member.email ? null : member.email)
-                    }
-                  >
-                    <CgMoreVertical className="cursor-pointer text-gray-500" />
-                  </button>
-
-                  {openMenu === member.email && (
-                    <div className="absolute right-0 mt-2 w-28 bg-white border rounded shadow z-10">
-                      <button
-                        onClick={() => {
-                          setEditingMember({ ...member });
-                          setShowEditModal(true);
-                          setOpenMenu(null);
-                        }}
-                        className="flex items-center gap-2 px-3 py-2 text-sm hover:bg-gray-100 w-full text-left"
-                      >
-                        <FaEdit size={14} /> Edit
-                      </button>
-                      <button
-                        onClick={() => {
-                          handleRemove(member.email);
-                          setOpenMenu(null);
-                        }}
-                        className="flex items-center gap-2 px-3 py-2 text-sm text-red-600 hover:bg-gray-100 w-full text-left"
-                      >
-                        <FaTrash size={14} /> Remove
-                      </button>
-                    </div>
-                  )}
-                </div>
-              </div>
-              <div className="flex justify-between items-center gap-3 mt-3">
-                <p>Status: </p>
-                <p
-                  className={`${
-                    member.status === "Active"
-                      ? "text-green-600"
-                      : "text-yellow-600"
-                  } font-medium`}
-                >
-                  {member.status}
-                </p>
-              </div>
-              <div className="flex justify-between items-center gap-3 mt-3">
-                <p>Role: </p>
-                <p className="inline-block bg-black text-white text-xs px-2 py-1 rounded">
-                  {member.role}
-                </p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Edit Modal */}
-      <Modal
-        title="Edit Member"
-        open={showEditModal}
-        onCancel={() => setShowEditModal(false)}
-        footer={null}
-      >
-        {editingMember && (
-          <>
-            <div className="mb-4">
-              <label className="block text-sm mb-1">Name</label>
-              <Input
-                value={editingMember.name}
-                onChange={(e) =>
-                  setEditingMember({ ...editingMember, name: e.target.value })
-                }
-              />
-            </div>
-
-            <div className="mb-4">
-              <label className="block text-sm mb-1">Email</label>
-              <Input value={editingMember.email} disabled />
-            </div>
-
-            <div className="mb-4">
-              <label className="block text-sm mb-1">Role</label>
-              <Select
-                value={editingMember.role}
-                onChange={(val) =>
-                  setEditingMember({ ...editingMember, role: val })
-                }
-                className="w-full"
-              >
-                <Select.Option value="Admin">Admin</Select.Option>
-                <Select.Option value="Editor">Editor</Select.Option>
-                <Select.Option value="Manager">Manager</Select.Option>
-              </Select>
-            </div>
-
-            <div className="mb-6">
-              <label className="block text-sm mb-1">Status</label>
-              <Select
-                value={editingMember.status}
-                onChange={(val) =>
-                  setEditingMember({ ...editingMember, status: val })
-                }
-                className="w-full"
-              >
-                <Select.Option value="Active">Active</Select.Option>
-                <Select.Option value="Pending">Pending</Select.Option>
-              </Select>
-            </div>
-
-            <div className="flex justify-end gap-3">
-              <Button onClick={() => setShowEditModal(false)}>Cancel</Button>
-              <Button type="primary" onClick={handleEditSave}>
-                Save Changes
-              </Button>
-            </div>
-          </>
-        )}
-      </Modal>
-
       {/* Update Password */}
-      <div className="bg-white rounded-xl shadow p-4 mb-6 flex justify-between items-center">
+      <div className="flex items-center justify-between p-4 mb-6 bg-white shadow rounded-xl">
         <div>
           <h3 className="font-medium">Update your password</h3>
           <p className="text-sm text-gray-500">
             Change or update your password. Forgot your password?{" "}
-            <Link to="/forgate-password" className="text-blue-600 underline">
+            <Link to="/forgot-password" className="text-blue-600 underline">
               Click here
             </Link>{" "}
             to reset it.
@@ -272,7 +135,7 @@ export default function ContactUs() {
       </div>
 
       {/* Two-Factor Authentication */}
-      <div className="bg-white rounded-xl shadow p-4 flex justify-between items-center">
+      <div className="flex items-center justify-between p-4 bg-white shadow rounded-xl">
         <div>
           <h3 className="font-medium">Two-Factor Authentication</h3>
           <p className="text-sm text-gray-500">
@@ -286,12 +149,111 @@ export default function ContactUs() {
           <input
             type="checkbox"
             checked={twoFA}
-            onChange={() => setTwoFA(!twoFA)}
+            onChange={(e) => handleToggleTwoFa(e.target.checked)}
             className="sr-only peer"
+            disabled={isTwoFaSetupLoading || isTwoFaEnableLoading || isTwoFaDisableLoading}
           />
           <div className="w-11 h-6 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:bg-green-500 relative after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-full" />
         </label>
       </div>
+
+      <Modal
+        title={twoFaMode === "enable" ? "Enable Two-Factor Authentication" : "Disable Two-Factor Authentication"}
+        open={showTwoFaModal}
+        onCancel={closeTwoFaModal}
+        footer={null}
+      >
+        {twoFaMode === "enable" ? (
+          <div className="space-y-4">
+            <div className="p-3 border rounded-lg bg-gray-50">
+              <p className="text-sm text-gray-700">
+                Scan this QR code with your authenticator app, then enter the 6-digit token.
+              </p>
+            </div>
+
+            {twoFaSetupData?.qrCodeUrl ? (
+              <div className="flex items-center justify-center p-3 border rounded-lg">
+                <img
+                  src={twoFaSetupData.qrCodeUrl}
+                  alt="2FA QR"
+                  className="max-w-[220px] w-full"
+                />
+              </div>
+            ) : null}
+
+            {twoFaSetupData?.secret ? (
+              <div className="p-3 border rounded-lg">
+                <p className="text-xs text-gray-500">Secret</p>
+                <p className="text-sm font-medium break-all">{twoFaSetupData.secret}</p>
+              </div>
+            ) : null}
+
+            <div>
+              <label className="block mb-1 text-sm">Token</label>
+              <Input
+                value={twoFaToken}
+                onChange={(e) => setTwoFaToken(e.target.value)}
+                placeholder="Enter token (e.g. 123456)"
+              />
+            </div>
+
+            {backupCodes?.length ? (
+              <div className="p-3 border rounded-lg bg-gray-50">
+                <p className="text-sm font-medium text-gray-900">Backup codes</p>
+                <p className="text-xs text-gray-500">Save these codes somewhere safe.</p>
+                <div className="grid grid-cols-2 gap-2 mt-3">
+                  {backupCodes.map((code) => (
+                    <div key={code} className="px-2 py-1 font-mono text-sm bg-white border rounded">
+                      {code}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ) : null}
+
+            <div className="flex justify-end gap-3">
+              <Button onClick={closeTwoFaModal}>Cancel</Button>
+              <Button
+                type="primary"
+                onClick={handleSubmitTwoFa}
+                loading={isTwoFaSetupLoading || isTwoFaEnableLoading}
+                disabled={!!backupCodes?.length}
+              >
+                {backupCodes?.length ? "Enabled" : "Enable"}
+              </Button>
+            </div>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            <div className="p-3 border rounded-lg bg-gray-50">
+              <p className="text-sm text-gray-700">
+                Enter your authenticator token to disable 2FA.
+              </p>
+            </div>
+
+            <div>
+              <label className="block mb-1 text-sm">Token</label>
+              <Input
+                value={twoFaToken}
+                onChange={(e) => setTwoFaToken(e.target.value)}
+                placeholder="Enter token (e.g. 123456)"
+              />
+            </div>
+
+            <div className="flex justify-end gap-3">
+              <Button onClick={closeTwoFaModal}>Cancel</Button>
+              <Button
+                type="primary"
+                danger
+                onClick={handleSubmitTwoFa}
+                loading={isTwoFaDisableLoading}
+              >
+                Disable
+              </Button>
+            </div>
+          </div>
+        )}
+      </Modal>
 
       <Modal
         title="Update your Password"
@@ -300,8 +262,8 @@ export default function ContactUs() {
         footer={null}
       >
         {["current", "new", "confirm"].map((field) => (
-          <div className="mb-4 relative" key={field}>
-            <label className="block text-sm mb-1">
+          <div className="relative mb-4" key={field}>
+            <label className="block mb-1 text-sm">
               {field === "current"
                 ? "Enter Current Password"
                 : field === "new"
@@ -334,7 +296,7 @@ export default function ContactUs() {
             />
           </div>
         ))}
-        <p className="text-xs text-gray-500 mb-4">
+        <p className="mb-4 text-xs text-gray-500">
           Your Password must contain at least 8 characters, 1 uppercase letter,
           1 number, and 1 special character.
         </p>
@@ -344,44 +306,6 @@ export default function ContactUs() {
           </Button>
           <Button type="primary" onClick={handlePasswordChange}>
             Save Changes
-          </Button>
-        </div>
-      </Modal>
-
-      {/* Invite Modal */}
-      <Modal
-        title="Invite Your Team Member"
-        open={showInviteModal}
-        onCancel={() => setShowInviteModal(false)}
-        footer={null}
-      >
-        <div className="mb-4 relative">
-          <label className="block text-sm mb-1">Email</label>
-          <Input
-            type="email"
-            value={invite.email}
-            onChange={(e) =>
-              setInvite((i) => ({ ...i, email: e.target.value }))
-            }
-            prefix={<AiOutlineMail />}
-          />
-        </div>
-        <div className="mb-6">
-          <label className="block text-sm mb-1">Role</label>
-          <Select
-            value={invite.role}
-            onChange={(value) => setInvite((i) => ({ ...i, role: value }))}
-            className="w-full"
-          >
-            <Select.Option value="Admin">Admin</Select.Option>
-            <Select.Option value="Editor">Editor</Select.Option>
-            <Select.Option value="Manager">Manager</Select.Option>
-          </Select>
-        </div>
-        <div className="flex justify-end gap-3">
-          <Button onClick={() => setShowInviteModal(false)}>Cancel</Button>
-          <Button type="primary" onClick={handleInvite}>
-            Invite
           </Button>
         </div>
       </Modal>

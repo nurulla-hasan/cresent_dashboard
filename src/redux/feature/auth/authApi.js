@@ -120,6 +120,53 @@ const authApi = baseApi.injectEndpoints({
         }
       },
     }),
+
+    twoFaSetup: builder.mutation({
+      query: () => ({
+        url: "/auth/2fa/setup",
+        method: "POST",
+      }),
+    }),
+
+    twoFaEnable: builder.mutation({
+      query: (data) => ({
+        url: "/auth/2fa/enable",
+        method: "POST",
+        body: data,
+      }),
+    }),
+
+    twoFaDisable: builder.mutation({
+      query: (data) => ({
+        url: "/auth/2fa/disable",
+        method: "POST",
+        body: data,
+      }),
+    }),
+
+    twoFaVerifyLogin: builder.mutation({
+      query: (data) => ({
+        url: "/auth/2fa/verify-login",
+        method: "POST",
+        body: data,
+      }),
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        try {
+          const { data } = await queryFulfilled;
+          const accessToken = data?.data?.accessToken;
+          if (!accessToken) {
+            ErrorToast("Invalid login response.");
+            return;
+          }
+          localStorage.setItem("accessToken", accessToken);
+          dispatch(SetAccessToken(accessToken));
+          SuccessToast(data?.message || "Login successful.");
+          window.location.href = "/";
+        } catch (error) {
+          ErrorToast(error?.error?.data?.message || "Login failed.");
+        }
+      },
+    }),
     
   }),
 });
@@ -133,4 +180,8 @@ export const {
   useResendResetOTPMutation,
   useResendSignupOTPMutation,
   useResetPasswordMutation,
+  useTwoFaSetupMutation,
+  useTwoFaEnableMutation,
+  useTwoFaDisableMutation,
+  useTwoFaVerifyLoginMutation,
 } = authApi;
