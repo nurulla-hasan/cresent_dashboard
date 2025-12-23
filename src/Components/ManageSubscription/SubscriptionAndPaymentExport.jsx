@@ -1,19 +1,19 @@
-import { DatePicker, Select } from "antd";
-import { FaArrowDown } from "react-icons/fa";
-import { DownOutlined } from "@ant-design/icons";
+// import { DatePicker, Select } from "antd";
+// import { FaArrowDown } from "react-icons/fa";
+// import { DownOutlined } from "@ant-design/icons";
 const DonorsSubscription = () => {
-  const { Option } = Select;
+  // const { Option } = Select;
   return (
-    <div className="p-6 bg-white rounded-3xl border">
-      <div className="mb-6">
+    <div className="p-6 bg-white border rounded-3xl">
+      {/* <div className="mb-6">
         <h1 className="text-2xl font-semibold">Export Subscription Data</h1>
         <p className="text-neutral-400">
           Track all subscriptions, manage invoices, and export payment data.Download a full report of all active and inactive subscriptions.   </p>
-      </div>
+      </div> */}
 
-      <div className="flex justify-between items-center mb-6">
+      {/* <div className="flex items-center justify-between mb-6">
         <div>
-          <div className="flex justify-center items-center gap-2 text-neutral-400">
+          <div className="flex items-center justify-center gap-2 text-neutral-400">
             <p>FIlter subscription data by </p>
             <Select
               defaultValue="All"
@@ -27,16 +27,16 @@ const DonorsSubscription = () => {
               <Option value="Donor">Donor</Option>
             </Select>
             <p>and</p>
-            <div className="flex justify-items-center gap-2">
+            <div className="flex gap-2 justify-items-center">
               <DatePicker placeholder="Start Date"></DatePicker>
               <DatePicker placeholder="End Date"></DatePicker>
             </div>
           </div>
         </div>
-        <button className="bg-white px-4 py-2 rounded-3xl border flex justify-between items-center gap-2">
+        <button className="flex items-center justify-between gap-2 px-4 py-2 bg-white border rounded-3xl">
           <FaArrowDown /> Export
         </button>
-      </div>
+      </div> */}
     </div>
   );
 };

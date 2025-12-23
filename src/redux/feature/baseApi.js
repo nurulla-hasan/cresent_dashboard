@@ -46,6 +46,7 @@ export const baseApi = createApi({
     "PROFILE",
     "DASHBOARD",
     "DONATION",
+    "SUBSCRIPTION",
     "CAUSE",
     "REWARD",
     "BADGE",

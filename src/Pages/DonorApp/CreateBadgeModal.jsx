@@ -200,8 +200,11 @@ const CreateBadgeModal = ({ open, onClose }) => {
           message.error("Please upload an image file");
           return Upload.LIST_IGNORE;
         }
-        setFileList([file]);
         return false;
+      },
+      onChange: (info) => {
+        const nextList = Array.isArray(info?.fileList) ? info.fileList.slice(-1) : [];
+        setFileList(nextList);
       },
       onRemove: () => {
         setFileList([]);
@@ -275,7 +278,8 @@ const CreateBadgeModal = ({ open, onClose }) => {
   }, [unlockType, open, form]);
 
   const handleSubmit = async (values) => {
-    if (!fileList?.[0]) {
+    const iconFile = fileList?.[0]?.originFileObj;
+    if (!iconFile) {
       message.error("Please upload a badge icon");
       return;
     }
@@ -332,7 +336,7 @@ const CreateBadgeModal = ({ open, onClose }) => {
 
       const formData = new FormData();
       formData.append("data", JSON.stringify(payload));
-      formData.append("icon", fileList[0]);
+      formData.append("icon", iconFile);
 
       await createBadge(formData).unwrap();
       message.success("Badge created successfully");
@@ -351,7 +355,17 @@ const CreateBadgeModal = ({ open, onClose }) => {
       centered
       width={900}
     >
-      <Form form={form} layout="vertical" onFinish={handleSubmit}>
+      <Form
+        form={form}
+        layout="vertical"
+        onFinish={handleSubmit}
+        onFinishFailed={({ errorFields }) => {
+          const first = Array.isArray(errorFields) ? errorFields[0] : null;
+          const firstMsg = first?.errors?.[0];
+          message.error(firstMsg || "Please fix the highlighted fields and try again");
+        }}
+        scrollToFirstError
+      >
         {validationHint ? (
           <Alert type="info" showIcon className="mb-4" message={validationHint} />
         ) : null}
@@ -635,7 +649,11 @@ const CreateBadgeModal = ({ open, onClose }) => {
           <Button onClick={onClose} disabled={isLoading}>
             Cancel
           </Button>
-          <Button type="primary" htmlType="submit" loading={isLoading}>
+          <Button
+            type="primary"
+            onClick={() => form.submit()}
+            loading={isLoading}
+          >
             Create Badge
           </Button>
         </div>

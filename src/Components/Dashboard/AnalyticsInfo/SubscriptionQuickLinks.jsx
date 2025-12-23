@@ -1,37 +1,57 @@
-
-import { Table, DatePicker } from "antd";
-import { MoreOutlined } from "@ant-design/icons";
-import useSmartFetchHook from "../../hooks/useSmartFetchHook.ts";
+ 
+import { Table, DatePicker, Modal, Button } from "antd";
+// import { MoreOutlined } from "@ant-design/icons";
 import { VscEye } from "react-icons/vsc";
 import user from "../../../assets/image/user.png";
 
 import { SlArrowLeft } from "react-icons/sl";
-import { TfiDownload } from "react-icons/tfi";
-import { RxCrossCircled } from "react-icons/rx";
 import DonorsSubscription from "../../ManageSubscription/SubscriptionAndPaymentExport";
 import { useGetSubscriptionDataQuery } from "../../../redux/feature/subscription/subscriptionApis.js";
 import Search from "antd/es/input/Search";
+import { useState } from "react";
 const SubscriptionQuickLinks = () => {
   const { RangePicker } = DatePicker;
 
-  const {
-    searchTerm,
-    setSearchTerm,
-    setCurrentPage,
-    data: donationRes,
-    pagination,
-    isLoading,
-    // isError,
-    setFilterParams,
-  } = useSmartFetchHook(useGetSubscriptionDataQuery);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [dateRange, setDateRange] = useState(null);
+  const [sortBy, setSortBy] = useState(null);
+  const [sortOrder, setSortOrder] = useState(null);
 
+  const [isViewOpen, setIsViewOpen] = useState(false);
+  const [selectedSubscription, setSelectedSubscription] = useState(null);
+
+  const queryArgs = {
+    page: currentPage,
+    limit: 10,
+    searchTerm: searchTerm || undefined,
+    startDate: dateRange?.[0] || undefined,
+    endDate: dateRange?.[1] || undefined,
+    sortBy: sortBy || undefined,
+    sortOrder: sortOrder || undefined,
+  };
+
+  const { data: subscriptionRes, isLoading } = useGetSubscriptionDataQuery(queryArgs);
+
+  const donationRes = subscriptionRes?.data;
   const apiData = donationRes?.subscriptionDonationHistory || [];
+  const meta = donationRes?.meta;
+
+  const handleOpenView = (record) => {
+    setSelectedSubscription(record);
+    setIsViewOpen(true);
+  };
+
+  const handleCloseView = () => {
+    setIsViewOpen(false);
+    setSelectedSubscription(null);
+  };
 
   const tableData =
     apiData.map((item, idx) => ({
       key: item?.createdAt || String(idx),
-      name: item?.donor?.name || "-",
-      email: item?.organization?.name || "-",
+      donorName: item?.donor?.name || "-",
+      organizationName: item?.organization?.name || "-",
       cause: item?.cause || "-",
       dateTime: item?.createdAt,
       amount: Number(item?.amount) || 0,
@@ -44,19 +64,19 @@ const SubscriptionQuickLinks = () => {
   const columns = [
     {
       title: "Name/Email",
-      dataIndex: "email",
-      key: "email",
+      dataIndex: "donorName",
+      key: "donorName",
       sorter: true,
-      render: (text, record) => (
+      render: (_text, record) => (
         <div className="flex gap-1">
           <img
             src={user}
-            alt={record.name}
-            className="h-10 w-10 rounded-full"
+            alt={record.donorName}
+            className="w-10 h-10 rounded-full"
           />
           <div>
-            <p className="font-medium">{record.name}</p>
-            <p className="text-gray-400">{record.email}</p>
+            <p className="font-medium">{record.donorName}</p>
+            <p className="text-gray-400">{record.organizationName}</p>
           </div>
         </div>
       ),
@@ -66,7 +86,7 @@ const SubscriptionQuickLinks = () => {
       dataIndex: "donationType",
       key: "donationType",
       render: (value) => (
-        <span className="px-3 py-1 rounded-2xl bg-blue-50 text-blue-600 text-sm capitalize">
+        <span className="px-3 py-1 text-sm text-blue-600 capitalize rounded-2xl bg-blue-50">
           {value || "-"}
         </span>
       ),
@@ -105,8 +125,10 @@ const SubscriptionQuickLinks = () => {
       render: (status) => (
         <p
           className={
-            status === "Active"
+            status === "completed"
               ? "bg-green-100 text-green-600 px-2 py-1 rounded-3xl text-center"
+              : status === "processing"
+              ? "bg-blue-100 text-blue-700 px-2 py-1 rounded-3xl text-center"
               : "bg-gray-100 text-gray-600 px-2 py-1 rounded-3xl text-center"
           }
         >
@@ -117,17 +139,16 @@ const SubscriptionQuickLinks = () => {
     {
       title: "Action",
       key: "action",
-      render: () => (
-        <div className="flex justify-center items-center gap-2 bg-">
-          <div className="bg-neutral-100 h-12 w-12 p-3 flex items-center justify-center rounded-full">
-            <VscEye className="h-5 w-5" />
-          </div>
-          <div className="bg-neutral-100 h-12 w-12 p-3 flex items-center justify-center rounded-full">
-            <TfiDownload className="h-5 w-5" />
-          </div>
-          <div className="bg-neutral-100 h-12 w-12 p-3 flex items-center justify-center rounded-full">
-            <RxCrossCircled className="h-5 w-5" />
-          </div>
+      render: (_text, record) => (
+        <div className="flex items-center justify-center gap-2 bg-">
+          <button
+            type="button"
+            onClick={() => handleOpenView(record)}
+            className="flex items-center justify-center w-12 h-12 p-3 rounded-full bg-neutral-100"
+            title="View Details"
+          >
+            <VscEye className="w-5 h-5" />
+          </button>
         </div>
       ),
     },
@@ -137,47 +158,47 @@ const SubscriptionQuickLinks = () => {
     <div>
       <button
         onClick={() => window.history.back()}
-        className="bg-white px-4 py-3 rounded-3xl flex justify-center items-center gap-2 mb-4"
+        className="flex items-center justify-center gap-2 px-4 py-3 mb-4 bg-white rounded-3xl"
       >
         <SlArrowLeft /> Back
       </button>
-      <div className="flex justify-between items-center gap-5">
+      <div className="flex items-center justify-between gap-5">
         <div>
-          <h1 className="text-3xl font-bold mb-4">Subscriptions Overview</h1>
-          <p className="text-lg text-gray-600 mb-4">
+          <h1 className="mb-4 text-3xl font-bold">Subscriptions Overview</h1>
+          <p className="mb-4 text-lg text-gray-600">
             Track activity, view invoices, and keep renewals healthy.
           </p>
         </div>
       </div>
 
       <div>
-        <div className="grid grid-cols-1 md:grid-cols-3 justify-center  items-center gap-3">
-          <div className="bg-white p-6 rounded-3xl border">
+        <div className="grid items-center justify-center grid-cols-1 gap-3 md:grid-cols-3">
+          <div className="p-6 bg-white border rounded-3xl">
             <p className="text-lg font-medium">Active Subscriptions</p>
-            <h1 className="text-2xl font-medium mt-10">
+            <h1 className="mt-10 text-2xl font-medium">
               {donationRes?.totalActiveSubscriptions ?? 0}
               {/* API does not provide change text vs last month */}
             </h1>
           </div>
 
-          <div className="bg-white p-6 rounded-3xl border">
+          <div className="p-6 bg-white border rounded-3xl">
             <p className="text-lg font-medium">Canceled Subscriptions</p>
-            <h1 className="text-2xl font-medium mt-10">
+            <h1 className="mt-10 text-2xl font-medium">
               {donationRes?.totalCancelledSubscriptions ?? 0}
-              {/* <span className="text-gray-400 text-sm">vs last month</span> */}
+              {/* <span className="text-sm text-gray-400">vs last month</span> */}
             </h1>
           </div>
-          <div className="bg-white p-6 rounded-3xl border">
+          <div className="p-6 bg-white border rounded-3xl">
             <p className="text-lg font-medium">Renewal Rate</p>
-            <h1 className="text-2xl font-medium mt-10">
+            <h1 className="mt-10 text-2xl font-medium">
               {donationRes?.monthlyRenewalRate ?? 0}%
-              {/* <span className="text-gray-400 text-sm">vs last month</span> */}
+              {/* <span className="text-sm text-gray-400">vs last month</span> */}
             </h1>
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-3xl border my-6">
-          <div className="flex justify-between items-center gap-5">
+        <div className="p-6 my-6 bg-white border rounded-3xl">
+          <div className="flex items-center justify-between gap-5">
             <h1 className="text-xl font-medium">Subscription Listing</h1>
 
             <div className="flex items-center gap-3">
@@ -186,7 +207,10 @@ const SubscriptionQuickLinks = () => {
                   placeholder="input search text"
                   allowClear
                   value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
+                  onChange={(e) => {
+                    setSearchTerm(e.target.value);
+                    setCurrentPage(1);
+                  }}
                 />
               </div>
 
@@ -195,30 +219,22 @@ const SubscriptionQuickLinks = () => {
                   placeholder={["Start date", "End date"]}
                   onChange={(dates, dateStrings) => {
                     if (dates && dates.length === 2) {
-                      setFilterParams(prev => ({
-                        ...prev,
-                        startDate: dateStrings[0],
-                        endDate: dateStrings[1]
-                      }));
-                    } else {
-                      // Clear date range
-                      setFilterParams(prev => {
-                        const newParams = { ...prev };
-                        delete newParams.startDate;
-                        delete newParams.endDate;
-                        return newParams;
-                      });
+                      setDateRange([dateStrings[0], dateStrings[1]]);
+                      setCurrentPage(1);
+                      return;
                     }
+                    setDateRange(null);
+                    setCurrentPage(1);
                   }}
                 />
               </div>
 
-              <div className="relative group mt-4 md:mt-0 inline-block">
+              {/* <div className="relative inline-block mt-4 group md:mt-0">
                 <MoreOutlined className="text-xl cursor-pointer" />
-                <button className="absolute -left-5 bottom-10 text-xs opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-gray-500 text-white px-4 py-2 rounded">
+                <button className="absolute px-4 py-2 text-xs text-white transition-opacity duration-200 bg-gray-500 rounded opacity-0 -left-5 bottom-10 group-hover:opacity-100">
                   Export
                 </button>
-              </div>
+              </div> */}
             </div>
           </div>
           <Table
@@ -226,31 +242,82 @@ const SubscriptionQuickLinks = () => {
             dataSource={tableData}
             loading={isLoading}
             onChange={(pagination, filters, sorter) => {
-              // Update page
               setCurrentPage(pagination.current);
-              const newFilterParams = {};
-              // Handle sorting
               if (sorter?.field) {
-                newFilterParams.sortBy = sorter.field;
-                newFilterParams.sortOrder = sorter.order === "ascend" ? "asc" : "desc";
+                setSortBy(sorter.field);
+                setSortOrder(sorter.order === "ascend" ? "asc" : "desc");
+              } else {
+                setSortBy(null);
+                setSortOrder(null);
               }
-              // Handle filters
-              Object.keys(filters).forEach((key) => {
-                if (filters[key]) {
-                  newFilterParams[key] = filters[key][0];
-                }
-              });
-
-              setFilterParams(newFilterParams);
             }}
             pagination={{
-              current: pagination.page,
-              pageSize: pagination.limit,
-              total: pagination.total,
+              current: meta?.page || currentPage,
+              pageSize: meta?.limit || 10,
+              total: meta?.total || 0,
               showTotal: (total) => `Total ${total} items`,
             }}
             style={{ marginTop: 20 }}
           />
+
+          <Modal
+            title="Subscription Details"
+            open={isViewOpen}
+            onCancel={handleCloseView}
+            footer={[
+              <Button key="close" onClick={handleCloseView}>
+                Close
+              </Button>,
+            ]}
+            width={600}
+            centered
+          >
+            {selectedSubscription ? (
+              <div className="space-y-4">
+                <div className="p-4 border rounded-xl bg-gray-50">
+                  <p className="text-xs text-gray-500">Donor</p>
+                  <p className="text-base font-semibold text-gray-900">{selectedSubscription.donorName}</p>
+                  <p className="text-sm text-gray-600">Organization: {selectedSubscription.organizationName}</p>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="p-4 border rounded-xl">
+                    <p className="text-xs text-gray-500">Amount</p>
+                    <p className="text-lg font-bold text-gray-900">${Number(selectedSubscription.amount || 0).toFixed(2)}</p>
+                  </div>
+                  <div className="p-4 border rounded-xl">
+                    <p className="text-xs text-gray-500">Type</p>
+                    <p className="text-sm font-semibold text-gray-900 capitalize">{selectedSubscription.donationType || "-"}</p>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="p-4 border rounded-xl">
+                    <p className="text-xs text-gray-500">Status</p>
+                    <p className="text-sm font-semibold text-gray-900 capitalize">{selectedSubscription.status || "-"}</p>
+                  </div>
+                  <div className="p-4 border rounded-xl">
+                    <p className="text-xs text-gray-500">Date & Time</p>
+                    <p className="text-sm font-semibold text-gray-900">
+                      {selectedSubscription.dateTime ? new Date(selectedSubscription.dateTime).toLocaleString() : "-"}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="p-4 border rounded-xl">
+                  <p className="text-xs text-gray-500">Cause</p>
+                  <p className="text-sm font-semibold text-gray-900 break-all">{selectedSubscription.cause || "-"}</p>
+                </div>
+
+                <div className="p-4 border rounded-xl">
+                  <p className="text-xs text-gray-500">Message</p>
+                  <p className="text-sm text-gray-800 whitespace-pre-wrap">
+                    {selectedSubscription.specialMessage || "-"}
+                  </p>
+                </div>
+              </div>
+            ) : null}
+          </Modal>
         </div>
       </div>
       <DonorsSubscription />

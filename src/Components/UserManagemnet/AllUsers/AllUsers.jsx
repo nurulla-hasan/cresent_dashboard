@@ -5,7 +5,7 @@ import PendingApproval from "../PendingApproval";
 import { useRef } from "react";
 import { useGetUserStateQuery } from "../../../redux/feature/user/userApis.js";
 import ProfileTables from "../ProfileTables";
-import { FaArrowDown } from "react-icons/fa";
+// import { FaArrowDown } from "react-icons/fa";
 
 const AllUsers = () => {
   const { data: userStateData } = useGetUserStateQuery();
@@ -32,9 +32,9 @@ const AllUsers = () => {
             Manage users, organizations, and businesses in one place.
           </p>
         </div>
-        <button className="flex items-center justify-between gap-2 px-4 py-2 bg-white border rounded-3xl">
+        {/* <button className="flex items-center justify-between gap-2 px-4 py-2 bg-white border rounded-3xl">
           <FaArrowDown /> Export
-        </button>
+        </button> */}
       </div>
 
    
