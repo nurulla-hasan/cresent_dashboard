@@ -12,12 +12,16 @@ import {
   useTwoFaSetupMutation,
 } from "../../../redux/feature/auth/authApi";
 
+import { useChangePasswordMutation } from "../../../redux/feature/profile/profileApis";
+
 export default function ContactUs() {
   const [twoFA, setTwoFA] = useState(false);
 
   const [twoFaSetup, { isLoading: isTwoFaSetupLoading }] = useTwoFaSetupMutation();
   const [twoFaEnable, { isLoading: isTwoFaEnableLoading }] = useTwoFaEnableMutation();
   const [twoFaDisable, { isLoading: isTwoFaDisableLoading }] = useTwoFaDisableMutation();
+
+  const [changePassword, { isLoading: isChangePasswordLoading }] = useChangePasswordMutation();
 
   // Modal states
   const [showPasswordModal, setShowPasswordModal] = useState(false);
@@ -39,6 +43,19 @@ export default function ContactUs() {
     new: false,
     confirm: false,
   });
+
+  const resetPasswordState = () => {
+    setPasswords({
+      current: "",
+      new: "",
+      confirm: "",
+    });
+    setShowPw({
+      current: false,
+      new: false,
+      confirm: false,
+    });
+  };
 
   const resetTwoFaModalState = () => {
     setTwoFaToken("");
@@ -99,11 +116,29 @@ export default function ContactUs() {
     resetTwoFaModalState();
   };
 
-  const handlePasswordChange = () => {
-    if (passwords.new !== passwords.confirm) {
+  const handlePasswordChange = async () => {
+    if (!passwords.current || !passwords.new || !passwords.confirm) {
+      message.error("Please fill all password fields");
       return;
     }
-    setShowPasswordModal(false);
+
+    if (passwords.new !== passwords.confirm) {
+      message.error("New password and confirm password do not match");
+      return;
+    }
+
+    try {
+      const res = await changePassword({
+        oldPassword: passwords.current,
+        newPassword: passwords.new,
+      }).unwrap();
+      message.success(res?.message || "Password changed successfully");
+      setShowPasswordModal(false);
+      resetPasswordState();
+    } catch (err) {
+      const msg = err?.data?.message || "Failed to change password";
+      message.error(msg);
+    }
   };
 
 
@@ -258,7 +293,10 @@ export default function ContactUs() {
       <Modal
         title="Update your Password"
         open={showPasswordModal}
-        onCancel={() => setShowPasswordModal(false)}
+        onCancel={() => {
+          setShowPasswordModal(false);
+          resetPasswordState();
+        }}
         footer={null}
       >
         {["current", "new", "confirm"].map((field) => (
@@ -301,10 +339,16 @@ export default function ContactUs() {
           1 number, and 1 special character.
         </p>
         <div className="flex justify-end gap-3">
-          <Button onClick={() => setShowPasswordModal(false)}>
+          <Button
+            onClick={() => {
+              setShowPasswordModal(false);
+              resetPasswordState();
+            }}
+            disabled={isChangePasswordLoading}
+          >
             Discard Changes
           </Button>
-          <Button type="primary" onClick={handlePasswordChange}>
+          <Button type="primary" onClick={handlePasswordChange} loading={isChangePasswordLoading}>
             Save Changes
           </Button>
         </div>
