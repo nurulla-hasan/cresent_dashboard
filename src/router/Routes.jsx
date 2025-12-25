@@ -40,6 +40,7 @@ const AnalyticsRoute = lazyLoad(() => import('../Pages/AnalyticsRoute/AnalyticsR
 const BusinessAdmin = lazyLoad(() => import('../Pages/BusinessAdmin/BusinessAdmin'));
 const DonorApp = lazyLoad(() => import('../Pages/DonorApp/DonorApp'));
 const ContactUs = lazyLoad(() => import('../Pages/Settings/ContactUS/ContactUS'));
+const PrivacyPolicy = lazyLoad(() => import('../Pages/Settings/PrivacyPolicy/PrivacyPolicy'));
 
 export const router = createBrowserRouter([
   {
@@ -121,6 +122,10 @@ export const router = createBrowserRouter([
       {
         path: "/settings/contact-us",
         element: <ContactUs />,
+      },
+      {
+        path: "/settings/privacy-policy",
+        element: <PrivacyPolicy />,
       },
       {
         path: "/admin-profile",
