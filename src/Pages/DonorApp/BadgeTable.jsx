@@ -95,7 +95,16 @@ const BadgeTable = () => {
       title: "Unlock Type",
       dataIndex: "unlockType",
       key: "unlockType",
-      render: (t) => <span className="capitalize">{t || "-"}</span>,
+      render: (t) => {
+        if (!t) return <span>-</span>;
+        const label = String(t)
+          .replace(/_/g, " ")
+          .split(" ")
+          .filter(Boolean)
+          .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+          .join(" ");
+        return <span>{label}</span>;
+      },
     },
     {
       title: "Status",

@@ -168,6 +168,7 @@ const CreateBadgeModal = ({ open, onClose }) => {
   const [createBadge, { isLoading }] = useCreateBadgeMutation();
 
   const unlockType = Form.useWatch("unlockType", form);
+  const tierMode = Form.useWatch("tierMode", form);
 
   const shouldShowCategories = unlockType === "category_specific" || unlockType === "seasonal";
   const shouldShowTimeRange = unlockType === "time_based";
@@ -217,18 +218,40 @@ const CreateBadgeModal = ({ open, onClose }) => {
     if (!open) {
       form.resetFields();
       setFileList([]);
-    } else {
-      const currentTiers = form.getFieldValue("tiers");
-      if (!Array.isArray(currentTiers) || currentTiers.length === 0) {
-        form.setFieldsValue({ tiers: DEFAULT_TIERS });
-      }
+      return;
     }
+
+    // Create flow: start with no tier mode selected and no tiers.
+    // Tiers will appear only after the user selects Tier Type.
+    form.setFieldsValue({ tierMode: undefined, tiers: undefined });
   }, [open, form]);
 
   useEffect(() => {
     if (!open) return;
 
     if (!unlockType) return;
+
+    if (!tierMode) {
+      const existingLogic = form.getFieldValue("conditionLogic");
+      if (!existingLogic) {
+        form.setFieldsValue({ conditionLogic: "or" });
+      }
+      return;
+    }
+
+    if (tierMode === "single") {
+      const currentTiers = form.getFieldValue("tiers");
+      if (!Array.isArray(currentTiers) || currentTiers.length !== 1 || currentTiers[0]?.tier !== "one-tier") {
+        form.setFieldsValue({
+          tiers: [{ tier: "one-tier", name: "", requiredCount: undefined, requiredAmount: undefined }],
+        });
+      }
+      const existingLogic = form.getFieldValue("conditionLogic");
+      if (!existingLogic) {
+        form.setFieldsValue({ conditionLogic: "or" });
+      }
+      return;
+    }
 
     const defaults = SMART_DEFAULTS[unlockType];
 
@@ -276,6 +299,30 @@ const CreateBadgeModal = ({ open, onClose }) => {
       form.setFieldsValue({ minDonationAmount: undefined, maxDonationAmount: undefined });
     }
   }, [unlockType, open, form]);
+
+  useEffect(() => {
+    if (!open) return;
+
+    if (!tierMode) return;
+
+    const currentTiers = form.getFieldValue("tiers");
+
+    if (tierMode === "single") {
+      form.setFieldsValue({
+        tiers: [{ tier: "one-tier", name: "", requiredCount: undefined, requiredAmount: undefined }],
+      });
+      return;
+    }
+
+    // Multi
+    if (
+      !Array.isArray(currentTiers) ||
+      currentTiers.length !== 4 ||
+      currentTiers.some((t) => t?.tier === "one-tier")
+    ) {
+      form.setFieldsValue({ tiers: DEFAULT_TIERS });
+    }
+  }, [tierMode, open, form]);
 
   const handleSubmit = async (values) => {
     const iconFile = fileList?.[0]?.originFileObj;
@@ -391,6 +438,20 @@ const CreateBadgeModal = ({ open, onClose }) => {
           </Form.Item>
 
           <Form.Item
+            label="Tier Type"
+            name="tierMode"
+            rules={[{ required: true, message: "Tier type is required" }]}
+          >
+            <Select
+              placeholder="Select tier type"
+              options={[
+                { value: "single", label: "Single tier" },
+                { value: "multi", label: "Multi tier" },
+              ]}
+            />
+          </Form.Item>
+
+          <Form.Item
             label="Condition Logic"
             name="conditionLogic"
             rules={[{ required: true, message: "Condition logic is required" }]}
@@ -502,148 +563,161 @@ const CreateBadgeModal = ({ open, onClose }) => {
           </div>
         )}
 
-        <div className="p-4 mt-2 border rounded-lg bg-gray-50">
-          <div className="flex items-center justify-between mb-3">
-            <div>
-              <div className="font-semibold text-gray-900">Tiers</div>
-              <div className="text-xs text-gray-500">
-                Add tier requirements (count/amount as needed).
+        {tierMode ? (
+          <div className="p-4 mt-2 border rounded-lg bg-gray-50">
+            <div className="flex items-center justify-between mb-3">
+              <div>
+                <div className="font-semibold text-gray-900">Tiers</div>
+                <div className="text-xs text-gray-500">
+                  Add tier requirements (count/amount as needed).
+                </div>
               </div>
             </div>
-            <Button
-              onClick={() => {
-                const current = form.getFieldValue("tiers") || [];
-                if (current.length >= 4) return;
-                form.setFieldsValue({
-                  tiers: [
-                    ...current,
-                    {
-                      tier: "",
-                      name: "",
-                      requiredCount: undefined,
-                      requiredAmount: undefined,
-                    },
-                  ],
-                });
-              }}
-              disabled={(form.getFieldValue("tiers") || []).length >= 4}
-            >
-              Add Tier
-            </Button>
-          </div>
 
-          <Form.List
-            name="tiers"
-            rules={[
-              {
-                validator: async (_rule, tiers) => {
-                  if (!Array.isArray(tiers) || tiers.length === 0) {
-                    throw new Error("At least one tier is required");
-                  }
-                  if (tiers.length > 4) {
-                    throw new Error("Maximum 4 tiers allowed");
-                  }
-
-                  // Single tier must be one-tier
-                  if (tiers.length === 1 && tiers[0]?.tier !== "one-tier") {
-                    throw new Error('Single tier badges must use "one-tier"');
-                  }
-
-                  // Each tier must have at least one requirement > 0
-                  for (const t of tiers) {
-                    const count = Number(t?.requiredCount || 0);
-                    const amount = Number(t?.requiredAmount || 0);
-                    if (!(count > 0 || amount > 0)) {
-                      throw new Error(
-                        "At least one requirement (Count or Amount) must be greater than 0"
-                      );
+            <Form.List
+              name="tiers"
+              rules={[
+                {
+                  validator: async (_rule, tiers) => {
+                    const currentTierMode = form.getFieldValue("tierMode");
+                    if (!currentTierMode) {
+                      throw new Error("Tier type is required");
                     }
-                  }
-
-                  // Tier order validation
-                  const tierNames = tiers.map((t) => t?.tier);
-                  const invalidTier = tierNames.find((t) => !TIER_ORDER.includes(t));
-                  if (invalidTier) {
-                    throw new Error("Invalid tier type");
-                  }
-
-                  // For multi-tier, enforce progression colour->bronze->silver->gold
-                  if (tiers.length > 1) {
-                    const indices = tierNames.map((t) => PROGRESSION_ORDER.indexOf(t));
-                    if (indices.some((i) => i === -1)) {
-                      throw new Error("Multi-tier badges must use colour/bronze/silver/gold");
+                    if (!Array.isArray(tiers) || tiers.length === 0) {
+                      throw new Error("At least one tier is required");
                     }
-                    for (let i = 1; i < indices.length; i++) {
-                      if (!(indices[i] > indices[i - 1])) {
-                        throw new Error("Tiers must be in correct progression order");
+                    if (tiers.length > 4) {
+                      throw new Error("Maximum 4 tiers allowed");
+                    }
+
+                    if (currentTierMode === "single") {
+                      if (tiers.length !== 1 || tiers[0]?.tier !== "one-tier") {
+                        throw new Error('Single tier badges must use "one-tier"');
                       }
                     }
-                  }
+
+                    if (currentTierMode === "multi") {
+                      if (tiers.length !== 4) {
+                        throw new Error("Multi tier badges must have exactly 4 tiers");
+                      }
+                    }
+
+                    // Single tier must be one-tier
+                    if (tiers.length === 1 && tiers[0]?.tier !== "one-tier") {
+                      throw new Error('Single tier badges must use "one-tier"');
+                    }
+
+                    // Each tier must have at least one requirement > 0
+                    for (const t of tiers) {
+                      const count = Number(t?.requiredCount || 0);
+                      const amount = Number(t?.requiredAmount || 0);
+                      if (!(count > 0 || amount > 0)) {
+                        throw new Error(
+                          "At least one requirement (Count or Amount) must be greater than 0"
+                        );
+                      }
+                    }
+
+                    // Tier order validation
+                    const tierNames = tiers.map((t) => t?.tier);
+                    const invalidTier = tierNames.find((t) => !TIER_ORDER.includes(t));
+                    if (invalidTier) {
+                      throw new Error("Invalid tier type");
+                    }
+
+                    // For multi-tier, enforce progression colour->bronze->silver->gold
+                    if (tiers.length > 1) {
+                      const indices = tierNames.map((t) => PROGRESSION_ORDER.indexOf(t));
+                      if (indices.some((i) => i === -1)) {
+                        throw new Error("Multi-tier badges must use colour/bronze/silver/gold");
+                      }
+                      for (let i = 1; i < indices.length; i++) {
+                        if (!(indices[i] > indices[i - 1])) {
+                          throw new Error("Tiers must be in correct progression order");
+                        }
+                      }
+
+                      // If user selected multi-tier, enforce exact set of tiers
+                      if (currentTierMode === "multi") {
+                        const normalized = [...tierNames].sort();
+                        const required = [...PROGRESSION_ORDER].sort();
+                        for (let i = 0; i < required.length; i++) {
+                          if (normalized[i] !== required[i]) {
+                            throw new Error("Multi tier must include colour, bronze, silver and gold");
+                          }
+                        }
+                      }
+                    }
+                  },
                 },
-              },
-            ]}
-          >
-            {(fields, { remove }) => (
-              <div className="space-y-3">
-                {fields.map((field) => (
-                  <div
-                    key={field.key}
-                    className="grid grid-cols-1 gap-3 p-3 bg-white border rounded-lg md:grid-cols-5"
-                  >
-                    <Form.Item
-                      {...field}
-                      label="Tier"
-                      name={[field.name, "tier"]}
-                      rules={[{ required: true, message: "Tier is required" }]}
+              ]}
+            >
+              {(fields, { remove }) => (
+                <div className="space-y-3">
+                  {fields.map((field) => (
+                    <div
+                      key={field.key}
+                      className="grid grid-cols-1 gap-3 p-3 bg-white border rounded-lg md:grid-cols-5"
                     >
-                      <Select
-                        options={[
-                          { value: "one-tier", label: "One-tier" },
-                          { value: "colour", label: "Colour" },
-                          { value: "bronze", label: "Bronze" },
-                          { value: "silver", label: "Silver" },
-                          { value: "gold", label: "Gold" },
-                        ]}
-                      />
-                    </Form.Item>
+                      <Form.Item
+                        {...field}
+                        label="Tier"
+                        name={[field.name, "tier"]}
+                        rules={[{ required: true, message: "Tier is required" }]}
+                      >
+                        <Select
+                          options={[
+                            { value: "one-tier", label: "One-tier" },
+                            { value: "colour", label: "Colour" },
+                            { value: "bronze", label: "Bronze" },
+                            { value: "silver", label: "Silver" },
+                            { value: "gold", label: "Gold" },
+                          ]}
+                        />
+                      </Form.Item>
 
-                    <Form.Item
-                      {...field}
-                      label="Name"
-                      name={[field.name, "name"]}
-                      rules={[{ required: true, message: "Name is required" }]}
-                      className="md:col-span-2"
-                    >
-                      <Input placeholder="e.g., Night Giver" />
-                    </Form.Item>
+                      <Form.Item
+                        {...field}
+                        label="Name"
+                        name={[field.name, "name"]}
+                        rules={[{ required: true, message: "Name is required" }]}
+                        className="md:col-span-2"
+                      >
+                        <Input placeholder="e.g., Night Giver" />
+                      </Form.Item>
 
-                    <Form.Item
-                      {...field}
-                      label="Required Count"
-                      name={[field.name, "requiredCount"]}
-                    >
-                      <InputNumber className="w-full" min={0} />
-                    </Form.Item>
+                      <Form.Item
+                        {...field}
+                        label="Required Count"
+                        name={[field.name, "requiredCount"]}
+                      >
+                        <InputNumber className="w-full" min={0} />
+                      </Form.Item>
 
-                    <Form.Item
-                      {...field}
-                      label="Required Amount"
-                      name={[field.name, "requiredAmount"]}
-                    >
-                      <InputNumber className="w-full" min={0} />
-                    </Form.Item>
+                      <Form.Item
+                        {...field}
+                        label="Required Amount"
+                        name={[field.name, "requiredAmount"]}
+                      >
+                        <InputNumber className="w-full" min={0} />
+                      </Form.Item>
 
-                    <div className="flex items-end">
-                      <Button danger onClick={() => remove(field.name)}>
-                        Remove
-                      </Button>
+                      <div className="flex items-end">
+                        <Button
+                          danger
+                          onClick={() => remove(field.name)}
+                          disabled={fields.length <= 1 || tierMode === "multi"}
+                        >
+                          Remove
+                        </Button>
+                      </div>
                     </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </Form.List>
-        </div>
+                  ))}
+                </div>
+              )}
+            </Form.List>
+          </div>
+        ) : null}
 
         <div className="flex justify-end gap-3 pt-4 mt-6 border-t">
           <Button onClick={onClose} disabled={isLoading}>
