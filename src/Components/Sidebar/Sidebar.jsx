@@ -27,6 +27,7 @@ const Sidebar = ({ closeDrawer }) => {
     { icon: donor, label: "Donor App", Link: "/donor-app" },
     { icon: business, label: "Business Admin", Link: "/business-admin" },
     { icon: business, label: "Settings", Link: "/settings/contact-us" },
+    { icon: business, label: "Terms Condition", Link: "/settings/terms-condition" },
     { icon: business, label: "Privacy Policy", Link: "/settings/privacy-policy" },
   ];
 
