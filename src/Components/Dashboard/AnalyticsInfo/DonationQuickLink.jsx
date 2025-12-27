@@ -1,5 +1,4 @@
 import { Table, Input, Drawer } from "antd";
-import { MoreOutlined } from "@ant-design/icons";
 import { VscEye } from "react-icons/vsc";
 import user from "../../../assets/image/user.png";
 import Chnage from "../../../assets/image/Change.png";
@@ -114,9 +113,17 @@ const DonationQuickLink = () => {
       dataIndex: "dateTime",
       key: "dateTime",
       sorter: true,
-      render: (dateTime) => (
-        <p className="font-medium">{dateTime ? new Date(dateTime).toLocaleString() : "-"}</p>
-      ),
+      render: (dateTime) => {
+        if (!dateTime) return <p className="font-medium">-</p>;
+
+        const dt = new Date(dateTime);
+        return (
+          <div className="leading-tight">
+            <p className="text-base font-semibold text-gray-900">{dt.toLocaleDateString()}</p>
+            <p className="mt-1 text-sm text-gray-500">{dt.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</p>
+          </div>
+        );
+      },
     },
     {
       title: "Donation Type",
@@ -162,74 +169,74 @@ const DonationQuickLink = () => {
 
   return (
     <div>
-      <button onClick={() => window.history.back()} className="flex items-center justify-center gap-2 px-4 py-3 mb-4 bg-white rounded-3xl">
-        <SlArrowLeft /> Back
+      <button
+        onClick={() => window.history.back()}
+        className="flex items-center justify-center gap-2 px-4 py-2 mb-6 bg-white border rounded-full"
+      >
+        <SlArrowLeft className="w-4 h-4" /> Back
       </button>
-      <div className="flex flex-col gap-5">
-        <div>
-          <h1 className="mb-4 text-3xl font-bold">Donations Overview</h1>
-          <p className="mb-4 text-lg text-gray-600">
-            Filter, review, and manage receipts with ease.
-          </p>
+      <div className="flex flex-col gap-6">
+        <div className="flex items-start justify-between gap-6">
+          <div className="max-w-[720px]">
+            <h1 className="mb-2 text-3xl font-bold">Donations Overview</h1>
+            <p className="text-base text-gray-500">
+              Filter, review, and manage receipts with ease.
+            </p>
+          </div>
+          <div />
         </div>
 
-        <div className="grid items-center justify-center grid-cols-1 gap-3 md:grid-cols-3">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
           <div className="p-6 bg-white border rounded-3xl">
-            <p className="text-lg font-medium">Total Donations</p>
-            <h1 className="mt-10 text-2xl font-medium">
-              <span className="text-gray-400">$</span> {Number(donationRes?.totalDonation || 0).toFixed(2)}
-              <span className="text-sm text-green-600"> {donationRes?.totalDonationChangeText || ""}</span>
-            </h1>
+            <p className="text-sm font-semibold text-gray-900">Total Donations</p>
+            <div className="mt-10">
+              <p className="text-3xl font-semibold">
+                <span className="text-gray-300">$</span>
+                {Number(donationRes?.totalDonation || 0).toLocaleString(undefined, { maximumFractionDigits: 2 })}
+              </p>
+              <p className="mt-1 text-xs text-gray-500">
+                <span className="text-green-600">{donationRes?.totalDonationChangeText || ""}</span>
+              </p>
+            </div>
           </div>
 
           <div className="p-6 bg-white border rounded-3xl">
-            <p className="text-lg font-medium">Avg. Donation</p>
-            <h1 className="mt-10 text-2xl font-medium">
-              <span className="text-gray-400">$</span> {Number(donationRes?.avgDonationAmount || 0).toFixed(2)}
-              <span className="text-sm text-gray-400"> {donationRes?.avgDonationChangeText || ""}</span>
-            </h1>
+            <p className="text-sm font-semibold text-gray-900">Avg. Donation</p>
+            <div className="mt-10">
+              <p className="text-3xl font-semibold">
+                <span className="text-gray-300">$</span>
+                {Number(donationRes?.avgDonationAmount || 0).toLocaleString(undefined, { maximumFractionDigits: 2 })}
+              </p>
+              <p className="mt-1 text-xs text-gray-500">
+                <span className="text-green-600">{donationRes?.avgDonationChangeText || ""}</span>
+              </p>
+            </div>
           </div>
+
           <div className="p-6 bg-white border rounded-3xl">
-            <p className="text-lg font-medium">Total Donors</p>
-            <h1 className="mt-10 text-2xl font-medium">
-              {donationRes?.totalDonors || 0}
-              <span className="text-sm text-green-500"> {donationRes?.totalDonorsChangeText || ""}</span>
-            </h1>
+            <p className="text-sm font-semibold text-gray-900">Total Donors</p>
+            <div className="mt-10">
+              <p className="text-3xl font-semibold">{Number(donationRes?.totalDonors || 0).toLocaleString()}</p>
+              <p className="mt-1 text-xs text-gray-500">
+                <span className="text-green-600">{donationRes?.totalDonorsChangeText || ""}</span>
+              </p>
+            </div>
           </div>
         </div>
 
-        <div className="p-6 my-6 bg-white border rounded-3xl">
-          <div className="flex items-center justify-between gap-5">
-            <h1 className="text-xl font-medium">Donation History</h1>
+        <div className="p-6 bg-white border rounded-3xl">
+          <div className="flex items-center justify-between gap-6 mb-4">
+            <h1 className="text-lg font-semibold">Donation history</h1>
 
-            <div className="flex items-center gap-3 mb-4">
-              <div>
+            <div className="flex items-center gap-3">
+              <div className="px-4 py-2 bg-white border rounded-full">
                 <Search
-                  placeholder="Search by name or email"
+                  placeholder="Search"
                   allowClear
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
+                  bordered={false}
                 />
-              </div>
-
-              {/* <div>
-                <Select defaultValue="selected" style={{ width: 120 }}>
-                  <Option value="selected">Selected</Option>
-                  <Option value="all">All</Option>
-                </Select>
-              </div> */}
-
-              {/* <div>
-                <Button>
-                  Monthly
-                </Button>
-              </div> */}
-
-              <div className="relative inline-block group">
-                <MoreOutlined className="text-xl cursor-pointer" />
-                <button className="absolute px-4 py-2 text-xs text-white transition-opacity duration-200 bg-gray-500 rounded opacity-0 -left-5 bottom-10 group-hover:opacity-100">
-                  Export
-                </button>
               </div>
             </div>
           </div>
@@ -301,30 +308,11 @@ const DonationQuickLink = () => {
                 <p className="text-lg font-bold text-gray-900">${Number(selectedDonation.amount || 0).toFixed(2)}</p>
               </div>
               <div className="p-4 border rounded-xl">
-                <p className="text-xs text-gray-500">Type</p>
-                <div className="mt-1">{renderDonationTypeBadge(selectedDonation.donationType || "-")}</div>
+                <p className="text-xs text-gray-500">Donation Message</p>
+                <p className="text-sm text-gray-800 whitespace-pre-wrap">
+                  {selectedDonation.donationMessage || "-"}
+                </p>
               </div>
-            </div>
-
-            <div className="p-4 border rounded-xl">
-              <p className="text-xs text-gray-500">Cause</p>
-              <p className="text-sm font-semibold text-gray-900 break-all">
-                {selectedDonation.causeId || "-"}
-              </p>
-            </div>
-
-            <div className="p-4 border rounded-xl">
-              <p className="text-xs text-gray-500">Date & Time</p>
-              <p className="text-sm font-semibold text-gray-900">
-                {selectedDonation.dateTime ? new Date(selectedDonation.dateTime).toLocaleString() : "-"}
-              </p>
-            </div>
-
-            <div className="p-4 border rounded-xl">
-              <p className="text-xs text-gray-500">Donation Message</p>
-              <p className="text-sm text-gray-800 whitespace-pre-wrap">
-                {selectedDonation.donationMessage || "-"}
-              </p>
             </div>
           </div>
         ) : null}

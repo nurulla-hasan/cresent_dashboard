@@ -250,71 +250,106 @@ const DonorRewards = () => {
   );
 
   return (
-    <div className="container p-6 mx-auto">
-      <div className="flex items-center justify-between gap-4 mb-4">
-        <div>
-          <h2 className="text-lg font-semibold">Rewards</h2>
-          <p className="text-sm text-gray-500">Search and filter rewards</p>
-        </div>
-        <div className="flex items-center gap-2">
-          <Input
-            placeholder="Search rewards..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-60"
-            disabled={isLoading}
-          />
-          <RangePicker
-            placeholder={["From date", "To date"]}
-            onChange={handleDateRangeChange}
-            value={dateRange}
-            disabled={isLoading}
-          />
+    <div>
+      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+        <h2 className="text-base font-semibold text-gray-900">Create and manage donor rewards</h2>
+
+        <div className="flex flex-col items-stretch gap-3 md:flex-row md:items-center">
+          <div className="w-full md:w-[220px]">
+            <div className="px-4 py-2 bg-white border border-gray-200 rounded-full [&_.ant-input-affix-wrapper]:!border-0 [&_.ant-input-affix-wrapper]:!shadow-none [&_.ant-input-affix-wrapper]:!bg-transparent [&_.ant-input]:!bg-transparent [&_.ant-input]:!text-sm">
+              <Input
+                placeholder="Search"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                bordered={false}
+                allowClear
+                disabled={isLoading}
+              />
+            </div>
+          </div>
+
+          <div className="w-full md:w-auto">
+            <div className="px-4 py-2 bg-white border border-gray-200 rounded-full [&_.ant-picker]:!border-0 [&_.ant-picker]:!shadow-none [&_.ant-picker]:!bg-transparent [&_.ant-picker-input_>input]:!text-sm">
+              <RangePicker
+                placeholder={["Select Interval", ""]}
+                onChange={handleDateRangeChange}
+                value={dateRange}
+                bordered={false}
+                disabled={isLoading}
+              />
+            </div>
+          </div>
         </div>
       </div>
+
       <Spin spinning={isLoading} indicator={<LoadingOutlined spin />}>
-        <div className="grid grid-cols-1 gap-6 mb-3 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-4 mt-6 sm:grid-cols-2 lg:grid-cols-3">
           {rewards.map((reward) => (
-            <div key={reward.id} className="p-6 space-y-6 shadow-lg">
-              <div className="flex items-center justify-between gap-2">
-                <div className="flex items-center justify-center gap-2 mb-6 text-2xl font-semibold">
-                  <img src={reward.icon} alt="" />
-                  <h1>{reward.title}</h1>
+            <div
+              key={reward.id}
+              role="button"
+              tabIndex={0}
+              onClick={() => openDrawer(reward)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  openDrawer(reward);
+                }
+              }}
+              className="p-5 bg-white border shadow-sm rounded-2xl cursor-pointer"
+            >
+              <div className="flex items-start justify-between gap-4">
+                <div className="flex items-center gap-3">
+                  <img src={reward.icon} alt="" className="w-8 h-8" />
+                  <h3 className="text-base font-semibold text-gray-900">{reward.title}</h3>
                 </div>
+
                 <Dropdown overlay={rewardMenu(reward)} trigger={["click"]}>
-                  <Button type="link" icon={<EllipsisOutlined />} />
+                  <Button
+                    type="text"
+                    onClick={(e) => e.stopPropagation()}
+                    className="!h-9 !w-9 !p-0 flex items-center justify-center rounded-full bg-gray-50"
+                    icon={<EllipsisOutlined />}
+                  />
                 </Dropdown>
               </div>
-              <div className="flex items-center justify-between gap-2">
-                <p className="text-gray-400">Expires: {reward.expires}</p>
-                <div className="flex items-center justify-between gap-2">
-                  <p>Active</p>
+
+              <div className="flex items-center justify-between gap-4 mt-4">
+                <p className="text-xs text-gray-500">Expires: {reward.expires}</p>
+                <div className="flex items-center gap-2">
+                  <p className="text-xs text-gray-700">Active</p>
                   <Switch
                     checked={!!reward.isActive}
                     disabled={updatingRewardId === reward.id}
                     loading={updatingRewardId === reward.id}
+                    onClick={(checked, e) => {
+                      e?.stopPropagation?.();
+                    }}
                     onChange={(checked) => handleToggleActive(reward.id, checked)}
                   />
                 </div>
               </div>
-              <div>
-                <p className="text-gray-400">Offered by:</p>
-                <p>{reward.description}</p>
+
+              <div className="mt-4">
+                <p className="text-xs text-gray-500">Offered by:</p>
+                <p className="mt-1 text-sm font-medium text-gray-900">{reward.offeredBy}</p>
               </div>
-              <div className="flex items-center justify-between gap-2">
+
+              <div className="flex items-end justify-between gap-4 mt-6">
                 <div>
-                  <p className="text-2xl font-semibold">{reward.redemptions}</p>
-                  <p className="text-gray-400">Redemptions</p>
+                  <p className="text-2xl font-semibold text-gray-900">{reward.redemptions}</p>
+                  <p className="text-xs text-gray-500">redemptions</p>
                 </div>
-                <div>
-                  <p className="">Redeem Via</p>
-                  <div className="flex items-end gap-2 mt-2 justify-emd">
+
+                <div className="text-right">
+                  <p className="text-xs text-gray-700">Redeem via</p>
+                  <div className="flex items-center justify-end gap-2 mt-2">
                     {reward.redeem.map((method, index) => (
                       <img
                         key={index}
                         src={method}
                         alt="redeem option"
-                        className="w-6 h-6"
+                        className="w-5 h-5"
                       />
                     ))}
                   </div>
