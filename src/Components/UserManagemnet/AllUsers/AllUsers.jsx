@@ -12,7 +12,10 @@ const AllUsers = () => {
   
   const stats = userStateData?.data || {};
 
-  const pendingApprovalRef = useRef<HTMLDivElement | null>(null);
+  const totalRegisteredProfiles =
+    (stats.totalClients ?? 0) + (stats.totalOrganizations ?? 0) + (stats.totalBusinesses ?? 0);
+
+  const pendingApprovalRef = useRef(null);
   const handlePendingApproval = () => {
     if (pendingApprovalRef.current) {
       pendingApprovalRef.current.scrollIntoView({
@@ -27,8 +30,8 @@ const AllUsers = () => {
 
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-semibold">User Management</h1>
-          <p className="text-neutral-400">
+          <h1 className="text-3xl font-bold">User Management</h1>
+          <p className="text-sm text-gray-500">
             Manage users, organizations, and businesses in one place.
           </p>
         </div>
@@ -39,104 +42,100 @@ const AllUsers = () => {
 
    
       <div className="p-6 my-10 bg-white border rounded-3xl">
-        <div className="grid grid-cols-1 gap-4 mb-8 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 ">
-          
-          <div className="p-6 bg-gray-100 rounded-3xl">
-            <div className="flex items-center justify-between gap-2 mb-8">
-              <div>
-                <p className="font-semibold tetx-xl">Organizations</p>
-                <p className="text-neutral-400 ">
-                  
-                  <span className="text-green-500">{stats.organizationsChangeText || "+0.0%"}</span> vs last month
-                </p>
-              </div>
-               <Link to="/organization-management">
-              <div className="flex items-center justify-center w-10 h-10 p-1 bg-white rounded-full">
-                <BsArrowUpRight />
-              </div>
-              </Link>
-            </div>
-
-            <h2 className="text-2xl font-semibold">
-              {stats.totalOrganizations ?? 0}{" "}
-              <span className="ml-2 text-sm text-gray-400">
-                active profiles
-              </span>
-            </h2>
+        <p className="text-sm font-semibold text-gray-900">Total Registered Profiles</p>
+        <div className="mt-8">
+          <div className="flex items-end gap-3">
+            <p className="text-4xl font-bold text-gray-900">{totalRegisteredProfiles.toLocaleString()}</p>
+            <p className="pb-1 text-xs text-gray-500">
+              <span className="text-green-600">{stats.totalChangeText || "+0.0%"}</span> vs last month
+            </p>
           </div>
-          <div className="p-6 bg-gray-100 rounded-3xl">
-            <div className="flex items-center justify-between gap-2 mb-8">
-              <div>
-                <p className="font-semibold tetx-xl">Businesses</p>
-                <p className="text-neutral-400 ">
-                  
-                  <span className={`text-${stats.businessesChangeColor || "red"}-500`}>{stats.businessesChangeText || "-0.0%"}</span> vs last month
-                </p>
-              </div>
-               <Link to="/business-admin">
-              <div className="flex items-center justify-center w-10 h-10 p-1 bg-white rounded-full">
-                <BsArrowUpRight />
-              </div>
-              </Link>
-            </div>
 
-            <h2 className="text-2xl font-semibold">
-              {stats.totalBusinesses ?? 0}
-              <span className="ml-2 text-sm text-gray-400">
-                active profiles
-              </span>
-            </h2>
-          </div>
-          <div className="p-6 bg-gray-100 rounded-3xl">
-            <div className="flex items-center justify-between gap-2 mb-8">
-              <div>
-                <p className="font-semibold tetx-xl">Clients</p>
-                <p className="text-neutral-400 ">
-                  
-                  <span className="text-green-500">{stats.clientsChangeText || "+0.0%"}</span> vs last month
-                </p>
-              </div>
-              <Link to="/client-management">
-                <div className="flex items-center justify-center w-10 h-10 p-1 bg-white rounded-full">
-                  <BsArrowUpRight />
+          <div className="grid grid-cols-1 gap-4 mt-8 md:grid-cols-2 lg:grid-cols-4">
+            <div className="p-5 bg-gray-50 rounded-2xl">
+              <div className="flex items-start justify-between gap-2">
+                <div>
+                  <p className="text-sm font-semibold text-gray-900">Donors</p>
+                  <p className="mt-1 text-xs text-gray-500">
+                    <span className="text-green-600">{stats.clientsChangeText || "+0.0%"}</span> vs last month
+                  </p>
                 </div>
-              </Link>
-            </div>
-
-            <h2 className="text-2xl font-semibold">
-              {stats.totalClients ?? 0}{" "}
-              <span className="ml-2 text-sm text-gray-400">
-                active profiles
-              </span>
-            </h2>
-          </div>
-          <div className="p-6 bg-gray-100 rounded-3xl">
-            <div className="flex items-center justify-between gap-2 mb-8">
-              <div>
-                <p className="font-semibold tetx-xl">Pending Approvals</p>
-                <p className="text-neutral-400 ">
-                  
-                  <span className="text-yellow-500">{stats.pendingChangeText || "+0.0%"}</span> vs last month
-                </p>
+                <Link to="/client-management" className="flex items-center justify-center bg-white rounded-full w-9 h-9">
+                  <BsArrowUpRight />
+                </Link>
               </div>
-              <div onClick={handlePendingApproval} className="flex items-center justify-center w-10 h-10 p-1 bg-white rounded-full cursor-pointer">
-                <BsArrowUpRight />
+              <div className="mt-6">
+                <p className="text-2xl font-bold text-gray-900">{(stats.totalClients ?? 0).toLocaleString()}</p>
+                <p className="mt-1 text-xs text-gray-500">active profiles</p>
               </div>
             </div>
 
-            <h2 className="text-2xl font-semibold">
-              {stats.pendingApprovals ?? 0}
-              <span className="ml-2 text-sm text-gray-400">
-                pending profiles
-              </span>
-            </h2>
+            <div className="p-5 bg-gray-50 rounded-2xl">
+              <div className="flex items-start justify-between gap-2">
+                <div>
+                  <p className="text-sm font-semibold text-gray-900">Organizations</p>
+                  <p className="mt-1 text-xs text-gray-500">
+                    <span className="text-green-600">{stats.organizationsChangeText || "+0.0%"}</span> vs last month
+                  </p>
+                </div>
+                <Link to="/organization-management" className="flex items-center justify-center bg-white rounded-full w-9 h-9">
+                  <BsArrowUpRight />
+                </Link>
+              </div>
+              <div className="mt-6">
+                <p className="text-2xl font-bold text-gray-900">{(stats.totalOrganizations ?? 0).toLocaleString()}</p>
+                <p className="mt-1 text-xs text-gray-500">active profiles</p>
+              </div>
+            </div>
+
+            <div className="p-5 bg-gray-50 rounded-2xl">
+              <div className="flex items-start justify-between gap-2">
+                <div>
+                  <p className="text-sm font-semibold text-gray-900">Businesses</p>
+                  <p className="mt-1 text-xs text-gray-500">
+                    <span className="text-red-500">{stats.businessesChangeText || "-0.0%"}</span> vs last month
+                  </p>
+                </div>
+                <Link to="/business-admin" className="flex items-center justify-center bg-white rounded-full w-9 h-9">
+                  <BsArrowUpRight />
+                </Link>
+              </div>
+              <div className="mt-6">
+                <p className="text-2xl font-bold text-gray-900">{(stats.totalBusinesses ?? 0).toLocaleString()}</p>
+                <p className="mt-1 text-xs text-gray-500">active profiles</p>
+              </div>
+            </div>
+
+            <div className="p-5 bg-gray-50 rounded-2xl">
+              <div className="flex items-start justify-between gap-2">
+                <div>
+                  <p className="text-sm font-semibold text-gray-900">Pending Approvals</p>
+                  <p className="mt-1 text-xs text-gray-500">
+                    <span className="text-yellow-600">{stats.pendingChangeText || "+0.0%"}</span> vs last month
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={handlePendingApproval}
+                  className="flex items-center justify-center bg-white rounded-full w-9 h-9"
+                >
+                  <BsArrowUpRight />
+                </button>
+              </div>
+              <div className="mt-6">
+                <p className="text-2xl font-bold text-gray-900">{(stats.pendingApprovals ?? 0).toLocaleString()}</p>
+                <p className="mt-1 text-xs text-gray-500">pending profiles</p>
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
-      <ProfileTables/>
+      <ProfileTables />
 
-      <PendingApproval />
+      <div ref={pendingApprovalRef}>
+        <PendingApproval />
+      </div>
     </div>
   );
 };

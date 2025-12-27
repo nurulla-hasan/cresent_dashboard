@@ -172,9 +172,9 @@ const SubscriptionQuickLinks = () => {
     <div>
       <button
         onClick={() => window.history.back()}
-        className="flex items-center justify-center gap-2 px-4 py-3 mb-4 bg-white rounded-3xl"
+        className="flex items-center justify-center gap-2 px-4 py-2 mb-6 bg-white border rounded-full"
       >
-        <SlArrowLeft /> Back
+        <SlArrowLeft className="w-4 h-4" /> Back
       </button>
       <div className="flex items-center justify-between gap-5">
         <div>
