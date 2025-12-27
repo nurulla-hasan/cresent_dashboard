@@ -1,10 +1,9 @@
 /* eslint-disable no-unused-vars */
-import Title from "antd/es/skeleton/Title";
 import React, { useMemo, useState } from "react";
 import { BsArrowUpRight } from "react-icons/bs";
 import { Link } from "react-router-dom";
-import { BarChart, ResponsiveContainer, Tooltip } from "recharts";
-import { DownloadOutlined } from "@ant-design/icons";
+import { BarChart, ResponsiveContainer } from "recharts";
+import { FilterOutlined } from "@ant-design/icons";
 import {
   Bar,
   CartesianGrid,
@@ -16,7 +15,7 @@ import {
   YAxis,
   Cell,
 } from "recharts";
-import { Button, Select } from "antd";
+import { Select } from "antd";
 import { FaArrowDown } from "react-icons/fa";
 import { useGetUserEngagementQuery, useGetDonationChartQuery } from "../../redux/feature/user/userApis";
 const { Option } = Select;
@@ -72,8 +71,10 @@ const AnalyticsRoute = () => {
   };
   const data = getFilteredData();
   const btnClass = (label) =>
-    `px-6 py-3 rounded-3xl border transition ${
-      active === label ? "bg-black text-white" : "bg-white text-black"
+    `px-5 py-2 rounded-full border text-sm font-medium transition ${
+      active === label
+        ? "bg-black text-white border-black"
+        : "bg-white text-gray-900 border-gray-200 hover:bg-gray-50"
     }`;
   const PALETTE = {
     org: "#6ee7b7", 
@@ -122,119 +123,142 @@ const AnalyticsRoute = () => {
 
   return (
     <div>
-      <div className="flex items-center justify-between gap-5">
-        <div className="w-full md:w-[70%]">
-          <h1 className="mb-3 text-xl font-semibold md:text-3xl">Analytics</h1>
-          <p className="mb-10 text-gray-500">
+      <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between md:gap-6">
+        <div className="w-full">
+          <h1 className="text-4xl font-bold text-gray-900">Analytics</h1>
+          <p className="mt-2 text-sm text-gray-500">
             Track donor trends, popular causes, and user activity across the
             platform.
           </p>
         </div>
-        <div className="w-full md:w-[40%] flex justify-end items-center gap-5">
+        <div className="flex items-center justify-start gap-3 overflow-x-auto flex-nowrap md:justify-end">
           <button
-            className={btnClass("Today")} 
+            type="button"
+            className="flex items-center gap-2 px-5 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-full hover:bg-gray-50 whitespace-nowrap"
+          >
+            <FilterOutlined />
+            Filter
+          </button>
+          <button
+            className={`${btnClass("Today")} whitespace-nowrap`} 
             onClick={() => setActive("Today")}
           >
             Today
           </button>
           <button
-            className={btnClass("This Week")}
+            className={`${btnClass("This Week")} whitespace-nowrap`}
             onClick={() => setActive("This Week")}
           >
             This Week
           </button>
           <button
-            className={btnClass("This Month")}
+            className={`${btnClass("This Month")} whitespace-nowrap`}
             onClick={() => setActive("This Month")}
           >
             This Month
           </button>
         </div>
       </div>
-      <div className="p-6 my-10 bg-white border rounded-3xl">
-        <div>
-          <div className="mb-12">
-            <h1 className="text-2xl font-semibold ">User Engagement</h1>
-            <p className="text-gray-500">
-              Track how users (donors, organizations, and businesses) are
-              engaging with Crescent Change.
-            </p>
-          </div>
+      <div className="p-6 mt-8 bg-white border border-gray-100 rounded-3xl">
+        <div className="max-w-5xl">
+          <h2 className="text-lg font-semibold text-gray-900">User Engagement</h2>
+          <p className="mt-1 text-sm text-gray-500">
+            Track how users (donors, organizations, and businesses) are engaging with Crescent Change.
+          </p>
         </div>
-        <div className="grid grid-cols-3 gap-4 mb-8 ">
-          <div className="p-6 bg-gray-100 rounded-3xl">
-            <div className="flex items-center justify-between gap-2 mb-8">
-              <div>
-                <p className="font-semibold tetx-xl">Active Users</p>
-                <p className="text-neutral-400 ">
-                  {userEngagementData?.data?.activeUsersChangeText ? (
-                    <span className={userEngagementData.data.activeUsersChangeText.includes('+') ? "text-green-500" : "text-red-500"}>
-                      {userEngagementData.data.activeUsersChangeText} vs last month
-                    </span>
-                  ) : (
-                    <span className="text-gray-500">No change data</span>
-                  )}
-                </p>
-              </div>
-            </div>
 
-            <h2 className="text-2xl font-semibold">
-              {userEngagementLoading ? "Loading..." : userEngagementData?.data?.totalActiveUsers || 0}{" "}
-              <span className="ml-2 text-sm text-gray-400">active Users</span>
-            </h2>
+        <div className="grid grid-cols-1 gap-4 mt-8 md:grid-cols-3">
+          <div className="p-6 bg-gray-50 rounded-3xl">
+            <p className="text-sm font-semibold text-gray-900">Active Users</p>
+            <p className="mt-1 text-xs text-gray-500">
+              {userEngagementData?.data?.activeUsersChangeText ? (
+                <span
+                  className={
+                    userEngagementData.data.activeUsersChangeText.includes("+")
+                      ? "text-green-600"
+                      : "text-red-500"
+                  }
+                >
+                  {userEngagementData.data.activeUsersChangeText} vs last month
+                </span>
+              ) : (
+                <span className="text-gray-500">No change data</span>
+              )}
+            </p>
+
+            <div className="flex items-baseline gap-2 mt-8">
+              <p className="text-3xl font-bold text-gray-900">
+                {userEngagementLoading
+                  ? "—"
+                  : Number(userEngagementData?.data?.totalActiveUsers || 0).toLocaleString()}
+              </p>
+              <p className="text-xs text-gray-500">active users</p>
+            </div>
           </div>
-          <div className="p-6 bg-gray-100 rounded-3xl">
-            <div className="flex items-center justify-between gap-2 mb-8">
-              <div>
-                <p className="font-semibold tetx-xl">New Sign-ups</p>
-                <p className="text-neutral-400 ">
-                  {userEngagementData?.data?.newUsersChangeText ? (
-                    <span className={userEngagementData.data.newUsersChangeText.includes('+') ? "text-green-500" : "text-red-500"}>
-                      {userEngagementData.data.newUsersChangeText} vs last month
-                    </span>
-                  ) : (
-                    <span className="text-gray-500">No change data</span>
-                  )}
-                </p>
-              </div>
-            </div>
 
-            <h2 className="text-2xl font-semibold">
-              {userEngagementLoading ? "Loading..." : userEngagementData?.data?.totalNewUsers || 0}{" "}
-              <span className="ml-2 text-sm text-gray-400">New Sign-ups</span>
-            </h2>
+          <div className="p-6 bg-gray-50 rounded-3xl">
+            <p className="text-sm font-semibold text-gray-900">New Sign-ups</p>
+            <p className="mt-1 text-xs text-gray-500">
+              {userEngagementData?.data?.newUsersChangeText ? (
+                <span
+                  className={
+                    userEngagementData.data.newUsersChangeText.includes("+")
+                      ? "text-green-600"
+                      : "text-red-500"
+                  }
+                >
+                  {userEngagementData.data.newUsersChangeText} vs last month
+                </span>
+              ) : (
+                <span className="text-gray-500">No change data</span>
+              )}
+            </p>
+
+            <div className="flex items-baseline gap-2 mt-8">
+              <p className="text-3xl font-bold text-gray-900">
+                {userEngagementLoading
+                  ? "—"
+                  : Number(userEngagementData?.data?.totalNewUsers || 0).toLocaleString()}
+              </p>
+              <p className="text-xs text-gray-500">new sign-ups</p>
+            </div>
           </div>
-          <div className="p-6 bg-gray-100 rounded-3xl">
-            <div className="flex items-center justify-between gap-2 mb-8">
-              <div>
-                <p className="font-semibold tetx-xl">Returning Users</p>
-                <p className="text-neutral-400 ">
-                  {userEngagementData?.data?.returningUsersChangeText ? (
-                    <span className={userEngagementData.data.returningUsersChangeText.includes('+') ? "text-green-500" : "text-red-500"}>
-                      {userEngagementData.data.returningUsersChangeText} vs last month
-                    </span>
-                  ) : (
-                    <span className="text-gray-500">No change data</span>
-                  )}
-                </p>
-              </div>
-            </div>
 
-            <h2 className="text-2xl font-semibold">
-              {userEngagementLoading ? "Loading..." : userEngagementData?.data?.totalReturningUsers || 0}{" "}
-              <span className="ml-2 text-sm text-gray-400">
-                Returning Users
-              </span>
-            </h2>
+          <div className="p-6 bg-gray-50 rounded-3xl">
+            <p className="text-sm font-semibold text-gray-900">Returning Users</p>
+            <p className="mt-1 text-xs text-gray-500">
+              {userEngagementData?.data?.returningUsersChangeText ? (
+                <span
+                  className={
+                    userEngagementData.data.returningUsersChangeText.includes("+")
+                      ? "text-green-600"
+                      : "text-red-500"
+                  }
+                >
+                  {userEngagementData.data.returningUsersChangeText} vs last month
+                </span>
+              ) : (
+                <span className="text-gray-500">No change data</span>
+              )}
+            </p>
+
+            <div className="flex items-baseline gap-2 mt-8">
+              <p className="text-3xl font-bold text-gray-900">
+                {userEngagementLoading
+                  ? "—"
+                  : Number(userEngagementData?.data?.totalReturningUsers || 0).toLocaleString()}
+              </p>
+              <p className="text-xs text-gray-500">returning users</p>
+            </div>
           </div>
         </div>
       </div>
 
       {/* Donations Trend */}
-      <div className="p-6 bg-white border rounded-3xl ">
-        <div className="h-[460px] w-full py-6">
-          <div className="flex items-center justify-between mb-6">
-            <h1 className="text-2xl font-medium">Donation Trend</h1>
+      <div className="p-6 mt-6 bg-white border border-gray-100 rounded-3xl">
+        <div className="w-full">
+          <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+            <h2 className="text-lg font-semibold text-gray-900">Donations Trend</h2>
             <div className="flex items-center gap-3">
               <Select
                 size="middle"
@@ -260,18 +284,20 @@ const AnalyticsRoute = () => {
             </div>
           </div>
 
-          <ResponsiveContainer width="100%" height="100%" Title="Donation Trend">
-            <BarChart data={dataChart} barSize={35}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="name" tickLine={false} axisLine={false} />
-              <YAxis tickLine={false} axisLine={false} />
-              <RechartsTooltip />
-              <Legend verticalAlign="bottom" height={36} />
-              <Bar dataKey="totalAmount" name="Total Amount" fill={PALETTE.org} radius={[6,6,0,0]} />
-            </BarChart>
-          </ResponsiveContainer>
+          <div className="h-[420px] mt-6">
+            <ResponsiveContainer width="100%" height="100%" Title="Donation Trend">
+              <BarChart data={dataChart} barSize={44} barGap={12}>
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#F0F0F0" />
+                <XAxis dataKey="name" tickLine={false} axisLine={false} />
+                <YAxis tickLine={false} axisLine={false} />
+                <RechartsTooltip />
+                <Legend verticalAlign="bottom" height={36} />
+                <Bar dataKey="totalAmount" name="Total Amount" fill={PALETTE.org} radius={[10, 10, 10, 10]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
 
-          {donationLoading && <div className="mt-2 text-gray-500">Loading donation data...</div>}
+          {donationLoading && <div className="mt-2 text-sm text-gray-500">Loading donation data...</div>}
         </div>
       </div>
 
