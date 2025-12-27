@@ -230,7 +230,13 @@ const DonorDataTable = () => {
           </Button>
         ]}
         width={600}
-        className="[&_.ant-modal-content]:!rounded-xl donor-view-modal"
+        styles={{
+          content: {
+            borderRadius: "30px",
+            overflow: "hidden",
+          },
+        }}
+        className="donor-view-modal"
       >
         {selectedDonor && (
           <div className="space-y-6">

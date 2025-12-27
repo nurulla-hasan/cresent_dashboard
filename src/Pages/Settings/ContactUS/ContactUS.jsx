@@ -201,10 +201,10 @@ export default function ContactUs() {
       </div>
 
       {/* Update Password */}
-      <div className="flex items-center justify-between p-4 mb-6 bg-white shadow rounded-xl">
-        <div>
-          <h3 className="font-medium">Update your password</h3>
-          <p className="text-sm text-gray-500">
+      <div className="flex items-start justify-between p-8 mb-6 bg-white border border-gray-100 shadow-sm rounded-3xl">
+        <div className="max-w-[520px]">
+          <h3 className="text-lg font-semibold text-gray-900">Update your password</h3>
+          <p className="mt-3 text-sm text-gray-500">
             Change or update your password. Forgot your password?{" "}
             <Link to="/forgot-password" className="text-blue-600 underline">
               Click here
@@ -214,17 +214,17 @@ export default function ContactUs() {
         </div>
         <button
           onClick={() => setShowPasswordModal(true)}
-          className="text-xl cursor-pointer"
+          className="flex items-center justify-center w-10 h-10 text-2xl text-gray-900 rounded-full cursor-pointer"
         >
           ↗
         </button>
       </div>
 
       {/* Two-Factor Authentication */}
-      <div className="flex items-center justify-between p-4 bg-white shadow rounded-xl">
-        <div>
-          <h3 className="font-medium">Two-Factor Authentication</h3>
-          <p className="text-sm text-gray-500">
+      <div className="flex items-start justify-between p-8 bg-white border border-gray-100 shadow-sm rounded-3xl">
+        <div className="max-w-[520px]">
+          <h3 className="text-lg font-semibold text-gray-900">Two-Factor Authentication</h3>
+          <p className="mt-3 text-sm text-gray-500">
             Two-Factor Authentication is {twoFA ? "on" : "off"}.{" "}
             {twoFA
               ? "Your account is more secure."
@@ -239,7 +239,7 @@ export default function ContactUs() {
             className="sr-only peer"
             disabled={isProfileFetching || isTwoFaSetupLoading || isTwoFaEnableLoading || isTwoFaDisableLoading}
           />
-          <div className="w-11 h-6 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:bg-green-500 relative after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-full" />
+          <div className="relative w-14 h-8 bg-gray-200 rounded-full peer peer-focus:outline-none peer-checked:bg-black after:content-[''] after:absolute after:top-1 after:left-1 after:h-6 after:w-6 after:rounded-full after:bg-white after:transition-all peer-checked:after:translate-x-6" />
         </label>
       </div>
 
@@ -248,6 +248,12 @@ export default function ContactUs() {
         open={showTwoFaModal}
         onCancel={closeTwoFaModal}
         footer={null}
+        styles={{
+          content: {
+            borderRadius: "30px",
+            overflow: "hidden",
+          },
+        }}
       >
         {twoFaMode === "enable" ? (
           <div className="space-y-4">

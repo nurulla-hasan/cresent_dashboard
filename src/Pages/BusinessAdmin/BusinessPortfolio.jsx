@@ -3,7 +3,6 @@ import { useState } from "react";
 import {
   Input,
   Table,
-  Tag,
   Drawer,
   Divider,
   Descriptions,
@@ -111,32 +110,32 @@ const BusinessPortfolio = () => {
   const renderStatus = (status, isActive) => {
     if (!isActive) {
       return (
-        <Tag color="red" className="flex items-center gap-1 px-2 py-1 rounded-full w-fit">
+        <span className="inline-flex items-center gap-2 px-4 py-2 text-xs font-medium text-gray-600 bg-gray-100 rounded-full">
           <RxCrossCircled /> Inactive
-        </Tag>
+        </span>
       );
     }
 
     if (status === "pending") {
       return (
-        <Tag color="gold" className="flex items-center gap-1 px-2 py-1 rounded-full w-fit">
+        <span className="inline-flex items-center gap-2 px-4 py-2 text-xs font-medium rounded-full bg-amber-100 text-amber-700">
           <BsExclamationCircle /> Pending
-        </Tag>
+        </span>
       );
     }
 
     if (status === "suspended") {
       return (
-        <Tag color="red" className="flex items-center gap-1 px-2 py-1 rounded-full w-fit">
-          <RxCrossCircled /> Suspended
-        </Tag>
+        <span className="inline-flex items-center gap-2 px-4 py-2 text-xs font-medium text-gray-600 bg-gray-100 rounded-full">
+          <RxCrossCircled /> Inactive
+        </span>
       );
     }
 
     return (
-      <Tag color="green" className="flex items-center gap-1 px-2 py-1 rounded-full w-fit">
-        <FaCheckCircle /> Verified
-      </Tag>
+      <span className="inline-flex items-center gap-2 px-4 py-2 text-xs font-medium rounded-full bg-emerald-100 text-emerald-700">
+        <FaCheckCircle /> Active
+      </span>
     );
   };
 
@@ -153,8 +152,8 @@ const BusinessPortfolio = () => {
             className="object-contain w-10 h-10 rounded-full"
           />
           <div className="flex flex-col">
-            <span className="font-semibold">{record.name}</span>
-            <span className="text-sm text-gray-500">{record.email || "—"}</span>
+            <span className="text-sm font-semibold text-gray-900">{record.name}</span>
+            <span className="text-xs text-gray-500">{record.email || "—"}</span>
           </div>
         </div>
       ),
@@ -165,7 +164,7 @@ const BusinessPortfolio = () => {
       key: "createdAt",
       sorter: true,
       render: (createdAt) => (
-        <span className="text-sm">
+        <span className="text-sm font-medium text-gray-900">
           {createdAt ? new Date(createdAt).toLocaleDateString() : "—"}
         </span>
       ),
@@ -187,10 +186,10 @@ const BusinessPortfolio = () => {
         const isSuspended = record?.status === "suspended";
 
         return (
-          <div className="flex items-center justify-center gap-3 text-lg">
+          <div className="flex items-center justify-center gap-3">
             <div
               onClick={() => openProfile(record)}
-              className="flex items-center justify-center w-8 h-8 p-1 rounded-full cursor-pointer bg-neutral-100"
+              className="flex items-center justify-center w-10 h-10 bg-gray-100 rounded-full cursor-pointer"
               title="View"
             >
               <VscEye />
@@ -202,10 +201,10 @@ const BusinessPortfolio = () => {
                   onClick={() => {
                     if (!isRowLoading && hasAuthId) handleSuspend(record);
                   }}
-                  className={`flex items-center justify-center w-8 h-8 p-1 rounded-full ${
+                  className={`flex items-center justify-center w-10 h-10 rounded-full ${
                     !isRowLoading && hasAuthId
-                      ? "cursor-pointer bg-neutral-100"
-                      : "cursor-not-allowed bg-neutral-50 opacity-50"
+                      ? "cursor-pointer bg-gray-100"
+                      : "cursor-not-allowed bg-gray-50 opacity-50"
                   }`}
                   title={
                     !hasAuthId
@@ -221,10 +220,10 @@ const BusinessPortfolio = () => {
                   onClick={() => {
                     if (!isRowLoading && hasAuthId) handleAccept(record);
                   }}
-                  className={`flex items-center justify-center w-8 h-8 p-1 rounded-full ${
+                  className={`flex items-center justify-center w-10 h-10 rounded-full ${
                     !isRowLoading && hasAuthId
-                      ? "cursor-pointer bg-neutral-100"
-                      : "cursor-not-allowed bg-neutral-50 opacity-50"
+                      ? "cursor-pointer bg-gray-100"
+                      : "cursor-not-allowed bg-gray-50 opacity-50"
                   }`}
                   title={
                     !hasAuthId
@@ -245,10 +244,10 @@ const BusinessPortfolio = () => {
                     else handleSuspend(record);
                   }
                 }}
-                className={`flex items-center justify-center w-8 h-8 p-1 rounded-full ${
+                className={`flex items-center justify-center w-10 h-10 rounded-full ${
                   !isRowLoading && hasAuthId
-                    ? "cursor-pointer bg-neutral-100"
-                    : "cursor-not-allowed bg-neutral-50 opacity-50"
+                    ? "cursor-pointer bg-gray-100"
+                    : "cursor-not-allowed bg-gray-50 opacity-50"
                 }`}
                 title={
                   !hasAuthId
@@ -274,10 +273,10 @@ const BusinessPortfolio = () => {
               onClick={() => {
                 if (!isRowLoading && hasAuthId) handleDelete(record);
               }}
-              className={`flex items-center justify-center w-8 h-8 p-1 rounded-full ${
+              className={`flex items-center justify-center w-10 h-10 rounded-full ${
                 !isRowLoading && hasAuthId
-                  ? "cursor-pointer bg-neutral-100"
-                  : "cursor-not-allowed bg-neutral-50 opacity-50"
+                  ? "cursor-pointer bg-gray-100"
+                  : "cursor-not-allowed bg-gray-50 opacity-50"
               }`}
               title={
                 !hasAuthId
@@ -296,64 +295,80 @@ const BusinessPortfolio = () => {
   ];
 
   return (
-    <div className="p-6 mb-10 bg-white shadow-sm rounded-xl">
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-lg font-semibold">Business Portfolio</h2>
-        <div className="flex items-center gap-2">
-          <Input
-            prefix={<SearchOutlined />}
-            placeholder="Search..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-60"
-            allowClear
-            disabled={isLoading}
-          />
-          <RangePicker
-            placeholder={["Start date", "End date"]}
-            onChange={handleDateRangeChange}
-            value={dateRange}
-            disabled={isLoading}
-          />
+    <div className="mb-10 bg-white border border-gray-100 rounded-3xl">
+      <div className="flex flex-col gap-4 p-6 border-b border-gray-100 md:flex-row md:items-center md:justify-between">
+        <h2 className="text-base font-semibold text-gray-900">Business Portfolio</h2>
+        <div className="flex flex-col items-stretch gap-3 md:flex-row md:items-center">
+          <div className="w-full md:w-[240px]">
+            <div className="flex items-center h-12 px-5 bg-white border border-gray-200 rounded-full [&_.ant-input-affix-wrapper]:!h-full [&_.ant-input-affix-wrapper]:!border-0 [&_.ant-input-affix-wrapper]:!shadow-none [&_.ant-input-affix-wrapper]:!bg-transparent [&_.ant-input-affix-wrapper]:!p-0 [&_.ant-input]:!h-full [&_.ant-input]:!bg-transparent [&_.ant-input]:!text-sm">
+              <Input
+                prefix={<SearchOutlined />}
+                placeholder="Search"
+                value={searchTerm}
+                onChange={(e) => {
+                  setSearchTerm(e.target.value);
+                  setCurrentPage(1);
+                }}
+                bordered={false}
+                allowClear
+                disabled={isLoading}
+              />
+            </div>
+          </div>
+
+          <div className="w-full md:w-auto">
+            <div className="flex items-center h-12 px-5 bg-white border border-gray-200 rounded-full [&_.ant-picker]:!border-0 [&_.ant-picker]:!shadow-none [&_.ant-picker]:!bg-transparent [&_.ant-picker]:!p-0 [&_.ant-picker]:!h-full [&_.ant-picker-input_>input]:!text-sm [&_.ant-picker-input_>input]:!h-full">
+              <RangePicker
+                placeholder={["Select Interval", ""]}
+                onChange={handleDateRangeChange}
+                value={dateRange}
+                disabled={isLoading}
+                bordered={false}
+              />
+            </div>
+          </div>
         </div>
       </div>
 
       <Spin spinning={isLoading} indicator={<LoadingOutlined spin />}>
-        <Table
-          columns={columns}
-          dataSource={Array.isArray(data)
-            ? data.map((b) => ({
-                key: b?._id,
-                authId: b?.auth?._id || b?.auth?.id,
-                name: b?.name,
-                email: b?.auth?.email,
-                status: b?.auth?.status,
-                isActive: b?.auth?.isActive,
-                createdAt: b?.createdAt,
-                updatedAt: b?.updatedAt,
-                icon,
-              }))
-            : []}
-          rowKey="key"
-          onChange={(tablePagination, _filters, sorter) => {
-            setCurrentPage(tablePagination.current);
+        <div className="">
+          <Table
+            columns={columns}
+            dataSource={Array.isArray(data)
+              ? data.map((b) => ({
+                  key: b?._id,
+                  authId: b?.auth?._id || b?.auth?.id,
+                  name: b?.name,
+                  email: b?.auth?.email,
+                  status: b?.auth?.status,
+                  isActive: b?.auth?.isActive,
+                  createdAt: b?.createdAt,
+                  updatedAt: b?.updatedAt,
+                  icon,
+                }))
+              : []}
+            rowKey="key"
+            onChange={(tablePagination, _filters, sorter) => {
+              setCurrentPage(tablePagination.current);
 
-            const newParams = {};
-            if (sorter?.field) {
-              newParams.sortBy = sorter.field;
-              newParams.sortOrder = sorter.order === "ascend" ? "asc" : "desc";
-            }
-            setFilterParams(newParams);
-          }}
-          pagination={{
-            current: pagination.page || 1,
-            pageSize: pagination.limit || 10,
-            total: pagination.total || 0,
-            showTotal: (total) => `Total ${total} items`,
-            showSizeChanger: false,
-            position: ["bottomRight"],
-          }}
-        />
+              const newParams = {};
+              if (sorter?.field) {
+                newParams.sortBy = sorter.field;
+                newParams.sortOrder = sorter.order === "ascend" ? "asc" : "desc";
+              }
+              setFilterParams(newParams);
+            }}
+            pagination={{
+              current: pagination.page || 1,
+              pageSize: pagination.limit || 10,
+              total: pagination.total || 0,
+              showTotal: (total, range) =>
+                `Showing ${String(range?.[1] ?? 0).padStart(2, "0")} from ${String(total).padStart(2, "0")}`,
+              showSizeChanger: false,
+              position: ["bottomRight"],
+            }}
+          />
+        </div>
       </Spin>
 
       {/* Right-side Profile Drawer */}
