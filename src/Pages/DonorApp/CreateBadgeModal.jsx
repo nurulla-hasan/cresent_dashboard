@@ -401,6 +401,7 @@ const CreateBadgeModal = ({ open, onClose }) => {
       footer={null}
       centered
       width={900}
+      className="[&_.ant-modal-content]:!rounded-xl"
     >
       <Form
         form={form}

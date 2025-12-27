@@ -52,15 +52,15 @@ const DonorDataTable = () => {
       key: "email",
       sorter: true,
       render: (_text, record) => (
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3">
           <img
             src={user}
             alt={record.name}
             className="w-10 h-10 rounded-full"
           />
           <div>
-            <p className="font-medium">{record.name}</p>
-            <p className="text-sm text-gray-400">{record.email}</p>
+            <p className="text-sm font-semibold text-gray-900">{record.name}</p>
+            <p className="text-xs text-gray-500">{record.email}</p>
           </div>
         </div>
       ),
@@ -70,7 +70,10 @@ const DonorDataTable = () => {
       dataIndex: "totalDonationAmount",
       key: "totalDonationAmount",
       sorter: true,
-      render: (v) => <p className="font-medium">${(v ?? 0).toFixed(2)}</p>,},
+      render: (v) => (
+        <p className="text-sm font-semibold text-gray-900">${(v ?? 0).toFixed(2)}</p>
+      ),
+    },
     {
       title: <div className="flex items-center gap-2">Badges Earned</div>,
       dataIndex: "badges",
@@ -82,17 +85,17 @@ const DonorDataTable = () => {
 
         return (
           <div className="relative group">
-            <div className="flex flex-wrap gap-1">
+            <div className="flex flex-wrap gap-2">
               {visibleBadges.map((b, i) => (
                 <span
                   key={i}
-                  className="px-2 py-1 text-xs text-gray-600 bg-gray-100 rounded-full w-fit"
+                  className="inline-flex items-center rounded-full bg-gray-100 px-3 py-1 text-[11px] font-medium text-gray-700 w-fit"
                 >
                   {b?.badgeName || b?.badge_actual_name || "-"}
                 </span>
               ))}
               {remainingCount > 0 && (
-                <span className="px-2 py-1 text-xs text-gray-400 rounded-full bg-gray-50">
+                <span className="inline-flex items-center rounded-full bg-gray-50 px-3 py-1 text-[11px] font-medium text-gray-500">
                   +{remainingCount} more
                 </span>
               )}
@@ -122,9 +125,14 @@ const DonorDataTable = () => {
       key: "createdAt",
       sorter: true,
       render: (createdAt) => (
-        <p className="font-medium">
-          {createdAt ? new Date(createdAt).toLocaleString() : "-"}
-        </p>
+        <div className="leading-tight">
+          <p className="text-sm font-semibold text-gray-900">
+            {createdAt ? new Date(createdAt).toLocaleDateString() : "-"}
+          </p>
+          <p className="mt-1 text-xs text-gray-500">
+            {createdAt ? new Date(createdAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) : ""}
+          </p>
+        </div>
       ),
     },
 
@@ -133,10 +141,10 @@ const DonorDataTable = () => {
       key: "action",
       align: "center",
       render: (_, _record) => (
-        <div className="flex items-center justify-center gap-3 text-lg">
+        <div className="flex items-center justify-center gap-3">
           <div
             onClick={() => handleView(_record)}
-            className="flex items-center justify-center w-8 h-8 p-1 transition-colors rounded-full cursor-pointer bg-neutral-100 hover:bg-neutral-200"
+            className="flex items-center justify-center w-10 h-10 bg-gray-100 rounded-full cursor-pointer"
           >
             <VscEye />
           </div>
@@ -146,52 +154,69 @@ const DonorDataTable = () => {
   ];
 
   return (
-    <div className="p-6 mb-10 bg-white shadow-sm rounded-xl">
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-lg font-semibold">Donors Data</h2>
-        <div className="flex items-center gap-2">
-          <Input
-            prefix={<SearchOutlined />}
-            placeholder="Search..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-60"
-            disabled={isLoading}
-          />
-          <RangePicker
-            placeholder={["From date", "To date"]}
-            onChange={handleDateRangeChange}
-            value={dateRange}
-            disabled={isLoading}
-          />
+    <div className="mb-10 bg-white border border-gray-100 rounded-3xl">
+      <div className="flex flex-col gap-4 p-6 border-b border-gray-100 md:flex-row md:items-center md:justify-between">
+        <h2 className="text-base font-semibold text-gray-900">Donors Data</h2>
+        <div className="flex flex-col items-stretch gap-3 md:flex-row md:items-center">
+          <div className="w-full md:w-[240px]">
+            <div className="flex items-center h-12 px-5 bg-white border border-gray-200 rounded-full [&_.ant-input-affix-wrapper]:!h-full [&_.ant-input-affix-wrapper]:!border-0 [&_.ant-input-affix-wrapper]:!shadow-none [&_.ant-input-affix-wrapper]:!bg-transparent [&_.ant-input-affix-wrapper]:!p-0 [&_.ant-input]:!h-full [&_.ant-input]:!bg-transparent [&_.ant-input]:!text-sm">
+              <Input
+                prefix={<SearchOutlined />}
+                placeholder="Search"
+                value={searchTerm}
+                onChange={(e) => {
+                  setSearchTerm(e.target.value);
+                  setCurrentPage(1);
+                }}
+                bordered={false}
+                allowClear
+                disabled={isLoading}
+              />
+            </div>
+          </div>
+
+          <div className="w-full md:w-auto">
+            <div className="flex items-center h-12 px-5 bg-white border border-gray-200 rounded-full [&_.ant-picker]:!border-0 [&_.ant-picker]:!shadow-none [&_.ant-picker]:!bg-transparent [&_.ant-picker]:!p-0 [&_.ant-picker]:!h-full [&_.ant-picker-input_>input]:!text-sm [&_.ant-picker-input_>input]:!h-full">
+              <RangePicker
+                placeholder={["Select Interval", ""]}
+                onChange={handleDateRangeChange}
+                value={dateRange}
+                disabled={isLoading}
+                bordered={false}
+              />
+            </div>
+          </div>
         </div>
       </div>
 
       <Spin spinning={isLoading} indicator={<LoadingOutlined spin />}>
-        <Table
-          columns={columns}
-          dataSource={data}
-          loading={isLoading}
-          rowKey="_id"
-          onChange={(tablePagination, filters, sorter) => {
-            setCurrentPage(tablePagination.current);
+        <div className="">
+          <Table
+            columns={columns}
+            dataSource={data}
+            loading={isLoading}
+            rowKey="_id"
+            onChange={(tablePagination, filters, sorter) => {
+              setCurrentPage(tablePagination.current);
 
-            const newParams = {};
-            if (sorter?.field) {
-              newParams.sortBy = sorter.field;
-              newParams.sortOrder = sorter.order === "ascend" ? "asc" : "desc";
-            }
-            setFilterParams(newParams);
-          }}
-          pagination={{
-            current: pagination.page || 1,
-            pageSize: pagination.limit || 10,
-            total: pagination.total || 0,
-            showTotal: (total) => `Total ${total} items`,
-            showSizeChanger: false,
-            position: ["bottomRight"],
-          }}
-        />
+              const newParams = {};
+              if (sorter?.field) {
+                newParams.sortBy = sorter.field;
+                newParams.sortOrder = sorter.order === "ascend" ? "asc" : "desc";
+              }
+              setFilterParams(newParams);
+            }}
+            pagination={{
+              current: pagination.page || 1,
+              pageSize: pagination.limit || 10,
+              total: pagination.total || 0,
+              showTotal: (total, range) =>
+                `Showing ${String(range?.[1] ?? 0).padStart(2, "0")} from ${String(total).padStart(2, "0")}`,
+              showSizeChanger: false,
+              position: ["bottomRight"],
+            }}
+          />
+        </div>
       </Spin>
 
       {/* View Donor Modal */}
@@ -205,7 +230,7 @@ const DonorDataTable = () => {
           </Button>
         ]}
         width={600}
-        className="donor-view-modal"
+        className="[&_.ant-modal-content]:!rounded-xl donor-view-modal"
       >
         {selectedDonor && (
           <div className="space-y-6">

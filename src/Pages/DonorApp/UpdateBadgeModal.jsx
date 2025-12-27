@@ -102,6 +102,7 @@ const UpdateBadgeModal = ({ open, onClose, badge }) => {
       centered
       width={720}
       destroyOnClose
+      className="[&_.ant-modal-content]:!rounded-xl"
     >
       <Form
         form={form}

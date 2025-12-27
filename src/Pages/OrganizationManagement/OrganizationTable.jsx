@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import { useState } from "react";
 import {
   Button,
@@ -48,18 +47,13 @@ const OrganizationTable = () => {
     return false;
   };
 
-  //  Open edit modal
-  const handleEdit = () => {
-   
-  };
-
   const handleCancel = () => {
     setIsModalVisible(false);
     form.resetFields();
     setPreviewImage(null);
   };
 
-  const handleSave = (values) => {
+  const handleSave = () => {
     setIsModalVisible(false);
   };
 
@@ -258,14 +252,14 @@ const OrganizationTable = () => {
 
           <Button
             onClick={handleExport}
-            className="!h-10 !rounded-full !border-gray-200 !px-5 !text-sm !font-medium"
+            className="!h-11 !rounded-full !border-gray-200 !px-5 !text-sm !font-medium"
           >
             Export
           </Button>
         </div>
       </div>
 
-      <div className="p-6 pt-4 [&_.ant-table-thead>tr>th]:bg-gray-50 [&_.ant-table-thead>tr>th]:border-b [&_.ant-table-thead>tr>th]:border-gray-100 [&_.ant-table-thead>tr>th]:text-gray-900 [&_.ant-table-thead>tr>th]:font-semibold [&_.ant-table-thead>tr>th]:text-xs [&_.ant-table-tbody>tr>td]:border-b [&_.ant-table-tbody>tr>td]:border-gray-100 [&_.ant-table-tbody>tr>td]:py-4 [&_.ant-table-tbody>tr>td]:text-sm">
+      <div className="">
         <Table
           columns={columns}
           dataSource={data}
@@ -304,6 +298,7 @@ const OrganizationTable = () => {
         onCancel={handleCancel}
         footer={null}
         centered
+        className="[&_.ant-modal-content]:!rounded-xl"
       >
         <Form layout="vertical" form={form} onFinish={handleSave}>
           <div className="flex justify-center mb-4">
@@ -373,6 +368,7 @@ const OrganizationTable = () => {
         footer={null}
         centered
         width={600}
+        className="[&_.ant-modal-content]:!rounded-xl"
       >
         {viewRecord && (
           <div className="space-y-6">

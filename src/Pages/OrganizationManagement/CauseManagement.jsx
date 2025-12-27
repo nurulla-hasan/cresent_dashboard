@@ -253,7 +253,7 @@ const CauseManagement = () => {
         </div>
       </div>
 
-      <div className="p-6 pt-4 [&_.ant-table-thead>tr>th]:bg-gray-50 [&_.ant-table-thead>tr>th]:border-b [&_.ant-table-thead>tr>th]:border-gray-100 [&_.ant-table-thead>tr>th]:text-gray-900 [&_.ant-table-thead>tr>th]:font-semibold [&_.ant-table-thead>tr>th]:text-xs [&_.ant-table-tbody>tr>td]:border-b [&_.ant-table-tbody>tr>td]:border-gray-100 [&_.ant-table-tbody>tr>td]:py-4 [&_.ant-table-tbody>tr>td]:text-sm">
+      <div className="">
         <Table
           columns={columns}
           dataSource={data}
@@ -261,10 +261,8 @@ const CauseManagement = () => {
           pagination={{
             current: pagination?.page || currentPage,
             pageSize: pagination?.limit || 10,
-            total: pagination?.total || 0,
             showTotal: (total, range) =>
               `Showing ${range[0]}-${range[1]} from ${String(total).padStart(2, "0")}`,
-            onChange: (page) => setCurrentPage(page),
             showSizeChanger: false,
             position: ["bottomRight"],
           }}
@@ -280,6 +278,7 @@ const CauseManagement = () => {
         footer={null}
         centered
         width={600}
+        className="[&_.ant-modal-content]:!rounded-xl"
       >
         <Form layout="vertical" form={form} onFinish={handleSubmit}>
           <Form.Item
@@ -341,6 +340,7 @@ const CauseManagement = () => {
         footer={null}
         centered
         width={600}
+        className="[&_.ant-modal-content]:!rounded-xl"
       >
         {viewRecord && (
           <div className="space-y-6">

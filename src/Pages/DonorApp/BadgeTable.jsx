@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { Button, Dropdown, Input, Menu, Modal, Table, Tag, message } from "antd";
+import { Button, Dropdown, Input, Menu, Modal, Table, message } from "antd";
 import { DownOutlined, PlusOutlined, SearchOutlined } from "@ant-design/icons";
 import { VscEye } from "react-icons/vsc";
 import { FaPencilAlt } from "react-icons/fa";
@@ -16,10 +16,6 @@ const BadgeTable = () => {
   const [selectedBadge, setSelectedBadge] = useState(null);
 
   const [deleteBadge, { isLoading: isDeleteLoading }] = useDeleteBadgeMutation();
-
-  const [isActiveFilter, setIsActiveFilter] = useState(null);
-  const [featuredFilter, setFeaturedFilter] = useState(null);
-  const [unlockTypeFilter, setUnlockTypeFilter] = useState(null);
 
   const {
     data,
@@ -61,11 +57,27 @@ const BadgeTable = () => {
   };
 
   const statusTag = (isActive) => (
-    <Tag color={isActive ? "green" : "red"}>{isActive ? "Active" : "Inactive"}</Tag>
+    <span
+      className={
+        isActive
+          ? "inline-flex items-center gap-1 rounded-full bg-emerald-100 px-4 py-2 text-xs font-medium text-emerald-700"
+          : "inline-flex items-center gap-1 rounded-full bg-gray-100 px-4 py-2 text-xs font-medium text-gray-500"
+      }
+    >
+      {isActive ? "Active" : "Inactive"}
+    </span>
   );
 
   const featuredTag = (featured) => (
-    <Tag color={featured ? "blue" : "default"}>{featured ? "Featured" : "Normal"}</Tag>
+    <span
+      className={
+        featured
+          ? "inline-flex items-center rounded-full bg-blue-100 px-4 py-2 text-xs font-medium text-blue-700"
+          : "inline-flex items-center rounded-full bg-gray-100 px-4 py-2 text-xs font-medium text-gray-600"
+      }
+    >
+      {featured ? "Featured" : "Normal"}
+    </span>
   );
 
   const normalizedData = useMemo(() => {
@@ -81,14 +93,18 @@ const BadgeTable = () => {
       title: "Badge Name",
       dataIndex: "name",
       key: "name",
-      render: (text) => <span className="font-semibold">{text}</span>,
+      render: (text) => <span className="text-sm font-semibold text-gray-900">{text}</span>,
     },
     {
       title: "Badge Icon",
       dataIndex: "iconUrl",
       key: "icon",
       render: (iconUrl, record) => (
-        <img src={iconUrl || ""} alt={record?.name || "badge"} className="object-contain w-12 h-12" />
+        <img
+          src={iconUrl || ""}
+          alt={record?.name || "badge"}
+          className="object-contain w-12 h-12"
+        />
       ),
     },
     {
@@ -123,30 +139,30 @@ const BadgeTable = () => {
       align: "center",
       key: "action",
       render: (_, record) => (
-        <div className="flex items-center justify-center gap-3 text-lg">
+        <div className="flex items-center justify-center gap-3">
           <div
             onClick={() => handleView(record)}
-            className="flex items-center justify-center w-8 h-8 p-1 text-blue-600 bg-blue-100 rounded-full cursor-pointer hover:bg-blue-200"
+            className="flex items-center justify-center w-10 h-10 bg-gray-100 rounded-full cursor-pointer"
             title="View Details"
           >
-            <VscEye size={16} />
+            <VscEye />
           </div>
           <div
-            className="flex items-center justify-center w-8 h-8 p-1 text-yellow-600 bg-yellow-100 rounded-full cursor-pointer hover:bg-yellow-200"
+            className="flex items-center justify-center w-10 h-10 bg-gray-100 rounded-full cursor-pointer"
             title="Edit Badge"
             onClick={() => {
               setSelectedBadge(record);
               setIsUpdateOpen(true);
             }}
           >
-            <FaPencilAlt size={14} />
+            <FaPencilAlt />
           </div>
           <div
-            className="flex items-center justify-center w-8 h-8 p-1 text-red-600 bg-red-100 rounded-full cursor-pointer hover:bg-red-200"
+            className="flex items-center justify-center w-10 h-10 bg-gray-100 rounded-full cursor-pointer"
             title="Delete Badge"
             onClick={() => handleDelete(record)}
           >
-            <RxCrossCircled size={16} />
+            <RxCrossCircled />
           </div>
         </div>
       ),
@@ -157,7 +173,6 @@ const BadgeTable = () => {
     <Menu>
       <Menu.Item
         onClick={() => {
-          setIsActiveFilter(true);
           setFilterParams({ isActive: true });
         }}
       >
@@ -165,7 +180,6 @@ const BadgeTable = () => {
       </Menu.Item>
       <Menu.Item
         onClick={() => {
-          setIsActiveFilter(false);
           setFilterParams({ isActive: false });
         }}
       >
@@ -173,7 +187,6 @@ const BadgeTable = () => {
       </Menu.Item>
       <Menu.Item
         onClick={() => {
-          setFeaturedFilter(true);
           setFilterParams({ featured: true });
         }}
       >
@@ -181,7 +194,6 @@ const BadgeTable = () => {
       </Menu.Item>
       <Menu.Item
         onClick={() => {
-          setFeaturedFilter(false);
           setFilterParams({ featured: false });
         }}
       >
@@ -189,7 +201,6 @@ const BadgeTable = () => {
       </Menu.Item>
       <Menu.Item
         onClick={() => {
-          setUnlockTypeFilter("seasonal");
           setFilterParams({ unlockType: "seasonal" });
         }}
       >
@@ -197,9 +208,6 @@ const BadgeTable = () => {
       </Menu.Item>
       <Menu.Item
         onClick={() => {
-          setUnlockTypeFilter(null);
-          setFeaturedFilter(null);
-          setIsActiveFilter(null);
           setFilterParams({});
         }}
       >
@@ -209,50 +217,62 @@ const BadgeTable = () => {
   );
 
   return (
-    <div className="p-6 mb-10 bg-white shadow-sm rounded-xl">
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-lg font-semibold">Badges Management</h2>
-        <div className="flex items-center gap-2">
-          <Button
-            type="primary"
-            icon={<PlusOutlined />}
-            onClick={() => setIsCreateOpen(true)}
-            className="bg-[#1890ff]"
-          >
-            Create Badge
-          </Button>
-          <Input
-            prefix={<SearchOutlined />}
-            placeholder="Search..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-60"
-          />
+    <div className="mb-10 bg-white border border-gray-100 rounded-3xl">
+      <div className="flex flex-col gap-4 p-6 border-b border-gray-100 md:flex-row md:items-center md:justify-between">
+        <h2 className="text-base font-semibold text-gray-900">Badges Management</h2>
+
+        <div className="flex flex-col items-stretch gap-3 md:flex-row md:items-center">
+          <div className="w-full md:w-[240px]">
+            <div className="flex items-center h-12 px-5 bg-white border border-gray-200 rounded-full [&_.ant-input-affix-wrapper]:!h-full [&_.ant-input-affix-wrapper]:!border-0 [&_.ant-input-affix-wrapper]:!shadow-none [&_.ant-input-affix-wrapper]:!bg-transparent [&_.ant-input-affix-wrapper]:!p-0 [&_.ant-input]:!h-full [&_.ant-input]:!bg-transparent [&_.ant-input]:!text-sm">
+              <Input
+                prefix={<SearchOutlined />}
+                placeholder="Search"
+                value={searchTerm}
+                onChange={(e) => {
+                  setSearchTerm(e.target.value);
+                  setCurrentPage(1);
+                }}
+                bordered={false}
+                allowClear
+                disabled={isLoading}
+              />
+            </div>
+          </div>
+
           <Dropdown overlay={menu} trigger={["click"]}>
-            <Button>
+            <Button className="!h-12 !rounded-full !border-gray-200 !px-6 !text-sm !font-medium">
               Filter <DownOutlined />
             </Button>
           </Dropdown>
-          <div className="px-2 text-xs text-gray-500">
-            {isActiveFilter !== null || featuredFilter !== null || unlockTypeFilter
-              ? "Filters applied"
-              : "All"}
-          </div>
+
+          <Button
+            icon={<PlusOutlined />}
+            onClick={() => setIsCreateOpen(true)}
+            className="!h-12 !rounded-full !border-gray-200 !px-6 !text-sm !font-medium"
+          >
+            Add
+          </Button>
         </div>
       </div>
 
-      <Table
-        columns={columns}
-        dataSource={normalizedData}
-        loading={isLoading}
-        pagination={{
-          current: pagination?.page || currentPage,
-          pageSize: pagination?.limit || 10,
-          total: pagination?.total || 0,
-          onChange: (page) => setCurrentPage(page),
-        }}
-        rowKey="_id"
-      />
+      <div className="">
+        <Table
+          columns={columns}
+          dataSource={normalizedData}
+          loading={isLoading}
+          pagination={{
+            current: pagination?.page || currentPage,
+            pageSize: pagination?.limit || 10,
+            total: pagination?.total || 0,
+            showTotal: (total, range) =>
+              `Showing ${String(range?.[1] ?? 0).padStart(2, "0")} from ${String(total).padStart(2, "0")}`,
+            onChange: (page) => setCurrentPage(page),
+            showSizeChanger: false,
+            position: ["bottomRight"],
+          }}
+          rowKey="_id"
+        />
+      </div>
 
       <Modal
         title="Badge Details"
@@ -261,6 +281,7 @@ const BadgeTable = () => {
         footer={null}
         centered
         width={600}
+        className="[&_.ant-modal-content]:!rounded-xl"
       >
         {selectedBadge ? (
           <div className="space-y-6">
