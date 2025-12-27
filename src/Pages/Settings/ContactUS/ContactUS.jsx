@@ -4,7 +4,7 @@ import {
   AiOutlineEyeInvisible,
 } from "react-icons/ai";
 import { Modal, Input, Button, message } from "antd";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 import {
   useTwoFaDisableMutation,
@@ -19,6 +19,8 @@ import {
 
 export default function ContactUs() {
   const [twoFA, setTwoFA] = useState(false);
+
+  const location = useLocation();
 
   const { data: profileData, isFetching: isProfileFetching, refetch: refetchProfile } = useGetAuthProfileQuery();
 
@@ -162,10 +164,41 @@ export default function ContactUs() {
 
   return (
     <div>
-      <h1 className="mb-2 text-2xl font-semibold md:text-3xl">Settings</h1>
-      <p className="mb-8 text-gray-500">
-        Manage team access and keep your organisation account secure.
-      </p>
+      <div className="flex items-start justify-between gap-4 mb-8">
+        <div>
+          <h1 className="mb-2 text-2xl font-semibold md:text-3xl">Settings</h1>
+          <p className="text-gray-500">
+            Manage team access and keep your organisation account secure.
+          </p>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <Link
+            to="/settings/contact-us"
+            className={`px-4 py-2 text-sm font-medium bg-white border rounded-full ${
+              location.pathname === "/settings/contact-us" ? "bg-lime-300 border-lime-300" : ""
+            }`}
+          >
+            General
+          </Link>
+          <Link
+            to="/settings/terms-condition"
+            className={`px-4 py-2 text-sm font-medium bg-white border rounded-full ${
+              location.pathname === "/settings/terms-condition" ? "bg-lime-300 border-lime-300" : ""
+            }`}
+          >
+            Terms Condition
+          </Link>
+          <Link
+            to="/settings/privacy-policy"
+            className={`px-4 py-2 text-sm font-medium bg-white border rounded-full ${
+              location.pathname === "/settings/privacy-policy" ? "bg-lime-300 border-lime-300" : ""
+            }`}
+          >
+            Privacy Policy
+          </Link>
+        </div>
+      </div>
 
       {/* Update Password */}
       <div className="flex items-center justify-between p-4 mb-6 bg-white shadow rounded-xl">

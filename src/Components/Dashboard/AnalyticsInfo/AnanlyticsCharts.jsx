@@ -8,46 +8,44 @@ const AnanlyticsCharts = ({
   organizationChangeText,
 }) => {
   return (
-    <div className=" my-3">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-        <div className="bg-white border p-6 rounded-2xl relative">
-          <div className="flex justify-between items-start mb-6 h-20">
+    <div className="my-3">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="bg-white border border-gray-100 p-6 rounded-3xl relative shadow-sm">
+          <div className="flex justify-between items-start mb-8">
             <div className="flex justify-between items-center gap-2">
-              <p className=" text-xl font-medium">Total Donated</p>
+              <p className="text-base font-semibold text-gray-900">Total Donated</p>
             </div>
             <BsArrowUpRight />
           </div>
           <div className="">
-            <h1 className="text-3xl font-bold">
-              <span className="text-gray-400">$</span>
+            <h1 className="text-3xl font-semibold text-gray-900">
+              <span className="text-gray-300">$</span>
               {Number(totalDonation ?? 0).toLocaleString(undefined, {
                 minimumFractionDigits: 0,
                 maximumFractionDigits: 2,
               })}
             </h1>
             {donationAmountChangeText ? (
-              <p className="text-gray-400 mt-2">{donationAmountChangeText}</p>
+              <p className="text-sm text-gray-400 mt-2">{donationAmountChangeText}</p>
             ) : null}
           </div>
         </div>
-        <div className="bg-white border p-6 rounded-2xl relative">
-          <div className="flex justify-between items-start  mb-6 h-20">
+        <div className="bg-white border border-gray-100 p-6 rounded-3xl relative shadow-sm">
+          <div className="flex justify-between items-start mb-8">
             <div>
-              <p className=" text-xl font-medium">Active Organizations</p>
-           
+              <p className="text-base font-semibold text-gray-900">Active Organizations</p>
             </div>
             <BsArrowUpRight />
           </div>
           <div className="">
-            <h1 className="text-3xl font-bold">
+            <h1 className="text-3xl font-semibold text-gray-900">
               {Number(totalActiveOrganizations ?? 0).toLocaleString()}
             </h1>
             {organizationChangeText ? (
-              <p className="text-gray-400 mt-2">{organizationChangeText}</p>
+              <p className="text-sm text-gray-400 mt-2">{organizationChangeText}</p>
             ) : null}
           </div>
         </div>
-      
       </div>
     </div>
   );

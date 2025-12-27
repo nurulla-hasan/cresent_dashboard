@@ -23,21 +23,23 @@ const Analytics = () => {
   const stats = apiRes?.data || {};
 
   const btnClass = (label) =>
-    `px-6 py-3 rounded-3xl border transition ${
-      active === label ? "bg-black text-white" : "bg-white text-black"
+    `px-5 py-2 rounded-full border text-sm font-medium transition ${
+      active === label
+        ? "bg-black text-white border-black"
+        : "bg-white text-black border-gray-200 hover:bg-gray-50"
     }`;
 
   return (
-    <div className="">
-      <div className="flex items-center justify-between gap-5">
+    <div>
+      <div className="flex items-start justify-between gap-6">
         <div className="w-full md:w-[70%]">
-          <h1 className="mb-2 text-xl font-semibold md:text-3xl">Dashboard</h1>
+          <h1 className="mb-1 text-2xl font-semibold md:text-4xl">Dashboard</h1>
           <p className="mb-10 text-gray-500">
             Track donation patterns, donor behavior, and how contributions are
             shaping results.
           </p>
         </div>
-        <div className="w-full md:w-[30%] flex justify-start items-center gap-5">
+        <div className="w-full md:w-[30%] flex justify-end items-center gap-3">
           <button
             className={btnClass("Today")}
             onClick={() => setActive("Today")}
@@ -59,14 +61,14 @@ const Analytics = () => {
         </div>
       </div>
 
-      <div className="flex items-start justify-between gap-5">
-        <div className=" w-full md:w-[70%]">
+      <div className="flex items-start justify-between gap-6">
+        <div className="w-full md:w-[70%]">
           {isLoading || isFetching ? (
-            <div className="flex items-center justify-center p-10 bg-white border rounded-2xl">
+            <div className="flex items-center justify-center p-10 bg-white border rounded-3xl">
               <div className="w-10 h-10 border-4 border-gray-200 rounded-full border-t-black animate-spin" />
             </div>
           ) : isError ? (
-            <div className="p-6 text-red-500 bg-white border rounded-2xl">Failed to load dashboard data.</div>
+            <div className="p-6 text-red-500 bg-white border rounded-3xl">Failed to load dashboard data.</div>
           ) : (
             <>
               <AnanlyticsCharts

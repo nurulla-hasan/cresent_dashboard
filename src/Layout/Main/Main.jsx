@@ -5,6 +5,7 @@ import { ConfigProvider, Drawer } from "antd";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { FaX } from "react-icons/fa6";
 import { IoIosNotificationsOutline } from "react-icons/io";
+import { FiSettings } from "react-icons/fi";
 import { Link } from "react-router-dom";
 import brandlogo from "../../assets/image/Logo.png";
 import user from "../../assets/image/p.png";
@@ -37,7 +38,7 @@ const MainLayout = () => {
   return (
     <div className="flex flex-col min-h-screen">
       {/* header */}
-      <div className="h-20 bg-[#f9f7f9] flex justify-between items-center px-2 md:px-8 gap-2 border-b">
+      <div className="h-20 bg-[#f9f7f9] flex items-center gap-3 px-3 md:px-8 border-b">
         {isMobile && (
           <GiHamburgerMenu
             onClick={toggleDrawer}
@@ -46,64 +47,50 @@ const MainLayout = () => {
         )}
 
         {/* logo */}
-        <div>
+        <div className="flex items-center shrink-0">
           <Link to="/">
             <img
               src={brandlogo}
               alt="brandlogo"
-              className="object-contain md:h-full md:w-full"
+              className="object-contain h-10"
             />
           </Link>
         </div>
 
         {/* search */}
-        <div className="w-[320px] ">
-          <ConfigProvider
-            theme={{
-              components: {
-                Input: { controlHeight: 48 },
-              },
-            }}
-          >
-            {/* <div className="w-[320px] flex items-center gap-2 p-3 rounded-[60px]  backdrop-blur-sm">
-              <Search
-                allowClear
-                placeholder="Input search text"
-                onSearch={onSearch}
-                enterButton
-                bordered={false}
-                style={{ flex: 1, padding: 0 }}
-              />
-            </div> */}
-          </ConfigProvider>
-        </div>
+        <div className="flex-1" />
 
         {/* user + notifications */}
-        <div>
-          <div className="flex items-center justify-between gap-2 mx-10">
-            <div className="relative flex items-center gap-5 py-5">
-              <Link to="/notification">
-                <div className="relative">
-                  <IoIosNotificationsOutline className="w-10 h-10 p-1 text-black bg-white border rounded-full" />
-                  {typeof unseenCount === "number" && unseenCount > 0 ? (
-                    <span className="absolute top-0 right-0 flex items-center justify-center w-5 h-5 text-xs text-white bg-red-500 rounded-full">
-                      {unseenCount}
-                    </span>
-                  ) : null}
-                </div>
-              </Link>
-              <Link to="/admin-profile">
-                <div className="flex items-center gap-2">
-                  <img
-                    src={user}
-                    alt=""
-                    className="w-10 h-10 border rounded-full border-primary"
-                  />
-                  <p className="font-semibold md:text-xl">Super Admin</p>
-                </div>
-              </Link>
+        <div className="flex items-center gap-3 shrink-0">
+          <Link
+            to="/settings/contact-us"
+            className="grid w-10 h-10 bg-white border rounded-full place-items-center"
+            aria-label="Settings"
+          >
+            <FiSettings className="w-5 h-5" />
+          </Link>
+
+          <Link to="/notification">
+            <div className="relative grid w-10 h-10 bg-white border rounded-full place-items-center">
+              <IoIosNotificationsOutline className="w-6 h-6 text-black" />
+              {typeof unseenCount === "number" && unseenCount > 0 ? (
+                <span className="absolute top-0 right-0 flex items-center justify-center w-5 h-5 text-xs text-white bg-red-500 rounded-full">
+                  {unseenCount}
+                </span>
+              ) : null}
             </div>
-          </div>
+          </Link>
+
+          <Link to="/admin-profile">
+            <div className="flex items-center gap-2 px-2 py-1 bg-white border rounded-full">
+              <img
+                src={user}
+                alt=""
+                className="border rounded-full w-9 h-9 border-primary"
+              />
+              <p className="pr-2 text-sm font-semibold md:text-base">Super Admin</p>
+            </div>
+          </Link>
         </div>
       </div>
 
@@ -144,7 +131,7 @@ const MainLayout = () => {
           {/* main outlet content */}
           <div
             className={`flex-1 bg-[#f9f7f9] h-[calc(100vh-5rem)] overflow-y-auto ${
-              isMobile ? "p-4" : "p-10"
+              isMobile ? "p-4" : "p-8"
             }`}
           >
             <Outlet />

@@ -1,34 +1,27 @@
-import { useState } from "react";
-import { BiChevronDown } from "react-icons/bi";
+ 
+import { FiSettings } from "react-icons/fi";
+import { LuLayoutDashboard } from "react-icons/lu";
+import { HiOutlineUsers } from "react-icons/hi2";
+import { TbChartBar, TbBuildingCommunity, TbHeartHandshake, TbBriefcase2 } from "react-icons/tb";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 
-import dashboard from "../../assets/image/dashboard.png";
-import users from "../../assets/image/users.png";
-import analytics from "../../assets/image/analytics.png";
-import organization from "../../assets/image/organization.png";
-import donor from "../../assets/image/donor.png";
-import business from "../../assets/image/business.png";
 import logout from "../../assets/image/logout.png";
 
 const Sidebar = ({ closeDrawer }) => {
-  const [openDropdown, setOpenDropdown] = useState("");
   const navigate = useNavigate();
   const location = useLocation();
 
   const menuItems = [
-    { icon: dashboard, label: "Dashboard", Link: "/" },
-    { icon: users, label: "User Management", Link: "/user-management" },
-    { icon: analytics, label: "Analytics", Link: "/analytics" },
+    { icon: LuLayoutDashboard, label: "Dashboard", Link: "/" },
+    { icon: HiOutlineUsers, label: "User Management", Link: "/user-management" },
+    { icon: TbChartBar, label: "Analytics", Link: "/analytics" },
     {
-      icon: organization,
+      icon: TbBuildingCommunity,
       label: "Organizations",
       Link: "/organization-management",
     },
-    { icon: donor, label: "Donor App", Link: "/donor-app" },
-    { icon: business, label: "Business Admin", Link: "/business-admin" },
-    { icon: business, label: "Settings", Link: "/settings/contact-us" },
-    { icon: business, label: "Terms Condition", Link: "/settings/terms-condition" },
-    { icon: business, label: "Privacy Policy", Link: "/settings/privacy-policy" },
+    { icon: TbHeartHandshake, label: "Donor App", Link: "/donor-app" },
+    { icon: TbBriefcase2, label: "Business Admin", Link: "/business-admin" },
   ];
 
   // Find active menu item based on current path
@@ -41,16 +34,7 @@ const Sidebar = ({ closeDrawer }) => {
   const active = getActiveMenuItem();
 
   const handleActiveRoute = (_item) => {
-    setOpenDropdown("");
     if (closeDrawer) closeDrawer();
-  };
-
-  const handleSubItemClick = (_subItem) => {
-    if (closeDrawer) closeDrawer();
-  };
-
-  const toggleDropdown = (label) => {
-    setOpenDropdown(openDropdown === label ? "" : label);
   };
 
   const handleLogout = () => {
@@ -58,72 +42,56 @@ const Sidebar = ({ closeDrawer }) => {
     navigate("/sign-in");
   };
 
+  const isSettingsActive = location.pathname.startsWith("/settings");
+
   return (
-    <div className="bg-[#f9f7f9] h-full border-r">
+    <div className="h-full bg-white">
       <div className="flex flex-col h-full">
-        <div className="flex flex-col gap-2 px-4 py-8 mb-10 md:my-5">
+        <div className="flex flex-col gap-2 px-4 py-6">
           {menuItems.map((item) => (
             <div key={item.label} className={item.className || ""}>
               <Link to={item.Link}>
               <div
-                className={`text-lg flex justify-between items-center p-4 cursor-pointer rounded-2xl hover:bg-primary ${
-                  active === item.label ? "bg-primary" : "text-black"
+                className={`text-sm md:text-base flex justify-between items-center px-4 py-3 cursor-pointer rounded-2xl transition ${
+                  active === item.label
+                    ? "bg-lime-300 text-black"
+                    : "text-black hover:bg-gray-100"
                 }`}
-                onClick={() =>
-                  item.isDropdown
-                    ? toggleDropdown(item.label)
-                    : handleActiveRoute(item.label)
-                }
+                onClick={() => handleActiveRoute(item.label)}
               >
                   <div className="flex items-center gap-3">
-                    <img src={item.icon} alt={item.label} />
-                    <p>{item.label}</p>
-                    {item.isDropdown && (
-                      <BiChevronDown
-                        className={`transform transition-transform ${
-                          openDropdown === item.label ? "rotate-180" : ""
-                        }`}
-                      />
-                    )}
+                    <item.icon className="w-5 h-5" />
+                    <p className="font-medium truncate max-w-[170px]">{item.label}</p>
                   </div>
               </div>
                 </Link>
-              {item.isDropdown && openDropdown === item.label && (
-                <div className="flex flex-col">
-                  {item.subItems.map((subItem) => (
-                    <Link to={subItem.Link} key={subItem.label}>
-                      <div
-                        className={`py-2 px-5 cursor-pointer  ${
-                          active === subItem.label
-                            ? "bg-primary font-bold"
-                            : "text-black hover:bg-primary"
-                        }`}
-                        onClick={() => handleSubItemClick(subItem.label)}
-                      >
-                        <p className="flex items-center gap-2 ml-10">
-                          {subItem.icon}
-                          {subItem.label}
-                        </p>
-                      </div>
-                    </Link>
-                  ))}
-                </div>
-              )}
             </div>
           ))}
         </div>
 
-        {/* Spacer to push logout down */}
-        <div className="flex-1"></div>
+        <div className="flex-1" />
 
-        {/* Logout button */}
-        <div className="px-4 pb-8">
+        <div className="px-4 pb-3">
+          <Link
+            to="/settings/contact-us"
+            className={`text-sm md:text-base flex justify-between items-center px-4 py-3 cursor-pointer rounded-2xl transition mb-3 ${
+              isSettingsActive
+                ? "bg-lime-300 text-black"
+                : "text-black hover:bg-gray-100"
+            }`}
+          >
+            <div className="flex items-center gap-3">
+              <FiSettings className="w-5 h-5" />
+              <p className="font-medium">Settings</p>
+            </div>
+          </Link>
+
           <button
             onClick={handleLogout}
-            className="flex items-center w-full gap-2 px-5 py-4 text-black border cursor-pointer rounded-2xl hover:bg-primary"
+            className="flex items-center w-full gap-3 px-4 py-3 text-black border cursor-pointer rounded-2xl hover:bg-gray-100"
           >
-            <img src={logout} alt="Logout" />
-            <p>Logout</p>
+            <img src={logout} alt="Logout" className="w-5 h-5" />
+            <p className="font-medium">Log out</p>
           </button>
         </div>
       </div>
