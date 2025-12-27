@@ -119,15 +119,15 @@ const CauseManagement = () => {
       key: "name",
       sorter: (a, b) => a.name.localeCompare(b.name),
       render: (_, record) => (
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3">
           <img
             src={record?.organization?.logoImage || ""}
             alt={record.name}
             className="object-cover w-10 h-10 rounded-full"
           />
           <div>
-            <p className="font-medium">{record.name}</p>
-            <p className="text-sm text-gray-400">
+            <p className="text-sm font-semibold text-gray-900">{record.name}</p>
+            <p className="text-xs text-gray-500">
               {record?.createdAt ? new Date(record.createdAt).toLocaleDateString() : ""}
             </p>
           </div>
@@ -152,11 +152,9 @@ const CauseManagement = () => {
       filters: (categoriesRes?.data || []).map((c) => ({ text: c.label, value: c.value })),
       onFilter: (value, record) => record.category === value,
       render: (value) => (
-        <div className="flex items-center gap-2 px-4 py-2 rounded-3xl">
-          <div className="flex items-center gap-1 px-4 py-1 text-slate-700 bg-slate-100 rounded-2xl">
-            {value}
-          </div>
-        </div>
+        <span className="inline-flex items-center px-4 py-2 text-xs font-medium rounded-full bg-slate-100 text-slate-700">
+          {value}
+        </span>
       ),
     },
     {
@@ -169,19 +167,34 @@ const CauseManagement = () => {
         { text: "Suspended", value: "suspended" },
       ],
       onFilter: (value, record) => record.status === value,
-      render: (_, record) => (
-        <Select
-          size="small"
-          value={record.status}
-          style={{ width: 140 }}
-          loading={isStatusUpdating}
-          onChange={(v) => handleChangeStatus(record._id, v)}
-        >
-          <Option value="pending">Pending</Option>
-          <Option value="verified">Verified</Option>
-          <Option value="suspended">Suspended</Option>
-        </Select>
-      ),
+      render: (_, record) => {
+        const s = String(record?.status || "").toLowerCase();
+        const pillCls =
+          s === "verified"
+            ? "bg-emerald-100 text-emerald-700"
+            : s === "pending"
+            ? "bg-amber-100 text-amber-700"
+            : s === "suspended"
+            ? "bg-red-100 text-red-600"
+            : "bg-gray-100 text-gray-700";
+        return (
+          <div className="inline-flex items-center px-4 py-2 text-xs font-medium capitalize rounded-full cursor-pointer select-none">
+            <Select
+              size="small"
+              value={record.status}
+              bordered={false}
+              loading={isStatusUpdating}
+              onChange={(v) => handleChangeStatus(record._id, v)}
+              className={`!w-[140px] !rounded-full !px-2 !py-4 ${pillCls} [&_.ant-select-selector]:!bg-transparent [&_.ant-select-selector]:!border-0 [&_.ant-select-selector]:!shadow-none [&_.ant-select-selection-item]:!text-xs [&_.ant-select-selection-item]:!font-medium`}
+              dropdownMatchSelectWidth={false}
+            >
+              <Option value="pending">Pending</Option>
+              <Option value="verified">Verified</Option>
+              <Option value="suspended">Suspended</Option>
+            </Select>
+          </div>
+        );
+      },
     },
     {
       title: "Action",
@@ -191,14 +204,14 @@ const CauseManagement = () => {
         <div className="flex items-center justify-center gap-3 text-lg">
           <div 
             onClick={() => handleView(record)}
-            className="flex items-center justify-center w-8 h-8 p-1 bg-blue-100 rounded-full cursor-pointer hover:bg-blue-200"
+            className="flex items-center justify-center w-10 h-10 bg-gray-100 rounded-full cursor-pointer"
             title="View Details"
           >
             <VscEye />
           </div>
           <div
             onClick={() => handleEdit(record)}
-            className="flex items-center justify-center w-8 h-8 p-1 rounded-full cursor-pointer bg-neutral-100 hover:bg-neutral-200"
+            className="flex items-center justify-center w-10 h-10 bg-gray-100 rounded-full cursor-pointer"
             title="Edit Cause"
           >
             <FaPencilAlt />
@@ -210,39 +223,54 @@ const CauseManagement = () => {
 
 
   return (
-    <div className="p-6 mb-10 bg-white shadow-sm rounded-xl">
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-lg font-semibold">Cause Management</h2>
-        <div className="flex items-center gap-2">
-          <Input
-            prefix={<SearchOutlined />}
-            placeholder="Search causes..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-60"
-          />
+    <div className="mb-10 bg-white border border-gray-100 rounded-3xl">
+      <div className="flex flex-col gap-4 p-6 border-b border-gray-100 md:flex-row md:items-center md:justify-between">
+        <h2 className="text-base font-semibold text-gray-900">Cause Management</h2>
+
+        <div className="flex flex-col items-stretch gap-3 md:flex-row md:items-center">
+          <div className="w-full md:w-[220px]">
+            <div className="px-4 py-2 bg-white border border-gray-200 rounded-full [&_.ant-input-affix-wrapper]:!border-0 [&_.ant-input-affix-wrapper]:!shadow-none [&_.ant-input-affix-wrapper]:!bg-transparent [&_.ant-input]:!bg-transparent [&_.ant-input]:!text-sm">
+              <Input
+                prefix={<SearchOutlined />}
+                placeholder="Search"
+                value={searchTerm}
+                onChange={(e) => {
+                  setSearchTerm(e.target.value);
+                  setCurrentPage(1);
+                }}
+                bordered={false}
+                allowClear
+              />
+            </div>
+          </div>
+
           <button
             onClick={handleAdd}
-            className="flex items-center justify-center gap-1 px-4 py-1 bg-white border rounded-3xl"
+            className="flex items-center justify-center gap-2 px-5 py-3 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-full whitespace-nowrap"
           >
             <FaPlus /> Add Cause
           </button>
         </div>
       </div>
 
-      {/* Table */}
-      <Table
-        columns={columns}
-        dataSource={data}
-        loading={isLoading}
-        pagination={{
-          current: pagination?.page || currentPage,
-          pageSize: pagination?.limit || 10,
-          total: pagination?.total || 0,
-          onChange: (page) => setCurrentPage(page),
-        }}
-        rowKey="_id"
-      />
+      <div className="p-6 pt-4 [&_.ant-table-thead>tr>th]:bg-gray-50 [&_.ant-table-thead>tr>th]:border-b [&_.ant-table-thead>tr>th]:border-gray-100 [&_.ant-table-thead>tr>th]:text-gray-900 [&_.ant-table-thead>tr>th]:font-semibold [&_.ant-table-thead>tr>th]:text-xs [&_.ant-table-tbody>tr>td]:border-b [&_.ant-table-tbody>tr>td]:border-gray-100 [&_.ant-table-tbody>tr>td]:py-4 [&_.ant-table-tbody>tr>td]:text-sm">
+        <Table
+          columns={columns}
+          dataSource={data}
+          loading={isLoading}
+          pagination={{
+            current: pagination?.page || currentPage,
+            pageSize: pagination?.limit || 10,
+            total: pagination?.total || 0,
+            showTotal: (total, range) =>
+              `Showing ${range[0]}-${range[1]} from ${String(total).padStart(2, "0")}`,
+            onChange: (page) => setCurrentPage(page),
+            showSizeChanger: false,
+            position: ["bottomRight"],
+          }}
+          rowKey="_id"
+        />
+      </div>
 
       {/* Add/Edit Cause Modal */}
       <Modal

@@ -12,8 +12,7 @@ import {
 import { SearchOutlined } from "@ant-design/icons";
 import { VscEye } from "react-icons/vsc";
 import user from "../../assets/image/user.png";
-import { MdOtherHouses } from "react-icons/md";
-import { FaImage, FaPencilAlt, FaUsers } from "react-icons/fa";
+import { FaImage, FaUsers } from "react-icons/fa";
 import { GoOrganization } from "react-icons/go";
 import useSmartFetchHook from "../../Components/hooks/useSmartFetchHook.ts";
 import { useGetOrganizationReportQuery } from "../../redux/feature/organization/organizationApis.js";
@@ -124,15 +123,15 @@ const OrganizationTable = () => {
       dataIndex: "email",
       key: "email",
       render: (text, record) => (
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3">
           <img
             src={user}
             alt={record.name}
             className="w-10 h-10 rounded-full"
           />
           <div>
-            <p className="font-medium">{record.name}</p>
-            <p className="text-sm text-gray-400">{record.email}</p>
+            <p className="text-sm font-semibold text-gray-900">{record.name}</p>
+            <p className="text-xs text-gray-500">{record.email}</p>
           </div>
         </div>
       ),
@@ -180,32 +179,35 @@ const OrganizationTable = () => {
       dataIndex: "createdAt",
       key: "createdAt",
       render: (createdAt) => (
-        <span className="font-medium">{createdAt ? new Date(createdAt).toLocaleString() : "-"}</span>
+        <span className="text-sm font-medium text-gray-900">
+          {createdAt ? new Date(createdAt).toLocaleDateString() : "-"}
+        </span>
       ),
     },
     {
       title: "Status",
       dataIndex: ["auth", "status"],
       key: "status",
-      render: (status) => (
-        <span
-          className={`px-4 py-1 rounded-2xl text-sm font-medium ${status === "Active"
-            ? "bg-green-100 text-green-600"
-            : status === "verified"
-              ? "bg-yellow-100 text-yellow-600"
-              : "bg-gray-200 text-gray-600"
-            }`}
-        >
-          {status}
-        </span>
-      ),
+      render: (status) => {
+        const s = String(status || "").toLowerCase();
+        const cls =
+          s === "verified"
+            ? "inline-flex items-center rounded-full bg-emerald-100 px-4 py-2 text-xs font-medium text-emerald-700"
+            : s === "pending"
+            ? "inline-flex items-center rounded-full bg-amber-100 px-4 py-2 text-xs font-medium text-amber-700"
+            : s === "suspended"
+            ? "inline-flex items-center rounded-full bg-red-100 px-4 py-2 text-xs font-medium text-red-600"
+            : "inline-flex items-center rounded-full bg-gray-100 px-4 py-2 text-xs font-medium text-gray-700";
+        const label = s ? s.charAt(0).toUpperCase() + s.slice(1) : "-";
+        return <span className={cls}>{label}</span>;
+      },
     },
     {
       title: () => <div className="text-center">Action</div>,
       key: "action",
       render: (_, record) => (
         <div className="flex items-center justify-center gap-3 text-lg">
-          <div className="flex items-center justify-center w-8 h-8 p-1 rounded-full cursor-pointer bg-neutral-100" onClick={() => handleView(record)}>
+          <div className="flex items-center justify-center w-10 h-10 bg-gray-100 rounded-full cursor-pointer" onClick={() => handleView(record)}>
             <VscEye />
           </div>
           {/* <div
@@ -223,54 +225,77 @@ const OrganizationTable = () => {
   ];
 
   return (
-    <div className="p-6 mb-10 bg-white shadow-sm rounded-xl">
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-lg font-semibold">Organization Table</h2>
-        <div className="flex items-center gap-2">
-          <Input
-            prefix={<SearchOutlined />}
-            placeholder="Search..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-60"
-          />
-          <RangePicker
-            placeholder={["Start date", "End date"]}
-            onChange={handleDateRangeChange}
-            value={dateRange}
-          />
-          <Button onClick={handleExport}>Export</Button>
+    <div className="mb-10 bg-white border border-gray-100 rounded-3xl">
+      <div className="flex flex-col gap-4 p-6 border-b border-gray-100 md:flex-row md:items-center md:justify-between">
+        <h2 className="text-base font-semibold text-gray-900">Organization Table</h2>
+        <div className="flex flex-col items-stretch gap-3 md:flex-row md:items-center">
+          <div className="w-full md:w-[220px]">
+            <div className="px-4 py-2 bg-white border border-gray-200 rounded-full [&_.ant-input-affix-wrapper]:!border-0 [&_.ant-input-affix-wrapper]:!shadow-none [&_.ant-input-affix-wrapper]:!bg-transparent [&_.ant-input]:!bg-transparent [&_.ant-input]:!text-sm">
+              <Input
+                prefix={<SearchOutlined />}
+                placeholder="Search"
+                value={searchTerm}
+                onChange={(e) => {
+                  setSearchTerm(e.target.value);
+                  setCurrentPage(1);
+                }}
+                bordered={false}
+                allowClear
+              />
+            </div>
+          </div>
+
+          <div className="w-full md:w-auto">
+            <div className="px-4 py-2 bg-white border border-gray-200 rounded-full [&_.ant-picker]:!border-0 [&_.ant-picker]:!shadow-none [&_.ant-picker]:!bg-transparent [&_.ant-picker-input_>input]:!text-sm">
+              <RangePicker
+                placeholder={["Select Interval", ""]}
+                bordered={false}
+                onChange={handleDateRangeChange}
+                value={dateRange}
+              />
+            </div>
+          </div>
+
+          <Button
+            onClick={handleExport}
+            className="!h-10 !rounded-full !border-gray-200 !px-5 !text-sm !font-medium"
+          >
+            Export
+          </Button>
         </div>
       </div>
 
-      <Table
-        columns={columns}
-        dataSource={data}
-        loading={isLoading}
-        onChange={(paginationConfig, filters, sorter) => {
-          setCurrentPage(paginationConfig.current);
-          const newFilterParams = {};
-          if (sorter?.field) {
-            newFilterParams.sortBy = sorter.field;
-            newFilterParams.sortOrder = sorter.order === "ascend" ? "asc" : "desc";
-          }
-          Object.keys(filters || {}).forEach((key) => {
-            if (filters[key]) {
-              newFilterParams[key] = filters[key][0];
+      <div className="p-6 pt-4 [&_.ant-table-thead>tr>th]:bg-gray-50 [&_.ant-table-thead>tr>th]:border-b [&_.ant-table-thead>tr>th]:border-gray-100 [&_.ant-table-thead>tr>th]:text-gray-900 [&_.ant-table-thead>tr>th]:font-semibold [&_.ant-table-thead>tr>th]:text-xs [&_.ant-table-tbody>tr>td]:border-b [&_.ant-table-tbody>tr>td]:border-gray-100 [&_.ant-table-tbody>tr>td]:py-4 [&_.ant-table-tbody>tr>td]:text-sm">
+        <Table
+          columns={columns}
+          dataSource={data}
+          loading={isLoading}
+          onChange={(paginationConfig, filters, sorter) => {
+            setCurrentPage(paginationConfig.current);
+            const newFilterParams = {};
+            if (sorter?.field) {
+              newFilterParams.sortBy = sorter.field;
+              newFilterParams.sortOrder = sorter.order === "ascend" ? "asc" : "desc";
             }
-          });
-          setFilterParams(newFilterParams);
-        }}
-        pagination={{
-          current: pagination.page || 1,
-          pageSize: pagination.limit || 5,
-          total: pagination.total || 0,
-          showTotal: (total) => `Total ${total} items`,
-          showSizeChanger: false,
-          position: ["bottomRight"],
-        }}
-        rowKey={(row) => row._id}
-      />
+            Object.keys(filters || {}).forEach((key) => {
+              if (filters[key]) {
+                newFilterParams[key] = filters[key][0];
+              }
+            });
+            setFilterParams(newFilterParams);
+          }}
+          pagination={{
+            current: pagination.page || 1,
+            pageSize: pagination.limit || 5,
+            total: pagination.total || 0,
+            showTotal: (total, range) =>
+              `Showing ${range[0]}-${range[1]} from ${String(total).padStart(2, "0")}`,
+            showSizeChanger: false,
+            position: ["bottomRight"],
+          }}
+          rowKey={(row) => row._id}
+        />
+      </div>
 
       {/* Edit Profile Modal */}
       <Modal

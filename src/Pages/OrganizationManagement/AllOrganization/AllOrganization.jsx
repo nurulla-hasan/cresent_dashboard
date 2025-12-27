@@ -8,9 +8,9 @@ const AllOrganization = () => {
       {/* ---------- Top Title ---------- */}
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-semibold">Subscription & Payments</h1>
-          <p className="text-neutral-400">
-            Track all subscriptions, manage invoices, and export payment data.
+          <h1 className="text-3xl font-bold text-gray-900">Organization Management</h1>
+          <p className="mt-2 text-sm text-gray-500">
+            Track donor trends, popular causes, and user activity across the platform.
           </p>
         </div>
         <div className="flex items-center justify-center gap-2">
