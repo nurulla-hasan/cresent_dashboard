@@ -1,7 +1,6 @@
 import { useMemo, useState } from "react";
 import { Button, Dropdown, Input, Menu, Modal, Table, message } from "antd";
 import { DownOutlined, PlusOutlined, SearchOutlined } from "@ant-design/icons";
-import { VscEye } from "react-icons/vsc";
 import { FaPencilAlt } from "react-icons/fa";
 import { RxCrossCircled } from "react-icons/rx";
 
@@ -90,13 +89,21 @@ const BadgeTable = () => {
 
   const columns = [
     {
-      title: "Badge Name",
+      title: "Badge",
       dataIndex: "name",
       key: "name",
-      render: (text) => <span className="text-sm font-semibold text-gray-900">{text}</span>,
+      render: (text, record) => (
+        <button
+          type="button"
+          onClick={() => handleView(record)}
+          className="text-left text-sm font-semibold text-gray-900"
+        >
+          {text}
+        </button>
+      ),
     },
     {
-      title: "Badge Icon",
+      title: "Icon",
       dataIndex: "iconUrl",
       key: "icon",
       render: (iconUrl, record) => (
@@ -108,45 +115,19 @@ const BadgeTable = () => {
       ),
     },
     {
-      title: "Unlock Type",
-      dataIndex: "unlockType",
-      key: "unlockType",
-      render: (t) => {
-        if (!t) return <span>-</span>;
-        const label = String(t)
-          .replace(/_/g, " ")
-          .split(" ")
-          .filter(Boolean)
-          .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
-          .join(" ");
-        return <span>{label}</span>;
-      },
+      title: "Criteria",
+      dataIndex: "description",
+      key: "criteria",
+      render: (value) => (
+        <span className="text-sm text-gray-900">{value || "-"}</span>
+      ),
     },
     {
-      title: "Status",
-      dataIndex: "isActive",
-      key: "isActive",
-      render: (v) => statusTag(v),
-    },
-    {
-      title: "Featured",
-      dataIndex: "featured",
-      key: "featured",
-      render: (v) => featuredTag(v),
-    },
-    {
-      title: "Action",
+      title: "Actions",
       align: "center",
       key: "action",
       render: (_, record) => (
         <div className="flex items-center justify-center gap-3">
-          <div
-            onClick={() => handleView(record)}
-            className="flex items-center justify-center w-10 h-10 bg-gray-100 rounded-full cursor-pointer"
-            title="View Details"
-          >
-            <VscEye />
-          </div>
           <div
             className="flex items-center justify-center w-10 h-10 bg-gray-100 rounded-full cursor-pointer"
             title="Edit Badge"
@@ -281,7 +262,12 @@ const BadgeTable = () => {
         footer={null}
         centered
         width={600}
-        className="[&_.ant-modal-content]:!rounded-xl"
+        styles={{
+          content: {
+            borderRadius: "30px",
+            overflow: "hidden",
+          },
+        }}
       >
         {selectedBadge ? (
           <div className="space-y-6">

@@ -298,7 +298,12 @@ const OrganizationTable = () => {
         onCancel={handleCancel}
         footer={null}
         centered
-        className="[&_.ant-modal-content]:!rounded-xl"
+        styles={{
+          content: {
+            borderRadius: "30px",
+            overflow: "hidden",
+          },
+        }}
       >
         <Form layout="vertical" form={form} onFinish={handleSave}>
           <div className="flex justify-center mb-4">
@@ -368,7 +373,12 @@ const OrganizationTable = () => {
         footer={null}
         centered
         width={600}
-        className="[&_.ant-modal-content]:!rounded-xl"
+        styles={{
+          content: {
+            borderRadius: "30px",
+            overflow: "hidden",
+          },
+        }}
       >
         {viewRecord && (
           <div className="space-y-6">

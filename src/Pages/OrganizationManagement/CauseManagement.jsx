@@ -278,7 +278,12 @@ const CauseManagement = () => {
         footer={null}
         centered
         width={600}
-        className="[&_.ant-modal-content]:!rounded-xl"
+        styles={{
+          content: {
+            borderRadius: "30px",
+            overflow: "hidden",
+          },
+        }}
       >
         <Form layout="vertical" form={form} onFinish={handleSubmit}>
           <Form.Item
@@ -340,7 +345,12 @@ const CauseManagement = () => {
         footer={null}
         centered
         width={600}
-        className="[&_.ant-modal-content]:!rounded-xl"
+        styles={{
+          content: {
+            borderRadius: "30px",
+            overflow: "hidden",
+          },
+        }}
       >
         {viewRecord && (
           <div className="space-y-6">

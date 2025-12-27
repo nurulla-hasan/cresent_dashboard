@@ -259,14 +259,14 @@ const CreateBadgeModal = ({ open, onClose }) => {
       const existingTiers = form.getFieldValue("tiers");
       const mergedTiers = Array.isArray(existingTiers) && existingTiers.length
         ? existingTiers.map((t) => {
-            const d = defaults.tiers?.find((x) => x.tier === t.tier);
-            if (!d) return t;
-            return { ...t, ...d };
-          })
+          const d = defaults.tiers?.find((x) => x.tier === t.tier);
+          if (!d) return t;
+          return { ...t, ...d };
+        })
         : DEFAULT_TIERS.map((t) => {
-            const d = defaults.tiers?.find((x) => x.tier === t.tier);
-            return d ? { ...t, ...d } : t;
-          });
+          const d = defaults.tiers?.find((x) => x.tier === t.tier);
+          return d ? { ...t, ...d } : t;
+        });
 
       const additionalFields = {};
       if (defaults.timeRange) additionalFields.timeRange = defaults.timeRange;
@@ -401,7 +401,12 @@ const CreateBadgeModal = ({ open, onClose }) => {
       footer={null}
       centered
       width={900}
-      className="[&_.ant-modal-content]:!rounded-xl"
+      styles={{
+        content: {
+          borderRadius: "30px",
+          overflow: "hidden",
+        },
+      }}
     >
       <Form
         form={form}

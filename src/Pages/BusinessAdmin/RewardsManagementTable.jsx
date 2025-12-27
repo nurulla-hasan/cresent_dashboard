@@ -1,23 +1,16 @@
-/* eslint-disable no-unused-vars */
 import { useState } from "react";
 import {
-  Button,
-  Form,
   Input,
   Modal,
   Table,
-  Upload,
-  Tag,
   DatePicker,
   Spin,
 } from "antd";
 import {
   FaEye,
-  FaImage,
   FaCheckCircle,
-  FaPlus,
 } from "react-icons/fa";
-import { RxCrossCircled, RxDotsVertical } from "react-icons/rx";
+import { RxCrossCircled } from "react-icons/rx";
 import { BsExclamationCircle } from "react-icons/bs";
 import icon from "../../assets/image/leaf.png";
 import { SearchOutlined, LoadingOutlined } from "@ant-design/icons";
@@ -41,8 +34,6 @@ const RewardsManagementTable = () => {
     setFilterParams,
   } = useSmartFetchHook(useGetRewardReportQuery);
 
-  const [form] = Form.useForm();
-
   const handleView = (record) => {
     setSelectedReward(record);
     setIsViewModalOpen(true);
@@ -52,48 +43,57 @@ const RewardsManagementTable = () => {
     switch (status) {
       case "active":
         return (
-          <Tag color="green" className="flex items-center gap-1 px-2 py-1 rounded-full w-fit">
-            <FaCheckCircle /> active
-          </Tag>
+          <span className="inline-flex items-center gap-2 px-4 py-2 text-xs font-medium rounded-full bg-emerald-100 text-emerald-700">
+            <FaCheckCircle /> Active
+          </span>
         );
       case "inactive":
         return (
-          <Tag color="red" className="flex items-center gap-1 px-2 py-1 rounded-full w-fit">
-            <RxCrossCircled /> inactive
-          </Tag>
+          <span className="inline-flex items-center gap-2 px-4 py-2 text-xs font-medium text-gray-600 bg-gray-100 rounded-full">
+            <RxCrossCircled /> Inactive
+          </span>
         );
       case "expired":
         return (
-          <Tag color="default" className="flex items-center gap-1 px-2 py-1 rounded-full w-fit">
-            expired
-          </Tag>
+          <span className="inline-flex items-center gap-2 px-4 py-2 text-xs font-medium text-gray-600 bg-gray-100 rounded-full">
+            Expired
+          </span>
         );
       case "upcoming":
         return (
-          <Tag color="blue" className="flex items-center gap-1 px-2 py-1 rounded-full w-fit">
-            upcoming
-          </Tag>
+          <span className="inline-flex items-center gap-2 px-4 py-2 text-xs font-medium text-blue-700 bg-blue-100 rounded-full">
+            Upcoming
+          </span>
         );
       case "sold-out":
         return (
-          <Tag color="gold" className="flex items-center gap-1 px-2 py-1 rounded-full w-fit">
-            <BsExclamationCircle /> sold-out
-          </Tag>
+          <span className="inline-flex items-center gap-2 px-4 py-2 text-xs font-medium rounded-full bg-amber-100 text-amber-700">
+            <BsExclamationCircle /> Pending
+          </span>
         );
       default:
         return (
-          <Tag className="flex items-center gap-1 px-2 py-1 rounded-full w-fit">
+          <span className="inline-flex items-center gap-2 px-4 py-2 text-xs font-medium text-gray-600 bg-gray-100 rounded-full">
             {status || "-"}
-          </Tag>
+          </span>
         );
     }
   };
 
   const columns = [
-     {
-      title: "Reward Title",
+    {
+      title: "Reward Name",
       dataIndex: "title",
       key: "title",
+      render: (title, record) => (
+        <button
+          type="button"
+          onClick={() => handleView(record)}
+          className="text-sm font-semibold text-left text-gray-900"
+        >
+          {title || "-"}
+        </button>
+      ),
     },
     {
       title: "Business",
@@ -107,21 +107,19 @@ const RewardsManagementTable = () => {
             className="object-contain w-10 h-10 rounded-full"
           />
           <div className="flex flex-col">
-            <span className="font-semibold">{business?.name || "-"}</span>
-            <span className="text-sm text-gray-500">{business?._id || "-"}</span>
+            <span className="text-sm font-semibold text-gray-900">{business?.name || "-"}</span>
+            <span className="text-xs text-gray-500">{business?._id || "-"}</span>
           </div>
         </div>
       ),
     },
     {
-      title: "Category",
-      dataIndex: "category",
-      key: "category",
-    },
-    {
-      title: "Points",
-      dataIndex: "pointsCost",
-      key: "pointsCost",
+      title: "Tier",
+      dataIndex: "tier",
+      key: "tier",
+      render: (_v, record) => (
+        <span className="text-sm text-gray-900">{record?.tier || record?.category || "-"}</span>
+      ),
     },
     {
       title: "Redemptions",
@@ -136,13 +134,14 @@ const RewardsManagementTable = () => {
       render: (status) => renderStatus(status),
     },
     {
-      title: "Action",
+      title: "Actions",
+      align: "center",
       key: "action",
       render: (_, record) => (
-        <div className="flex gap-3 text-lg">
+        <div className="flex items-center justify-center gap-3">
           <div
             onClick={() => handleView(record)}
-            className="flex items-center justify-center w-8 h-8 p-1 rounded-full cursor-pointer bg-neutral-100"
+            className="flex items-center justify-center w-10 h-10 bg-gray-100 rounded-full cursor-pointer"
           >
             <FaEye />
           </div>
@@ -163,58 +162,74 @@ const RewardsManagementTable = () => {
   };
 
   return (
-    <div className="p-6 mb-10 bg-white shadow-sm rounded-xl">
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-lg font-semibold">Rewards Management</h2>
-        <div className="flex items-center gap-2">
-          <Input 
-            prefix={<SearchOutlined />}
-            placeholder="Search..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-60"
-          />
-          <RangePicker
-            placeholder={["From date", "To date"]}
-            onChange={handleDateRangeChange}
-            value={dateRange}
-          />
-          {/* <button className="flex items-center justify-center gap-2 px-6 py-2 bg-white border rounded-3xl">
-            <FaPlus /> Add
-          </button> */}
-          {/* <RxDotsVertical /> */}
+    <div className="mb-10 bg-white border border-gray-100 rounded-3xl">
+      <div className="flex flex-col gap-4 p-6 border-b border-gray-100 md:flex-row md:items-center md:justify-between">
+        <h2 className="text-base font-semibold text-gray-900">Rewards Management</h2>
+
+        <div className="flex flex-col items-stretch gap-3 md:flex-row md:items-center">
+          <div className="w-full md:w-[240px]">
+            <div className="flex items-center h-12 px-5 bg-white border border-gray-200 rounded-full [&_.ant-input-affix-wrapper]:!h-full [&_.ant-input-affix-wrapper]:!border-0 [&_.ant-input-affix-wrapper]:!shadow-none [&_.ant-input-affix-wrapper]:!bg-transparent [&_.ant-input-affix-wrapper]:!p-0 [&_.ant-input]:!h-full [&_.ant-input]:!bg-transparent [&_.ant-input]:!text-sm">
+              <Input
+                prefix={<SearchOutlined />}
+                placeholder="Search"
+                value={searchTerm}
+                onChange={(e) => {
+                  setSearchTerm(e.target.value);
+                  setCurrentPage(1);
+                }}
+                bordered={false}
+                allowClear
+                disabled={isLoading}
+              />
+            </div>
+          </div>
+
+          <div className="w-full md:w-auto">
+            <div className="flex items-center h-12 px-5 bg-white border border-gray-200 rounded-full [&_.ant-picker]:!border-0 [&_.ant-picker]:!shadow-none [&_.ant-picker]:!bg-transparent [&_.ant-picker]:!p-0 [&_.ant-picker]:!h-full [&_.ant-picker-input_>input]:!text-sm [&_.ant-picker-input_>input]:!h-full">
+              <RangePicker
+                placeholder={["Select Interval", ""]}
+                onChange={handleDateRangeChange}
+                value={dateRange}
+                disabled={isLoading}
+                bordered={false}
+              />
+            </div>
+          </div>
         </div>
       </div>
 
       <Spin spinning={isLoading} indicator={<LoadingOutlined spin />}>
-        <Table
-          columns={columns}
-          dataSource={apiResponse}
-          loading={isLoading}
-          rowKey="_id"
-          onChange={(tablePagination, filters, sorter) => {
-            setCurrentPage(tablePagination.current);
-            const newParams = {};
-            if (sorter?.field) {
-              newParams.sortBy = sorter.field;
-              newParams.sortOrder = sorter.order === "ascend" ? "asc" : "desc";
-            }
-            Object.keys(filters).forEach((key) => {
-              if (filters[key]) {
-                newParams[key] = filters[key][0];
+        <div className="">
+          <Table
+            columns={columns}
+            dataSource={apiResponse}
+            loading={isLoading}
+            rowKey="_id"
+            onChange={(tablePagination, filters, sorter) => {
+              setCurrentPage(tablePagination.current);
+              const newParams = {};
+              if (sorter?.field) {
+                newParams.sortBy = sorter.field;
+                newParams.sortOrder = sorter.order === "ascend" ? "asc" : "desc";
               }
-            });
-            setFilterParams(newParams);
-          }}
-          pagination={{
-            current: pagination.page || 1,
-            pageSize: pagination.limit || 10,
-            total: pagination.total || 0,
-            showTotal: (total) => `Total ${total} items`,
-            showSizeChanger: false,
-            position: ["bottomRight"],
-          }}
-        />
+              Object.keys(filters || {}).forEach((key) => {
+                if (filters[key]) {
+                  newParams[key] = filters[key][0];
+                }
+              });
+              setFilterParams(newParams);
+            }}
+            pagination={{
+              current: pagination.page || 1,
+              pageSize: pagination.limit || 10,
+              total: pagination.total || 0,
+              showTotal: (total, range) =>
+                `Showing ${String(range?.[1] ?? 0).padStart(2, "0")} from ${String(total).padStart(2, "0")}`,
+              showSizeChanger: false,
+              position: ["bottomRight"],
+            }}
+          />
+        </div>
       </Spin>
 
       <Modal
@@ -224,6 +239,12 @@ const RewardsManagementTable = () => {
         footer={null}
         centered
         width={600}
+        styles={{
+          content: {
+            borderRadius: "30px",
+            overflow: "hidden",
+          },
+        }}
       >
         {selectedReward ? (
           <div className="space-y-6">
